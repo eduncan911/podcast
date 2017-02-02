@@ -128,16 +128,19 @@ func (p *Podcast) AddImage(i Image) {
 // to Podcast and iTunes specifications.
 //
 // Article minimal requirements are:
+//
 // * Title
 // * Description
 // * Link
 //
 // Audio, Video and Downloads minimal requirements are:
+//
 // * Title
 // * Description
 // * Enclosure (HREF, Type and Length all required)
 //
 // The following fields are always overwritten (don't set them):
+//
 // * GUID
 // * PubDateFormatted
 // * AuthorFormatted
@@ -145,6 +148,7 @@ func (p *Podcast) AddImage(i Image) {
 // * Enclosure.LengthFormatted
 //
 // Recommendations:
+//
 // * Just set the minimal fields: the rest get set for you.
 // * Always set an Enclosure.Length, to be nice to your downloaders.
 // * Follow Apple's best practices to enrich your podcasts:
