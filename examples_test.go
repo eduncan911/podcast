@@ -16,6 +16,7 @@ var (
 func ExampleNew() {
 	ti, l, d := "title", "link", "description"
 
+	// instantiate a new Podcast
 	p := podcast.New(ti, l, d, &pubDate, &pubDate)
 
 	fmt.Println(p.Title, p.Link, p.Description, p.Language)
@@ -28,6 +29,7 @@ func ExampleNew() {
 func ExamplePodcast_AddAuthor() {
 	p := podcast.New("title", "link", "description", nil, nil)
 
+	// add the Author
 	p.AddAuthor(podcast.Author{
 		Name:  "the name",
 		Email: "me@test.com",
@@ -43,20 +45,22 @@ func ExamplePodcast_AddAuthor() {
 func ExamplePodcast_AddCategory() {
 	p := podcast.New("title", "link", "description", nil, nil)
 
-	p.AddCategory("Taby", nil)
-	p.AddCategory("North American", []string{"Long Hair", "Short Hair"})
-	p.AddCategory("Simese", nil)
+	// add the Category
+	p.AddCategory("Bombay", nil)
+	p.AddCategory("American", []string{"Longhair", "Shorthair"})
+	p.AddCategory("Siamese", nil)
 
 	fmt.Println(len(p.ICategories), len(p.ICategories[1].ICategories))
 	fmt.Println(p.Category)
 	// Output:
 	// 3 2
-	// Taby,North American,Simese
+	// Bombay,American,Siamese
 }
 
 func ExamplePodcast_AddImage() {
 	p := podcast.New("title", "link", "description", nil, nil)
 
+	// add the Image
 	p.AddImage(podcast.Image{
 		URL: "http://example.com/image.jpg",
 	})
@@ -75,6 +79,7 @@ func ExamplePodcast_AddItem() {
 	p.AddAuthor(podcast.Author{Name: "the name", Email: "me@test.com"})
 	p.AddImage(podcast.Image{URL: "http://example.com/image.jpg"})
 
+	// create an Item
 	item := podcast.Item{
 		Title:       "Episode 1",
 		Description: "Description for Episode 1",
@@ -86,6 +91,7 @@ func ExamplePodcast_AddItem() {
 		podcast.MP3,
 		183,
 	)
+	// add the Item
 	if _, err := p.AddItem(item); err != nil {
 		fmt.Println("item validation error: " + err.Error())
 	}
@@ -113,6 +119,9 @@ func ExamplePodcast_Bytes() {
 		"An example Podcast",
 		&pubDate, &pubDate,
 	)
+	p.AddAuthor(podcast.Author{Name: "Jane Doe", Email: "me@janedoe.com"})
+	p.AddImage(podcast.Image{URL: "http://janedoe.com/i.jpg"})
+
 	for i := int64(0); i < 4; i++ {
 		n := strconv.FormatInt(i, 10)
 
@@ -124,10 +133,11 @@ func ExamplePodcast_Bytes() {
 		}
 		if _, err := p.AddItem(item); err != nil {
 			fmt.Println(item.Title, ": error", err.Error())
-			return
+			break
 		}
 	}
 
+	// call Podcast.Bytes() to return a byte array
 	os.Stdout.Write(p.Bytes())
 
 	// Output:
@@ -140,13 +150,23 @@ func ExamplePodcast_Bytes() {
 	//     <generator>go podcast v1.0.0 (github.com/eduncan911/podcast)</generator>
 	//     <language>en-us</language>
 	//     <lastBuildDate>Wed, 01 Feb 2017 09:11:00 -0500</lastBuildDate>
+	//     <managingEditor>me@janedoe.com (Jane Doe)</managingEditor>
 	//     <pubDate>Wed, 01 Feb 2017 09:11:00 -0500</pubDate>
+	//     <image>
+	//       <url>http://janedoe.com/i.jpg</url>
+	//       <title></title>
+	//       <link></link>
+	//     </image>
+	//     <itunes:author>me@janedoe.com (Jane Doe)</itunes:author>
+	//     <itunes:image href="http://janedoe.com/i.jpg"></itunes:image>
 	//     <item>
 	//       <guid>http://example.com/0.mp3</guid>
 	//       <title>Episode 0</title>
 	//       <link>http://example.com/0.mp3</link>
 	//       <description>Description for Episode 0</description>
 	//       <pubDate>Wed, 01 Feb 2017 09:11:00 -0500</pubDate>
+	//       <itunes:author>me@janedoe.com (Jane Doe)</itunes:author>
+	//       <itunes:image href="http://janedoe.com/i.jpg"></itunes:image>
 	//     </item>
 	//     <item>
 	//       <guid>http://example.com/1.mp3</guid>
@@ -154,6 +174,8 @@ func ExamplePodcast_Bytes() {
 	//       <link>http://example.com/1.mp3</link>
 	//       <description>Description for Episode 1</description>
 	//       <pubDate>Wed, 01 Feb 2017 09:11:00 -0500</pubDate>
+	//       <itunes:author>me@janedoe.com (Jane Doe)</itunes:author>
+	//       <itunes:image href="http://janedoe.com/i.jpg"></itunes:image>
 	//     </item>
 	//     <item>
 	//       <guid>http://example.com/2.mp3</guid>
@@ -161,6 +183,8 @@ func ExamplePodcast_Bytes() {
 	//       <link>http://example.com/2.mp3</link>
 	//       <description>Description for Episode 2</description>
 	//       <pubDate>Wed, 01 Feb 2017 09:11:00 -0500</pubDate>
+	//       <itunes:author>me@janedoe.com (Jane Doe)</itunes:author>
+	//       <itunes:image href="http://janedoe.com/i.jpg"></itunes:image>
 	//     </item>
 	//     <item>
 	//       <guid>http://example.com/3.mp3</guid>
@@ -168,7 +192,10 @@ func ExamplePodcast_Bytes() {
 	//       <link>http://example.com/3.mp3</link>
 	//       <description>Description for Episode 3</description>
 	//       <pubDate>Wed, 01 Feb 2017 09:11:00 -0500</pubDate>
+	//       <itunes:author>me@janedoe.com (Jane Doe)</itunes:author>
+	//       <itunes:image href="http://janedoe.com/i.jpg"></itunes:image>
 	//     </item>
 	//   </channel>
 	// </rss>
+
 }

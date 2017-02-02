@@ -8,14 +8,14 @@
 * [Examples](#pkg-examples)
 
 ## <a name="pkg-overview">Overview</a>
-Package `podcast` is an iTunes and RSS 2.0 podcast generator for GoLang that
+Package podcast is an iTunes and RSS 2.0 podcast generator for GoLang that
 enforces strict compliance by using its simple interface.
 
 [![GoDoc](<a href="https://godoc.org/github.com/eduncan911/podcast?status.svg">https://godoc.org/github.com/eduncan911/podcast?status.svg</a>)](<a href="https://godoc.org/github.com/eduncan911/podcast">https://godoc.org/github.com/eduncan911/podcast</a>) [![Build Status](<a href="https://travis-ci.org/eduncan911/podcast.svg?branch=master">https://travis-ci.org/eduncan911/podcast.svg?branch=master</a>)](<a href="https://travis-ci.org/eduncan911/podcast">https://travis-ci.org/eduncan911/podcast</a>) [![Go Report Card](<a href="https://goreportcard.com/badge/github.com/eduncan911/podcast">https://goreportcard.com/badge/github.com/eduncan911/podcast</a>)](<a href="https://goreportcard.com/report/github.com/eduncan911/podcast">https://goreportcard.com/report/github.com/eduncan911/podcast</a>)
 
-Full documentation with detailed examples located at [![GoDoc](<a href="https://godoc.org/github.com/eduncan911/podcast?status.svg">https://godoc.org/github.com/eduncan911/podcast?status.svg</a>)](<a href="https://godoc.org/github.com/eduncan911/podcast">https://godoc.org/github.com/eduncan911/podcast</a>)
+Full documentation with detailed examples located at <a href="https://godoc.org/github.com/eduncan911/podcast">https://godoc.org/github.com/eduncan911/podcast</a>
 
-Usage
+### Usage
 
 
 	$ go get -u github.com/eduncan911/podcast
@@ -23,6 +23,10 @@ Usage
 The API exposes a number of method receivers on structs that implements the
 logic required to comply with the specifications and ensure a compliant feed.
 A number of overrides occur to help with iTunes visibility of your episodes.
+
+Notabily, the [Podcast.AddItem(i Item)](#Podcast.AddItem) function performs most of the
+heavy lifting by taking the [Item](#Item) input and performing validation, overrides
+and duplciate setters through the feed.
 
 See the detailed Examples in the GoDocs for complete usage.
 
@@ -60,6 +64,7 @@ Podcasts: <a href="https://help.apple.com/itc/podcasts_connect/#/itca5b22233">ht
   * [func (p *Podcast) Bytes() []byte](#Podcast.Bytes)
   * [func (p *Podcast) Encode(w io.Writer) error](#Podcast.Encode)
   * [func (p *Podcast) String() string](#Podcast.String)
+  * [func (p *Podcast) Write(b []byte) (n int, err error)](#Podcast.Write)
 * [type TextInput](#TextInput)
 
 #### <a name="pkg-examples">Examples</a>
@@ -70,7 +75,7 @@ Podcasts: <a href="https://help.apple.com/itc/podcasts_connect/#/itca5b22233">ht
 * [Podcast.AddImage](#example_Podcast_AddImage)
 * [Podcast.AddItem](#example_Podcast_AddItem)
 * [Podcast.Bytes](#example_Podcast_Bytes)
-* [Package (Encode)](#example__encode)
+* [Package (HttpHandlers)](#example__httpHandlers)
 
 #### <a name="pkg-files">Package files</a>
 [author.go](/src/github.com/eduncan911/podcast/author.go) [doc.go](/src/github.com/eduncan911/podcast/doc.go) [enclosure.go](/src/github.com/eduncan911/podcast/enclosure.go) [image.go](/src/github.com/eduncan911/podcast/image.go) [item.go](/src/github.com/eduncan911/podcast/item.go) [itunes.go](/src/github.com/eduncan911/podcast/itunes.go) [podcast.go](/src/github.com/eduncan911/podcast/podcast.go) [textinput.go](/src/github.com/eduncan911/podcast/textinput.go) 
@@ -80,7 +85,7 @@ Podcasts: <a href="https://help.apple.com/itc/podcasts_connect/#/itca5b22233">ht
 
 
 
-## <a name="Author">type</a> [Author](/src/target/author.go?s=149:287#L1)
+## <a name="Author">type</a> [Author](/src/target/author.go?s=150:288#L1)
 ``` go
 type Author struct {
     XMLName xml.Name `xml:"itunes:owner"`
@@ -90,7 +95,7 @@ type Author struct {
 ```
 Author represents a named author and email.
 
-For iTunes compiance, both Name and Email are required.
+For iTunes compliance, both Name and Email are required.
 
 
 
@@ -467,11 +472,21 @@ Encode writes the bytes to the io.Writer stream in RSS 2.0 specification.
 
 
 
-### <a name="Podcast.String">func</a> (\*Podcast) [String](/src/target/podcast.go?s=7091:7124#L223)
+### <a name="Podcast.String">func</a> (\*Podcast) [String](/src/target/podcast.go?s=7291:7324#L229)
 ``` go
 func (p *Podcast) String() string
 ```
 String encodes the Podcast state to a string.
+
+
+
+
+### <a name="Podcast.Write">func</a> (\*Podcast) [Write](/src/target/podcast.go?s=7163:7215#L224)
+``` go
+func (p *Podcast) Write(b []byte) (n int, err error)
+```
+Write implements the io.Writer inteface to write an RSS 2.0 stream
+that is compliant to the RSS 2.0 specification.
 
 
 
