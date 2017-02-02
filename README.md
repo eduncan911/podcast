@@ -24,13 +24,13 @@ The API exposes a number of method receivers on structs that implements the
 logic required to comply with the specifications and ensure a compliant feed.
 A number of overrides occur to help with iTunes visibility of your episodes.
 
-Notabily, the [Podcast.AddItem(i Item)](#Podcast.AddItem) function performs most of the
+Notably, the [Podcast.AddItem(i Item)](#Podcast.AddItem) function performs most of the
 heavy lifting by taking the [Item](#Item) input and performing validation, overrides
-and duplciate setters through the feed.
+and duplicate setters through the feed.
 
 See the detailed Examples in the GoDocs for complete usage.
 
-### Extensiblity
+### Extensibility
 In no way are you restricted in having full control over your feeds.  You may
 choose to skip the API methods and instead use the structs directly.  The
 fields have been grouped by RSS 2.0 and iTunes fields.
@@ -378,18 +378,18 @@ AddAuthor adds the specified Author to the podcast.
 
 
 
-### <a name="Podcast.AddCategory">func</a> (\*Podcast) [AddCategory](/src/target/podcast.go?s=2631:2701#L75)
+### <a name="Podcast.AddCategory">func</a> (\*Podcast) [AddCategory](/src/target/podcast.go?s=2632:2702#L75)
 ``` go
 func (p *Podcast) AddCategory(category string, subCategories []string)
 ```
-AddCategory adds the cateories to the Podcast in comma delimited format.
+AddCategory adds the categories to the Podcast in comma delimited format.
 
 subCategories are optional.
 
 
 
 
-### <a name="Podcast.AddImage">func</a> (\*Podcast) [AddImage](/src/target/podcast.go?s=3478:3513#L103)
+### <a name="Podcast.AddImage">func</a> (\*Podcast) [AddImage](/src/target/podcast.go?s=3479:3514#L103)
 ``` go
 func (p *Podcast) AddImage(i Image)
 ```
@@ -405,7 +405,7 @@ image files.
 
 
 
-### <a name="Podcast.AddItem">func</a> (\*Podcast) [AddItem](/src/target/podcast.go?s=4960:5006#L145)
+### <a name="Podcast.AddItem">func</a> (\*Podcast) [AddItem](/src/target/podcast.go?s=4973:5019#L149)
 ``` go
 func (p *Podcast) AddItem(i Item) (int, error)
 ```
@@ -415,23 +415,26 @@ errors in validation that may have occurred.
 This method takes the "itunes overrides" approach to populating
 itunes tags according to the overrides rules in the specification.
 This not only complies completely with iTunes parsing rules; but, it also
-displays what is possible to be set on an individial eposide level - if you
+displays what is possible to be set on an individual episode level - if you
 wish to have more fine grain control over your content.
 
 This method imposes strict validation of the Item being added to confirm
 to Podcast and iTunes specifications.
 
 Article minimal requirements are:
+
 * Title
 * Description
 * Link
 
 Audio, Video and Downloads minimal requirements are:
+
 * Title
 * Description
 * Enclosure (HREF, Type and Length all required)
 
 The following fields are always overwritten (don't set them):
+
 * GUID
 * PubDateFormatted
 * AuthorFormatted
@@ -439,6 +442,7 @@ The following fields are always overwritten (don't set them):
 * Enclosure.LengthFormatted
 
 Recommendations:
+
 * Just set the minimal fields: the rest get set for you.
 * Always set an Enclosure.Length, to be nice to your downloaders.
 * Follow Apple's best practices to enrich your podcasts:
@@ -454,7 +458,7 @@ Recommendations:
 
 
 
-### <a name="Podcast.Bytes">func</a> (\*Podcast) [Bytes](/src/target/podcast.go?s=6829:6861#L213)
+### <a name="Podcast.Bytes">func</a> (\*Podcast) [Bytes](/src/target/podcast.go?s=6842:6874#L217)
 ``` go
 func (p *Podcast) Bytes() []byte
 ```
@@ -463,7 +467,7 @@ Bytes returns an encoded []byte slice.
 
 
 
-### <a name="Podcast.Encode">func</a> (\*Podcast) [Encode](/src/target/podcast.go?s=6971:7014#L218)
+### <a name="Podcast.Encode">func</a> (\*Podcast) [Encode](/src/target/podcast.go?s=6984:7027#L222)
 ``` go
 func (p *Podcast) Encode(w io.Writer) error
 ```
@@ -472,7 +476,7 @@ Encode writes the bytes to the io.Writer stream in RSS 2.0 specification.
 
 
 
-### <a name="Podcast.String">func</a> (\*Podcast) [String](/src/target/podcast.go?s=7291:7324#L229)
+### <a name="Podcast.String">func</a> (\*Podcast) [String](/src/target/podcast.go?s=7305:7338#L233)
 ``` go
 func (p *Podcast) String() string
 ```
@@ -481,11 +485,11 @@ String encodes the Podcast state to a string.
 
 
 
-### <a name="Podcast.Write">func</a> (\*Podcast) [Write](/src/target/podcast.go?s=7163:7215#L224)
+### <a name="Podcast.Write">func</a> (\*Podcast) [Write](/src/target/podcast.go?s=7177:7229#L228)
 ``` go
 func (p *Podcast) Write(b []byte) (n int, err error)
 ```
-Write implements the io.Writer inteface to write an RSS 2.0 stream
+Write implements the io.Writer interface to write an RSS 2.0 stream
 that is compliant to the RSS 2.0 specification.
 
 

@@ -79,7 +79,7 @@ func (p *Podcast) AddAuthor(a Author) {
 	p.IAuthor = p.ManagingEditor
 }
 
-// AddCategory adds the cateories to the Podcast in comma delimited format.
+// AddCategory adds the categories to the Podcast in comma delimited format.
 //
 // subCategories are optional.
 func (p *Podcast) AddCategory(category string, subCategories []string) {
@@ -121,7 +121,7 @@ func (p *Podcast) AddImage(i Image) {
 // This method takes the "itunes overrides" approach to populating
 // itunes tags according to the overrides rules in the specification.
 // This not only complies completely with iTunes parsing rules; but, it also
-// displays what is possible to be set on an individial eposide level - if you
+// displays what is possible to be set on an individual episode level - if you
 // wish to have more fine grain control over your content.
 //
 // This method imposes strict validation of the Item being added to confirm
@@ -233,7 +233,7 @@ func (p *Podcast) Encode(w io.Writer) error {
 	return encode(w, *p)
 }
 
-// Write implements the io.Writer inteface to write an RSS 2.0 stream
+// Write implements the io.Writer interface to write an RSS 2.0 stream
 // that is compliant to the RSS 2.0 specification.
 func (p *Podcast) Write(b []byte) (n int, err error) {
 	return write(b, *p)

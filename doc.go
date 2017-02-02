@@ -13,14 +13,14 @@
 // logic required to comply with the specifications and ensure a compliant feed.
 // A number of overrides occur to help with iTunes visibility of your episodes.
 //
-// Notabily, the [Podcast.AddItem(i Item)](#Podcast.AddItem) function performs most of the
+// Notably, the [Podcast.AddItem(i Item)](#Podcast.AddItem) function performs most of the
 // heavy lifting by taking the [Item](#Item) input and performing validation, overrides
-// and duplciate setters through the feed.
+// and duplicate setters through the feed.
 //
 //
 // See the detailed Examples in the GoDocs for complete usage.
 //
-// Extensiblity
+// Extensibility
 //
 // In no way are you restricted in having full control over your feeds.  You may
 // choose to skip the API methods and instead use the structs directly.  The
