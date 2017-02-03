@@ -1,7 +1,7 @@
 language: go
 
 go:
-- stable
+- 1.7.3
 
 script:
   - go test -cover -v ./...
