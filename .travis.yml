@@ -4,4 +4,4 @@ go:
 - 1.7.3
 
 script:
-  - go test -cover -v ./...
+  - go test -cover -v
