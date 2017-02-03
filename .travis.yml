@@ -4,5 +4,6 @@ go:
 - 1.7.3
 
 script:
+  - go get -u -v github.com/pkg/errors
   - go build
   - go test -v -run="Test"  # excluding Examples, as Travis has issues
