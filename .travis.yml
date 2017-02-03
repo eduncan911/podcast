@@ -5,5 +5,6 @@ go:
 
 script:
   - go get -u -v github.com/pkg/errors
+  - go get -u -v github.com/stretchr/testify/assert
   - go build
   - go test -v -run="Test"  # excluding Examples, as Travis has issues
