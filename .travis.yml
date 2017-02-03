@@ -4,4 +4,4 @@ go:
 - 1.7.3
 
 script:
-  - go test -cover -v -run="Test"
+  - go test -v -run="Test"
