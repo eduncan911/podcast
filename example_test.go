@@ -24,11 +24,8 @@ func Example() {
 
 	// add some channel properties
 	p.ISubtitle = "A simple Podcast"
-	p.AddImage(podcast.Image{URL: "http://example.com/podcast.jpg"})
-	p.AddAuthor(podcast.Author{
-		Name:  "Jane Doe",
-		Email: "jane.doe@example.com",
-	})
+	p.AddImage("http://example.com/podcast.jpg")
+	p.AddAuthor("Jane Doe", "jane.doe@example.com")
 
 	for i := int64(0); i < 2; i++ {
 		n := strconv.FormatInt(i, 10)
@@ -41,8 +38,7 @@ func Example() {
 			PubDate:     &now,
 		}
 		// add a Download to the Item
-		item.AddEnclosure(
-			"http://example.com/"+n+".mp3", podcast.MP3, 55*(i+1))
+		item.AddEnclosure("http://example.com/"+n+".mp3", podcast.MP3, 55*(i+1))
 
 		// add the Item and check for validation errors
 		if _, err := p.AddItem(item); err != nil {
@@ -69,8 +65,6 @@ func Example() {
 	//     <pubDate>Wed, 01 Feb 2017 07:51:00 -0500</pubDate>
 	//     <image>
 	//       <url>http://example.com/podcast.jpg</url>
-	//       <title></title>
-	//       <link></link>
 	//     </image>
 	//     <itunes:author>jane.doe@example.com (Jane Doe)</itunes:author>
 	//     <itunes:subtitle>A simple Podcast</itunes:subtitle>
@@ -118,10 +112,10 @@ func Example_httpHandlers() {
 		)
 
 		// add some channel properties
-		p.AddAuthor(podcast.Author{Name: "Jane Doe", Email: "me@janedoe.com"})
-		p.AddImage(podcast.Image{URL: "http://janedoe.com/i.jpg"})
+		p.AddAuthor("Jane Doe", "me@janedoe.com")
+		p.AddImage("http://janedoe.com/i.jpg")
 
-		for i := int64(0); i < 3; i++ {
+		for i := int64(0); i < 2; i++ {
 			n := strconv.FormatInt(i, 10)
 
 			// create an Item
@@ -132,8 +126,7 @@ func Example_httpHandlers() {
 				PubDate:     &pubDate,
 			}
 			// add a Download to the Item
-			item.AddEnclosure(
-				"http://example.com/"+n+".mp3", podcast.MP3, 55*(i+1))
+			item.AddEnclosure("http://e.com/"+n+".mp3", podcast.MP3, 55*(i+1))
 
 			// add the Item and check for validation errors
 			if _, err := p.AddItem(item); err != nil {
@@ -173,45 +166,31 @@ func Example_httpHandlers() {
 	//     <pubDate>Wed, 01 Feb 2017 08:21:52 -0500</pubDate>
 	//     <image>
 	//       <url>http://janedoe.com/i.jpg</url>
-	//       <title></title>
-	//       <link></link>
 	//     </image>
 	//     <itunes:author>me@janedoe.com (Jane Doe)</itunes:author>
 	//     <itunes:image href="http://janedoe.com/i.jpg"></itunes:image>
 	//     <item>
-	//       <guid>http://example.com/0.mp3</guid>
+	//       <guid>http://e.com/0.mp3</guid>
 	//       <title>Episode 0</title>
 	//       <link>http://example.com/0.mp3</link>
 	//       <description>Description for Episode 0</description>
 	//       <pubDate>Wed, 01 Feb 2017 08:21:52 -0500</pubDate>
-	//       <enclosure url="http://example.com/0.mp3" length="55" type="audio/mpeg"></enclosure>
+	//       <enclosure url="http://e.com/0.mp3" length="55" type="audio/mpeg"></enclosure>
 	//       <itunes:author>me@janedoe.com (Jane Doe)</itunes:author>
 	//       <itunes:image href="http://janedoe.com/i.jpg"></itunes:image>
 	//       <itunes:duration>55</itunes:duration>
 	//     </item>
 	//     <item>
-	//       <guid>http://example.com/1.mp3</guid>
+	//       <guid>http://e.com/1.mp3</guid>
 	//       <title>Episode 1</title>
 	//       <link>http://example.com/1.mp3</link>
 	//       <description>Description for Episode 1</description>
 	//       <pubDate>Wed, 01 Feb 2017 08:21:52 -0500</pubDate>
-	//       <enclosure url="http://example.com/1.mp3" length="110" type="audio/mpeg"></enclosure>
+	//       <enclosure url="http://e.com/1.mp3" length="110" type="audio/mpeg"></enclosure>
 	//       <itunes:author>me@janedoe.com (Jane Doe)</itunes:author>
 	//       <itunes:image href="http://janedoe.com/i.jpg"></itunes:image>
 	//       <itunes:duration>110</itunes:duration>
 	//     </item>
-	//     <item>
-	//       <guid>http://example.com/2.mp3</guid>
-	//       <title>Episode 2</title>
-	//       <link>http://example.com/2.mp3</link>
-	//       <description>Description for Episode 2</description>
-	//       <pubDate>Wed, 01 Feb 2017 08:21:52 -0500</pubDate>
-	//       <enclosure url="http://example.com/2.mp3" length="165" type="audio/mpeg"></enclosure>
-	//       <itunes:author>me@janedoe.com (Jane Doe)</itunes:author>
-	//       <itunes:image href="http://janedoe.com/i.jpg"></itunes:image>
-	//       <itunes:duration>165</itunes:duration>
-	//     </item>
 	//   </channel>
 	// </rss>
-
 }

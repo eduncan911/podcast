@@ -11,7 +11,7 @@
 Package podcast is an iTunes and RSS 2.0 podcast generator for GoLang that
 enforces strict compliance by using its simple interface.
 
-[![GoDoc](<a href="https://godoc.org/github.com/eduncan911/podcast?status.svg">https://godoc.org/github.com/eduncan911/podcast?status.svg</a>)](<a href="https://godoc.org/github.com/eduncan911/podcast">https://godoc.org/github.com/eduncan911/podcast</a>) [![Build Status](<a href="https://travis-ci.org/eduncan911/podcast.svg?branch=master">https://travis-ci.org/eduncan911/podcast.svg?branch=master</a>)](<a href="https://travis-ci.org/eduncan911/podcast">https://travis-ci.org/eduncan911/podcast</a>) [![Go Report Card](<a href="https://goreportcard.com/badge/github.com/eduncan911/podcast">https://goreportcard.com/badge/github.com/eduncan911/podcast</a>)](<a href="https://goreportcard.com/report/github.com/eduncan911/podcast">https://goreportcard.com/report/github.com/eduncan911/podcast</a>)
+[![GoDoc](https://godoc.org/github.com/eduncan911/podcast?status.svg)](https://godoc.org/github.com/eduncan911/podcast) [![Build Status](https://travis-ci.org/eduncan911/podcast.svg?branch=master)](https://travis-ci.org/eduncan911/podcast) [![Go Report Card](https://goreportcard.com/badge/github.com/eduncan911/podcast)](https://goreportcard.com/report/github.com/eduncan911/podcast)
 
 Full documentation with detailed examples located at <a href="https://godoc.org/github.com/eduncan911/podcast">https://godoc.org/github.com/eduncan911/podcast</a>
 
@@ -57,9 +57,9 @@ Podcasts: <a href="https://help.apple.com/itc/podcasts_connect/#/itca5b22233">ht
   * [func (i *Item) AddEnclosure(url string, enclosureType EnclosureType, lengthInSeconds int64)](#Item.AddEnclosure)
 * [type Podcast](#Podcast)
   * [func New(title, link, description string, pubDate, lastBuildDate *time.Time) Podcast](#New)
-  * [func (p *Podcast) AddAuthor(a Author)](#Podcast.AddAuthor)
+  * [func (p *Podcast) AddAuthor(name, email string)](#Podcast.AddAuthor)
   * [func (p *Podcast) AddCategory(category string, subCategories []string)](#Podcast.AddCategory)
-  * [func (p *Podcast) AddImage(i Image)](#Podcast.AddImage)
+  * [func (p *Podcast) AddImage(url string)](#Podcast.AddImage)
   * [func (p *Podcast) AddItem(i Item) (int, error)](#Podcast.AddItem)
   * [func (p *Podcast) Bytes() []byte](#Podcast.Bytes)
   * [func (p *Podcast) Encode(w io.Writer) error](#Podcast.Encode)
@@ -78,7 +78,7 @@ Podcasts: <a href="https://help.apple.com/itc/podcasts_connect/#/itca5b22233">ht
 * [Package (HttpHandlers)](#example__httpHandlers)
 
 #### <a name="pkg-files">Package files</a>
-[author.go](/src/github.com/eduncan911/podcast/author.go) [doc.go](/src/github.com/eduncan911/podcast/doc.go) [enclosure.go](/src/github.com/eduncan911/podcast/enclosure.go) [image.go](/src/github.com/eduncan911/podcast/image.go) [item.go](/src/github.com/eduncan911/podcast/item.go) [itunes.go](/src/github.com/eduncan911/podcast/itunes.go) [podcast.go](/src/github.com/eduncan911/podcast/podcast.go) [textinput.go](/src/github.com/eduncan911/podcast/textinput.go) 
+[author.go](/src/github.com/eduncan911/podcast/author.go) [doc.go](/src/github.com/eduncan911/podcast/doc.go) [enclosure.go](/src/github.com/eduncan911/podcast/enclosure.go) [image.go](/src/github.com/eduncan911/podcast/image.go) [item.go](/src/github.com/eduncan911/podcast/item.go) [itunes.go](/src/github.com/eduncan911/podcast/itunes.go) [podcast.go](/src/github.com/eduncan911/podcast/podcast.go) [textinput.go](/src/github.com/eduncan911/podcast/textinput.go)
 
 
 
@@ -210,14 +210,14 @@ image files.
 
 
 
-## <a name="Image">type</a> [Image](/src/target/image.go?s=398:656#L3)
+## <a name="Image">type</a> [Image](/src/target/image.go?s=398:676#L3)
 ``` go
 type Image struct {
     XMLName xml.Name `xml:"image"`
     // TODO: is it URL or Link? which is it?
     URL    string `xml:"url"`
-    Title  string `xml:"title"`
-    Link   string `xml:"link"`
+    Title  string `xml:"title,omitempty"`
+    Link   string `xml:"link,omitempty"`
     Width  int    `xml:"width,omitempty"`
     Height int    `xml:"height,omitempty"`
 }
@@ -369,16 +369,16 @@ to the expected proper formats.
 
 
 
-### <a name="Podcast.AddAuthor">func</a> (\*Podcast) [AddAuthor](/src/target/podcast.go?s=2403:2440#L67)
+### <a name="Podcast.AddAuthor">func</a> (\*Podcast) [AddAuthor](/src/target/podcast.go?s=2403:2450#L67)
 ``` go
-func (p *Podcast) AddAuthor(a Author)
+func (p *Podcast) AddAuthor(name, email string)
 ```
 AddAuthor adds the specified Author to the podcast.
 
 
 
 
-### <a name="Podcast.AddCategory">func</a> (\*Podcast) [AddCategory](/src/target/podcast.go?s=2632:2702#L75)
+### <a name="Podcast.AddCategory">func</a> (\*Podcast) [AddCategory](/src/target/podcast.go?s=2682:2752#L78)
 ``` go
 func (p *Podcast) AddCategory(category string, subCategories []string)
 ```
@@ -389,9 +389,9 @@ subCategories are optional.
 
 
 
-### <a name="Podcast.AddImage">func</a> (\*Podcast) [AddImage](/src/target/podcast.go?s=3479:3514#L103)
+### <a name="Podcast.AddImage">func</a> (\*Podcast) [AddImage](/src/target/podcast.go?s=3529:3567#L106)
 ``` go
-func (p *Podcast) AddImage(i Image)
+func (p *Podcast) AddImage(url string)
 ```
 AddImage adds the specified Image to the Podcast.
 
@@ -405,7 +405,7 @@ image files.
 
 
 
-### <a name="Podcast.AddItem">func</a> (\*Podcast) [AddItem](/src/target/podcast.go?s=4973:5019#L149)
+### <a name="Podcast.AddItem">func</a> (\*Podcast) [AddItem](/src/target/podcast.go?s=5038:5084#L154)
 ``` go
 func (p *Podcast) AddItem(i Item) (int, error)
 ```
@@ -458,7 +458,7 @@ Recommendations:
 
 
 
-### <a name="Podcast.Bytes">func</a> (\*Podcast) [Bytes](/src/target/podcast.go?s=6842:6874#L217)
+### <a name="Podcast.Bytes">func</a> (\*Podcast) [Bytes](/src/target/podcast.go?s=6907:6939#L222)
 ``` go
 func (p *Podcast) Bytes() []byte
 ```
@@ -467,7 +467,7 @@ Bytes returns an encoded []byte slice.
 
 
 
-### <a name="Podcast.Encode">func</a> (\*Podcast) [Encode](/src/target/podcast.go?s=6984:7027#L222)
+### <a name="Podcast.Encode">func</a> (\*Podcast) [Encode](/src/target/podcast.go?s=7049:7092#L227)
 ``` go
 func (p *Podcast) Encode(w io.Writer) error
 ```
@@ -476,7 +476,7 @@ Encode writes the bytes to the io.Writer stream in RSS 2.0 specification.
 
 
 
-### <a name="Podcast.String">func</a> (\*Podcast) [String](/src/target/podcast.go?s=7305:7338#L233)
+### <a name="Podcast.String">func</a> (\*Podcast) [String](/src/target/podcast.go?s=7370:7403#L238)
 ``` go
 func (p *Podcast) String() string
 ```
@@ -485,7 +485,7 @@ String encodes the Podcast state to a string.
 
 
 
-### <a name="Podcast.Write">func</a> (\*Podcast) [Write](/src/target/podcast.go?s=7177:7229#L228)
+### <a name="Podcast.Write">func</a> (\*Podcast) [Write](/src/target/podcast.go?s=7242:7294#L233)
 ``` go
 func (p *Podcast) Write(b []byte) (n int, err error)
 ```

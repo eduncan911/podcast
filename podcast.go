@@ -74,8 +74,11 @@ func New(title, link, description string,
 }
 
 // AddAuthor adds the specified Author to the podcast.
-func (p *Podcast) AddAuthor(a Author) {
-	p.ManagingEditor = parseAuthorNameEmail(&a)
+func (p *Podcast) AddAuthor(name, email string) {
+	p.ManagingEditor = parseAuthorNameEmail(&Author{
+		Name:  name,
+		Email: email,
+	})
 	p.IAuthor = p.ManagingEditor
 }
 
@@ -110,9 +113,11 @@ func (p *Podcast) AddCategory(category string, subCategories []string) {
 // extensions (.jpg, .png), and in the RGB colorspace. To optimize
 // images for mobile devices, Apple recommends compressing your
 // image files.
-func (p *Podcast) AddImage(i Image) {
-	p.Image = &i
-	p.IImage = &IImage{HREF: p.Image.URL}
+func (p *Podcast) AddImage(url string) {
+	p.Image = &Image{
+		URL: url,
+	}
+	p.IImage = &IImage{HREF: url}
 }
 
 // AddItem adds the podcast episode.  It returns a count of Items added or any

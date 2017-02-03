@@ -30,10 +30,7 @@ func ExamplePodcast_AddAuthor() {
 	p := podcast.New("title", "link", "description", nil, nil)
 
 	// add the Author
-	p.AddAuthor(podcast.Author{
-		Name:  "the name",
-		Email: "me@test.com",
-	})
+	p.AddAuthor("the name", "me@test.com")
 
 	fmt.Println(p.ManagingEditor)
 	fmt.Println(p.IAuthor)
@@ -61,9 +58,7 @@ func ExamplePodcast_AddImage() {
 	p := podcast.New("title", "link", "description", nil, nil)
 
 	// add the Image
-	p.AddImage(podcast.Image{
-		URL: "http://example.com/image.jpg",
-	})
+	p.AddImage("http://example.com/image.jpg")
 
 	if p.Image != nil && p.IImage != nil {
 		fmt.Println(p.Image.URL)
@@ -76,8 +71,8 @@ func ExamplePodcast_AddImage() {
 
 func ExamplePodcast_AddItem() {
 	p := podcast.New("title", "link", "description", &pubDate, &pubDate)
-	p.AddAuthor(podcast.Author{Name: "the name", Email: "me@test.com"})
-	p.AddImage(podcast.Image{URL: "http://example.com/image.jpg"})
+	p.AddAuthor("the name", "me@test.com")
+	p.AddImage("http://example.com/image.jpg")
 
 	// create an Item
 	item := podcast.Item{
@@ -119,10 +114,10 @@ func ExamplePodcast_Bytes() {
 		"An example Podcast",
 		&pubDate, &pubDate,
 	)
-	p.AddAuthor(podcast.Author{Name: "Jane Doe", Email: "me@janedoe.com"})
-	p.AddImage(podcast.Image{URL: "http://janedoe.com/i.jpg"})
+	p.AddAuthor("Jane Doe", "me@janedoe.com")
+	p.AddImage("http://janedoe.com/i.jpg")
 
-	for i := int64(0); i < 4; i++ {
+	for i := int64(0); i < 2; i++ {
 		n := strconv.FormatInt(i, 10)
 
 		item := podcast.Item{
@@ -154,8 +149,6 @@ func ExamplePodcast_Bytes() {
 	//     <pubDate>Wed, 01 Feb 2017 09:11:00 -0500</pubDate>
 	//     <image>
 	//       <url>http://janedoe.com/i.jpg</url>
-	//       <title></title>
-	//       <link></link>
 	//     </image>
 	//     <itunes:author>me@janedoe.com (Jane Doe)</itunes:author>
 	//     <itunes:image href="http://janedoe.com/i.jpg"></itunes:image>
@@ -173,24 +166,6 @@ func ExamplePodcast_Bytes() {
 	//       <title>Episode 1</title>
 	//       <link>http://example.com/1.mp3</link>
 	//       <description>Description for Episode 1</description>
-	//       <pubDate>Wed, 01 Feb 2017 09:11:00 -0500</pubDate>
-	//       <itunes:author>me@janedoe.com (Jane Doe)</itunes:author>
-	//       <itunes:image href="http://janedoe.com/i.jpg"></itunes:image>
-	//     </item>
-	//     <item>
-	//       <guid>http://example.com/2.mp3</guid>
-	//       <title>Episode 2</title>
-	//       <link>http://example.com/2.mp3</link>
-	//       <description>Description for Episode 2</description>
-	//       <pubDate>Wed, 01 Feb 2017 09:11:00 -0500</pubDate>
-	//       <itunes:author>me@janedoe.com (Jane Doe)</itunes:author>
-	//       <itunes:image href="http://janedoe.com/i.jpg"></itunes:image>
-	//     </item>
-	//     <item>
-	//       <guid>http://example.com/3.mp3</guid>
-	//       <title>Episode 3</title>
-	//       <link>http://example.com/3.mp3</link>
-	//       <description>Description for Episode 3</description>
 	//       <pubDate>Wed, 01 Feb 2017 09:11:00 -0500</pubDate>
 	//       <itunes:author>me@janedoe.com (Jane Doe)</itunes:author>
 	//       <itunes:image href="http://janedoe.com/i.jpg"></itunes:image>
