@@ -17,7 +17,6 @@ Full documentation with detailed examples located at <a href="https://godoc.org/
 
 ### Usage
 
-
 	$ go get -u github.com/eduncan911/podcast
 
 The API exposes a number of method receivers on structs that implements the

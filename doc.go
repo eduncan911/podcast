@@ -5,7 +5,7 @@
 //
 // Full documentation with detailed examples located at https://godoc.org/github.com/eduncan911/podcast
 //
-// ### Usage
+// Usage
 //
 //     $ go get -u github.com/eduncan911/podcast
 //
