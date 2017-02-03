@@ -1,3 +1,4 @@
+[![GoDoc](https://godoc.org/github.com/eduncan911/podcast?status.svg)](https://godoc.org/github.com/eduncan911/podcast) [![Build Status](https://travis-ci.org/eduncan911/podcast.svg?branch=master)](https://travis-ci.org/eduncan911/podcast) [![Coverage Status](https://coveralls.io/repos/github/eduncan911/podcast/badge.svg?branch=master)](https://coveralls.io/github/eduncan911/podcast?branch=master) [![Go Report Card](https://goreportcard.com/badge/github.com/eduncan911/podcast)](https://goreportcard.com/report/github.com/eduncan911/podcast)
 
 
 # podcast
@@ -11,11 +12,10 @@
 Package podcast is an iTunes and RSS 2.0 podcast generator for GoLang that
 enforces strict compliance by using its simple interface.
 
-[![GoDoc](https://godoc.org/github.com/eduncan911/podcast?status.svg)](https://godoc.org/github.com/eduncan911/podcast) [![Build Status](https://travis-ci.org/eduncan911/podcast.svg?branch=master)](https://travis-ci.org/eduncan911/podcast) [![Go Report Card](https://goreportcard.com/badge/github.com/eduncan911/podcast)](https://goreportcard.com/report/github.com/eduncan911/podcast)
-
 Full documentation with detailed examples located at <a href="https://godoc.org/github.com/eduncan911/podcast">https://godoc.org/github.com/eduncan911/podcast</a>
 
-### Usage
+Usage
+
 
 	$ go get -u github.com/eduncan911/podcast
 
@@ -40,6 +40,11 @@ iTunes specific fields are all prefixed with the letter `I`.
 RSS 2.0: <a href="https://cyber.harvard.edu/rss/rss.html">https://cyber.harvard.edu/rss/rss.html</a>
 
 Podcasts: <a href="https://help.apple.com/itc/podcasts_connect/#/itca5b22233">https://help.apple.com/itc/podcasts_connect/#/itca5b22233</a>
+
+### Release Notes
+1.0.0
+* Initial release with 97% coverage (can't mock xml Encoder 3 lines of code).
+* Full documentation and full examples.
 
 
 
@@ -77,7 +82,7 @@ Podcasts: <a href="https://help.apple.com/itc/podcasts_connect/#/itca5b22233">ht
 * [Package (HttpHandlers)](#example__httpHandlers)
 
 #### <a name="pkg-files">Package files</a>
-[author.go](/src/github.com/eduncan911/podcast/author.go) [doc.go](/src/github.com/eduncan911/podcast/doc.go) [enclosure.go](/src/github.com/eduncan911/podcast/enclosure.go) [image.go](/src/github.com/eduncan911/podcast/image.go) [item.go](/src/github.com/eduncan911/podcast/item.go) [itunes.go](/src/github.com/eduncan911/podcast/itunes.go) [podcast.go](/src/github.com/eduncan911/podcast/podcast.go) [textinput.go](/src/github.com/eduncan911/podcast/textinput.go)
+[author.go](/src/github.com/eduncan911/podcast/author.go) [doc.go](/src/github.com/eduncan911/podcast/doc.go) [enclosure.go](/src/github.com/eduncan911/podcast/enclosure.go) [image.go](/src/github.com/eduncan911/podcast/image.go) [item.go](/src/github.com/eduncan911/podcast/item.go) [itunes.go](/src/github.com/eduncan911/podcast/itunes.go) [podcast.go](/src/github.com/eduncan911/podcast/podcast.go) [textinput.go](/src/github.com/eduncan911/podcast/textinput.go) 
 
 
 
