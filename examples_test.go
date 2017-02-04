@@ -9,21 +9,17 @@ import (
 	"github.com/eduncan911/podcast"
 )
 
-var (
-	pubDate = time.Date(2017, time.February, 1, 8, 21, 52, 0, time.Local)
-)
-
 func ExampleNew() {
 	ti, l, d := "title", "link", "description"
 
 	// instantiate a new Podcast
-	p := podcast.New(ti, l, d, &pubDate, &pubDate)
+	p := podcast.New(ti, l, d, &pubDate, &updatedDate)
 
 	fmt.Println(p.Title, p.Link, p.Description, p.Language)
 	fmt.Println(p.PubDate, p.LastBuildDate)
 	// Output:
 	// title link description en-us
-	// Wed, 01 Feb 2017 08:21:52 -0500 Wed, 01 Feb 2017 08:21:52 -0500
+	// Sat, 04 Feb 2017 08:21:52 +0000 Mon, 06 Feb 2017 08:21:52 +0000
 }
 
 func ExamplePodcast_AddAuthor() {
@@ -70,16 +66,17 @@ func ExamplePodcast_AddImage() {
 }
 
 func ExamplePodcast_AddItem() {
-	p := podcast.New("title", "link", "description", &pubDate, &pubDate)
+	p := podcast.New("title", "link", "description", &pubDate, &updatedDate)
 	p.AddAuthor("the name", "me@test.com")
 	p.AddImage("http://example.com/image.jpg")
 
 	// create an Item
+	date := pubDate.Add(time.Duration(-60))
 	item := podcast.Item{
 		Title:       "Episode 1",
 		Description: "Description for Episode 1",
 		ISubtitle:   "A simple episode 1",
-		PubDate:     &pubDate,
+		PubDate:     &date,
 	}
 	item.AddEnclosure(
 		"http://example.com/1.mp3",
@@ -102,29 +99,28 @@ func ExamplePodcast_AddItem() {
 		pp.IAuthor, pp.IDuration, pp.IExplicit, pp.IIsClosedCaptioned,
 		pp.IOrder, pp.ISubtitle, pp.ISummary)
 	// Output:
-	// http://example.com/1.mp3 Episode 1 http://example.com/1.mp3 Description for Episode 1 &{{ }  me@test.com (the name)}     2017-02-01 08:21:52 -0500 EST Wed, 01 Feb 2017 08:21:52 -0500 {{ } http://example.com/1.mp3 183 183 audio/mpeg audio/mpeg} me@test.com (the name) 183    A simple episode 1
+	// http://example.com/1.mp3 Episode 1 http://example.com/1.mp3 Description for Episode 1 &{{ }  me@test.com (the name)}     2017-02-04 08:21:51.99999994 +0000 UTC Sat, 04 Feb 2017 08:21:51 +0000 {{ } http://example.com/1.mp3 183 183 audio/mpeg audio/mpeg} me@test.com (the name) 183    A simple episode 1
 }
 
 func ExamplePodcast_Bytes() {
-	pubDate := time.Date(2017, time.February, 1, 9, 11, 0, 0, time.Local)
-
 	p := podcast.New(
 		"eduncan911 Podcasts",
 		"http://eduncan911.com/",
 		"An example Podcast",
-		&pubDate, &pubDate,
+		&pubDate, &updatedDate,
 	)
 	p.AddAuthor("Jane Doe", "me@janedoe.com")
 	p.AddImage("http://janedoe.com/i.jpg")
 
-	for i := int64(0); i < 2; i++ {
+	for i := int64(5); i < 7; i++ {
 		n := strconv.FormatInt(i, 10)
+		d := pubDate.AddDate(0, 0, int(i+3))
 
 		item := podcast.Item{
 			Title:       "Episode " + n,
 			Link:        "http://example.com/" + n + ".mp3",
 			Description: "Description for Episode " + n,
-			PubDate:     &pubDate,
+			PubDate:     &d,
 		}
 		if _, err := p.AddItem(item); err != nil {
 			fmt.Println(item.Title, ": error", err.Error())
@@ -144,33 +140,32 @@ func ExamplePodcast_Bytes() {
 	//     <description>An example Podcast</description>
 	//     <generator>go podcast v1.0.0 (github.com/eduncan911/podcast)</generator>
 	//     <language>en-us</language>
-	//     <lastBuildDate>Wed, 01 Feb 2017 09:11:00 -0500</lastBuildDate>
+	//     <lastBuildDate>Mon, 06 Feb 2017 08:21:52 +0000</lastBuildDate>
 	//     <managingEditor>me@janedoe.com (Jane Doe)</managingEditor>
-	//     <pubDate>Wed, 01 Feb 2017 09:11:00 -0500</pubDate>
+	//     <pubDate>Sat, 04 Feb 2017 08:21:52 +0000</pubDate>
 	//     <image>
 	//       <url>http://janedoe.com/i.jpg</url>
 	//     </image>
 	//     <itunes:author>me@janedoe.com (Jane Doe)</itunes:author>
 	//     <itunes:image href="http://janedoe.com/i.jpg"></itunes:image>
 	//     <item>
-	//       <guid>http://example.com/0.mp3</guid>
-	//       <title>Episode 0</title>
-	//       <link>http://example.com/0.mp3</link>
-	//       <description>Description for Episode 0</description>
-	//       <pubDate>Wed, 01 Feb 2017 09:11:00 -0500</pubDate>
+	//       <guid>http://example.com/5.mp3</guid>
+	//       <title>Episode 5</title>
+	//       <link>http://example.com/5.mp3</link>
+	//       <description>Description for Episode 5</description>
+	//       <pubDate>Sun, 12 Feb 2017 08:21:52 +0000</pubDate>
 	//       <itunes:author>me@janedoe.com (Jane Doe)</itunes:author>
 	//       <itunes:image href="http://janedoe.com/i.jpg"></itunes:image>
 	//     </item>
 	//     <item>
-	//       <guid>http://example.com/1.mp3</guid>
-	//       <title>Episode 1</title>
-	//       <link>http://example.com/1.mp3</link>
-	//       <description>Description for Episode 1</description>
-	//       <pubDate>Wed, 01 Feb 2017 09:11:00 -0500</pubDate>
+	//       <guid>http://example.com/6.mp3</guid>
+	//       <title>Episode 6</title>
+	//       <link>http://example.com/6.mp3</link>
+	//       <description>Description for Episode 6</description>
+	//       <pubDate>Mon, 13 Feb 2017 08:21:52 +0000</pubDate>
 	//       <itunes:author>me@janedoe.com (Jane Doe)</itunes:author>
 	//       <itunes:image href="http://janedoe.com/i.jpg"></itunes:image>
 	//     </item>
 	//   </channel>
 	// </rss>
-
 }

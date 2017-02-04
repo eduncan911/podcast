@@ -238,11 +238,11 @@ func (p *Podcast) Encode(w io.Writer) error {
 	return encode(w, *p)
 }
 
-// Write implements the io.Writer interface to write an RSS 2.0 stream
-// that is compliant to the RSS 2.0 specification.
-func (p *Podcast) Write(b []byte) (n int, err error) {
-	return write(b, *p)
-}
+// // Write implements the io.Writer interface to write an RSS 2.0 stream
+// // that is compliant to the RSS 2.0 specification.
+// func (p *Podcast) Write(b []byte) (n int, err error) {
+// 	return write(b, *p)
+// }
 
 // String encodes the Podcast state to a string.
 func (p *Podcast) String() string {
@@ -279,14 +279,14 @@ func encode(w io.Writer, p Podcast) error {
 	return nil
 }
 
-// write writes a stream using the RSS 2.0 specification.
-func write(b []byte, p Podcast) (n int, err error) {
-	buf := bytes.NewBuffer(b)
-	if err := encode(buf, p); err != nil {
-		return 0, errors.Wrap(err, "podcast.write: podcast.encode returned error")
-	}
-	return buf.Len(), nil
-}
+// // write writes a stream using the RSS 2.0 specification.
+// func write(b []byte, p Podcast) (n int, err error) {
+// 	buf := bytes.NewBuffer(b)
+// 	if err := encode(buf, p); err != nil {
+// 		return 0, errors.Wrap(err, "podcast.write: podcast.encode returned error")
+// 	}
+// 	return buf.Len(), nil
+// }
 
 func parseDateRFC1123Z(t *time.Time) string {
 	if t != nil && !t.IsZero() {
