@@ -53,6 +53,8 @@ type Podcast struct {
 	ICategories []*ICategory
 
 	Items []*Item
+
+	encode func(w io.Writer, o interface{}) error
 }
 
 // New instantiates a Podcast with required parameters.
@@ -69,6 +71,16 @@ func New(title, link, description string,
 		PubDate:       parseDateRFC1123Z(pubDate),
 		LastBuildDate: parseDateRFC1123Z(lastBuildDate),
 		Language:      "en-us",
+	}
+
+	// setup dependency (could inject later)
+	p.encode = func(w io.Writer, o interface{}) error {
+		e := xml.NewEncoder(w)
+		e.Indent("", "  ")
+		if err := e.Encode(o); err != nil {
+			return errors.Wrap(err, "podcast.encode: Encode returned error")
+		}
+		return nil
 	}
 	return p
 }
@@ -235,23 +247,33 @@ func (p *Podcast) Bytes() []byte {
 
 // Encode writes the bytes to the io.Writer stream in RSS 2.0 specification.
 func (p *Podcast) Encode(w io.Writer) error {
-	return encode(w, *p)
+	w.Write([]byte("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"))
+	wrapped := podcastWrapper{
+		XMLNS:   "http://www.itunes.com/dtds/podcast-1.0.dtd",
+		Version: "2.0",
+		Channel: p,
+	}
+	return p.encode(w, wrapped)
+}
+
+// String encodes the Podcast state to a string.
+func (p *Podcast) String() string {
+	b := new(bytes.Buffer)
+	if err := p.Encode(b); err != nil {
+		return "String: podcast.write returned the error: " + err.Error()
+	}
+	return b.String()
 }
 
 // // Write implements the io.Writer interface to write an RSS 2.0 stream
 // // that is compliant to the RSS 2.0 specification.
 // func (p *Podcast) Write(b []byte) (n int, err error) {
-// 	return write(b, *p)
+// 	buf := bytes.NewBuffer(b)
+// 	if err := p.Encode(buf); err != nil {
+// 		return 0, errors.Wrap(err, "Write: podcast.encode returned error")
+// 	}
+// 	return buf.Len(), nil
 // }
-
-// String encodes the Podcast state to a string.
-func (p *Podcast) String() string {
-	b := new(bytes.Buffer)
-	if err := encode(b, *p); err != nil {
-		return "String: podcast.write returned the error: " + err.Error()
-	}
-	return b.String()
-}
 
 type podcastWrapper struct {
 	XMLName xml.Name `xml:"rss"`
@@ -260,42 +282,14 @@ type podcastWrapper struct {
 	Channel *Podcast
 }
 
-// encode writes the bytes to the io.Writer in RSS 2.0 specification.
-func encode(w io.Writer, p Podcast) error {
-	e := xml.NewEncoder(w)
-	e.Indent("", "  ")
-
-	// <?xml version="1.0" encoding="UTF-8"?>
-	w.Write([]byte("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"))
-	// <rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
-	wrapped := podcastWrapper{
-		XMLNS:   "http://www.itunes.com/dtds/podcast-1.0.dtd",
-		Version: "2.0",
-		Channel: &p,
-	}
-	if err := e.Encode(wrapped); err != nil {
-		return errors.Wrap(err, "podcast.encode: Encode returned error")
-	}
-	return nil
-}
-
-// // write writes a stream using the RSS 2.0 specification.
-// func write(b []byte, p Podcast) (n int, err error) {
-// 	buf := bytes.NewBuffer(b)
-// 	if err := encode(buf, p); err != nil {
-// 		return 0, errors.Wrap(err, "podcast.write: podcast.encode returned error")
-// 	}
-// 	return buf.Len(), nil
-// }
-
-func parseDateRFC1123Z(t *time.Time) string {
+var parseDateRFC1123Z = func(t *time.Time) string {
 	if t != nil && !t.IsZero() {
 		return t.Format(time.RFC1123Z)
 	}
 	return time.Now().UTC().Format(time.RFC1123Z)
 }
 
-func parseAuthorNameEmail(a *Author) string {
+var parseAuthorNameEmail = func(a *Author) string {
 	var author string
 	if a != nil {
 		author = a.Email
@@ -306,7 +300,7 @@ func parseAuthorNameEmail(a *Author) string {
 	return author
 }
 
-func parseDuration(duration int64) string {
+var parseDuration = func(duration int64) string {
 	// TODO: parse the output into iTunes nicely formatted version.
 	//
 	// iTunes supports the following:
