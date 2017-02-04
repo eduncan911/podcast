@@ -44,8 +44,8 @@ Podcasts: <a href="https://help.apple.com/itc/podcasts_connect/#/itca5b22233">ht
 
 ### Release Notes
 1.0.0
-* Initial release with 97% coverage (can't mock xml Encoder 3 lines of code).
-* Full documentation and full examples.
+* Initial release.
+* Full documentation, full examples and complete code coverage.
 
 
 
