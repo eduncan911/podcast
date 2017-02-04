@@ -6,82 +6,31 @@ import (
 	"testing"
 )
 
-func TestEnclosureTypeM4A(t *testing.T) {
-	t.Parallel()
-
-	// act
-	v := podcast.M4A.String()
-
-	// assert
-	assert.EqualValues(t, "audio/x-m4a", v)
+type enclosureTest struct {
+	t        podcast.EnclosureType
+	expected string
 }
 
-func TestEnclosureTypeM4V(t *testing.T) {
-	t.Parallel()
-
-	// act
-	v := podcast.M4V.String()
-
-	// assert
-	assert.EqualValues(t, "video/x-m4v", v)
+var enclosureTests = []enclosureTest{
+	enclosureTest{podcast.M4A, "audio/x-m4a"},
+	enclosureTest{podcast.M4V, "video/x-m4v"},
+	enclosureTest{podcast.MP4, "video/mp4"},
+	enclosureTest{podcast.MP3, "audio/mpeg"},
+	enclosureTest{podcast.MOV, "video/quicktime"},
+	enclosureTest{podcast.PDF, "application/pdf"},
+	enclosureTest{podcast.EPUB, "document/x-epub"},
+	enclosureTest{podcast.M4A, "audio/x-m4a"},
+	enclosureTest{99, "application/octet-stream"},
 }
 
-func TestEnclosureTypeMP4(t *testing.T) {
+func TestEnclosureTypes(t *testing.T) {
 	t.Parallel()
+	for _, et := range enclosureTests {
+		et := et
+		t.Run(et.t.String(), func(t *testing.T) {
+			t.Parallel()
 
-	// act
-	v := podcast.MP4.String()
-
-	// assert
-	assert.EqualValues(t, "video/mp4", v)
-}
-
-func TestEnclosureTypeMP3(t *testing.T) {
-	t.Parallel()
-
-	// act
-	v := podcast.MP3.String()
-
-	// assert
-	assert.EqualValues(t, "audio/mpeg", v)
-}
-
-func TestEnclosureTypeMOV(t *testing.T) {
-	t.Parallel()
-
-	// act
-	v := podcast.MOV.String()
-
-	// assert
-	assert.EqualValues(t, "video/quicktime", v)
-}
-
-func TestEnclosureTypePDF(t *testing.T) {
-	t.Parallel()
-
-	// act
-	v := podcast.PDF.String()
-
-	// assert
-	assert.EqualValues(t, "application/pdf", v)
-}
-
-func TestEnclosureTypeEPUB(t *testing.T) {
-	t.Parallel()
-
-	// act
-	v := podcast.EPUB.String()
-
-	// assert
-	assert.EqualValues(t, "document/x-epub", v)
-}
-
-func TestEnclosureTypeDefault(t *testing.T) {
-	t.Parallel()
-
-	// act
-	v := podcast.EnclosureType(99)
-
-	// assert
-	assert.EqualValues(t, "application/octet-stream", v.String())
+			assert.EqualValues(t, et.expected, et.t.String())
+		})
+	}
 }
