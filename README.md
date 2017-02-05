@@ -1,34 +1,31 @@
-[![GoDoc](https://godoc.org/github.com/eduncan911/podcast?status.svg)](https://godoc.org/github.com/eduncan911/podcast) [![Build Status](https://travis-ci.org/eduncan911/podcast.svg?branch=master)](https://travis-ci.org/eduncan911/podcast) [![Coverage Status](https://coveralls.io/repos/github/eduncan911/podcast/badge.svg?branch=master)](https://coveralls.io/github/eduncan911/podcast?branch=master) [![Go Report Card](https://goreportcard.com/badge/github.com/eduncan911/podcast)](https://goreportcard.com/report/github.com/eduncan911/podcast)
-
+[![GoDoc](https://godoc.org/github.com/eduncan911/podcast?status.svg)](https://godoc.org/github.com/eduncan911/podcast)
+[![Build Status](https://travis-ci.org/eduncan911/podcast.svg?branch=master)](https://travis-ci.org/eduncan911/podcast)
+[![Coverage Status](https://coveralls.io/repos/github/eduncan911/podcast/badge.svg?branch=master)](https://coveralls.io/github/eduncan911/podcast?branch=master)
+[![Go Report Card](https://goreportcard.com/badge/github.com/eduncan911/podcast)](https://goreportcard.com/report/github.com/eduncan911/podcast)
+[![MIT License](https://img.shields.io/npm/l/mediaelement.svg)](https://eduncan911.mit-license.org/)
 
 # podcast
-`import "github.com/eduncan911/podcast"`
-
-* [Overview](#pkg-overview)
-* [Index](#pkg-index)
-* [Examples](#pkg-examples)
-* [Subdirectories](#pkg-subdirectories)
-
-## <a name="pkg-overview">Overview</a>
-Package podcast is an iTunes and RSS 2.0 podcast generator for GoLang that
-enforces strict compliance by using its simple interface.
+Package podcast generates a fully compliant iTunes and RSS 2.0 podcast feed
+for GoLang using a simple API.
 
 Full documentation with detailed examples located at <a href="https://godoc.org/github.com/eduncan911/podcast">https://godoc.org/github.com/eduncan911/podcast</a>
 
-Usage
-
+### Usage
+To use, `go get` and `import` the package like your typical GoLang library.
 
 	$ go get -u github.com/eduncan911/podcast
+	
+	import "github.com/eduncan911/podcast"
 
 The API exposes a number of method receivers on structs that implements the
 logic required to comply with the specifications and ensure a compliant feed.
 A number of overrides occur to help with iTunes visibility of your episodes.
 
-Notably, the [Podcast.AddItem(i Item)](#Podcast.AddItem) function performs most of the
-heavy lifting by taking the [Item](#Item) input and performing validation, overrides
-and duplicate setters through the feed.
+Notably, the [Podcast.AddItem(i Item)](#Podcast.AddItem) function performs most
+of the heavy lifting by taking the [Item](#Item) input and performing
+validation, overrides and duplicate setters through the feed.
 
-See the detailed Examples in the GoDocs for complete usage.
+See the detailed Examples of the API at <a href="https://godoc.org/github.com/eduncan911/podcast">https://godoc.org/github.com/eduncan911/podcast</a>.
 
 ### Extensibility
 In no way are you restricted in having full control over your feeds.  You may
@@ -47,8 +44,15 @@ Podcasts: <a href="https://help.apple.com/itc/podcasts_connect/#/itca5b22233">ht
 * Initial release.
 * Full documentation, full examples and complete code coverage.
 
+## Table of Contents
 
+* [Imported Packages](#pkg-imports)
+* [Index](#pkg-index)
+* [Examples](#pkg-examples)
 
+## <a name="pkg-imports">Imported Packages</a>
+
+- [github.com/pkg/errors](https://godoc.org/github.com/pkg/errors)
 
 ## <a name="pkg-index">Index</a>
 * [type Author](#Author)
@@ -59,16 +63,16 @@ Podcasts: <a href="https://help.apple.com/itc/podcasts_connect/#/itca5b22233">ht
 * [type IImage](#IImage)
 * [type Image](#Image)
 * [type Item](#Item)
-  * [func (i *Item) AddEnclosure(url string, enclosureType EnclosureType, lengthInSeconds int64)](#Item.AddEnclosure)
+  * [func (i \*Item) AddEnclosure(url string, enclosureType EnclosureType, lengthInSeconds int64)](#Item.AddEnclosure)
 * [type Podcast](#Podcast)
-  * [func New(title, link, description string, pubDate, lastBuildDate *time.Time) Podcast](#New)
-  * [func (p *Podcast) AddAuthor(name, email string)](#Podcast.AddAuthor)
-  * [func (p *Podcast) AddCategory(category string, subCategories []string)](#Podcast.AddCategory)
-  * [func (p *Podcast) AddImage(url string)](#Podcast.AddImage)
-  * [func (p *Podcast) AddItem(i Item) (int, error)](#Podcast.AddItem)
-  * [func (p *Podcast) Bytes() []byte](#Podcast.Bytes)
-  * [func (p *Podcast) Encode(w io.Writer) error](#Podcast.Encode)
-  * [func (p *Podcast) String() string](#Podcast.String)
+  * [func New(title, link, description string, pubDate, lastBuildDate \*time.Time) Podcast](#New)
+  * [func (p \*Podcast) AddAuthor(name, email string)](#Podcast.AddAuthor)
+  * [func (p \*Podcast) AddCategory(category string, subCategories []string)](#Podcast.AddCategory)
+  * [func (p \*Podcast) AddImage(url string)](#Podcast.AddImage)
+  * [func (p \*Podcast) AddItem(i Item) (int, error)](#Podcast.AddItem)
+  * [func (p \*Podcast) Bytes() []byte](#Podcast.Bytes)
+  * [func (p \*Podcast) Encode(w io.Writer) error](#Podcast.Encode)
+  * [func (p \*Podcast) String() string](#Podcast.String)
 * [type TextInput](#TextInput)
 
 #### <a name="pkg-examples">Examples</a>
@@ -82,14 +86,9 @@ Podcasts: <a href="https://help.apple.com/itc/podcasts_connect/#/itca5b22233">ht
 * [Package (IoWriter)](#example__ioWriter)
 
 #### <a name="pkg-files">Package files</a>
-[author.go](/src/github.com/eduncan911/podcast/author.go) [doc.go](/src/github.com/eduncan911/podcast/doc.go) [enclosure.go](/src/github.com/eduncan911/podcast/enclosure.go) [image.go](/src/github.com/eduncan911/podcast/image.go) [item.go](/src/github.com/eduncan911/podcast/item.go) [itunes.go](/src/github.com/eduncan911/podcast/itunes.go) [podcast.go](/src/github.com/eduncan911/podcast/podcast.go) [textinput.go](/src/github.com/eduncan911/podcast/textinput.go) 
+[author.go](./author.go) [doc.go](./doc.go) [enclosure.go](./enclosure.go) [image.go](./image.go) [item.go](./item.go) [itunes.go](./itunes.go) [podcast.go](./podcast.go) [textinput.go](./textinput.go) 
 
-
-
-
-
-
-## <a name="Author">type</a> [Author](/src/target/author.go?s=150:288#L1)
+## <a name="Author">type</a> [Author](./author.go#L8-L12)
 ``` go
 type Author struct {
     XMLName xml.Name `xml:"itunes:owner"`
@@ -101,16 +100,7 @@ Author represents a named author and email.
 
 For iTunes compliance, both Name and Email are required.
 
-
-
-
-
-
-
-
-
-
-## <a name="Enclosure">type</a> [Enclosure](/src/target/enclosure.go?s=814:1118#L36)
+## <a name="Enclosure">type</a> [Enclosure](./enclosure.go#L46-L53)
 ``` go
 type Enclosure struct {
     XMLName         xml.Name      `xml:"enclosure"`
@@ -123,21 +113,11 @@ type Enclosure struct {
 ```
 Enclosure represents a download enclosure.
 
-
-
-
-
-
-
-
-
-
-## <a name="EnclosureType">type</a> [EnclosureType](/src/target/enclosure.go?s=274:296#L11)
+## <a name="EnclosureType">type</a> [EnclosureType](./enclosure.go#L21)
 ``` go
 type EnclosureType int
 ```
 EnclosureType specifies the type of the enclosure.
-
 
 ``` go
 const (
@@ -152,25 +132,13 @@ const (
 ```
 EnclosureType specifies the type of the enclosure.
 
-
-
-
-
-
-
-
-
-
-### <a name="EnclosureType.String">func</a> (EnclosureType) [String](/src/target/enclosure.go?s=371:410#L14)
+### <a name="EnclosureType.String">func</a> (EnclosureType) [String](./enclosure.go#L24)
 ``` go
 func (et EnclosureType) String() string
 ```
 String returns the MIME type encoding of the specified EnclosureType.
 
-
-
-
-## <a name="ICategory">type</a> [ICategory](/src/target/itunes.go?s=645:782#L12)
+## <a name="ICategory">type</a> [ICategory](./itunes.go#L22-L26)
 ``` go
 type ICategory struct {
     XMLName     xml.Name `xml:"itunes:category"`
@@ -180,16 +148,7 @@ type ICategory struct {
 ```
 ICategory is a 2-tier classification system for iTunes.
 
-
-
-
-
-
-
-
-
-
-## <a name="IImage">type</a> [IImage](/src/target/itunes.go?s=487:584#L6)
+## <a name="IImage">type</a> [IImage](./itunes.go#L16-L19)
 ``` go
 type IImage struct {
     XMLName xml.Name `xml:"itunes:image"`
@@ -205,16 +164,7 @@ extensions (.jpg, .png), and in the RGB colorspace. To optimize
 images for mobile devices, Apple recommends compressing your
 image files.
 
-
-
-
-
-
-
-
-
-
-## <a name="Image">type</a> [Image](/src/target/image.go?s=398:676#L3)
+## <a name="Image">type</a> [Image](./image.go#L13-L21)
 ``` go
 type Image struct {
     XMLName xml.Name `xml:"image"`
@@ -235,16 +185,7 @@ extensions (.jpg, .png), and in the RGB colorspace. To optimize
 images for mobile devices, Apple recommends compressing your
 image files.
 
-
-
-
-
-
-
-
-
-
-## <a name="Item">type</a> [Item](/src/target/item.go?s=606:1746#L15)
+## <a name="Item">type</a> [Item](./item.go#L25-L50)
 ``` go
 type Item struct {
     XMLName          xml.Name   `xml:"item"`
@@ -291,26 +232,14 @@ Recommendations:
 - Always set an Enclosure.Length, to be nice to your downloaders.
 - Use Enclosure.Type instead of setting TypeFormatted for valid extensions.
 
-
-
-
-
-
-
-
-
-
-### <a name="Item.AddEnclosure">func</a> (\*Item) [AddEnclosure](/src/target/item.go?s=1813:1906#L43)
+### <a name="Item.AddEnclosure">func</a> (\*Item) [AddEnclosure](./item.go#L53-L54)
 ``` go
 func (i *Item) AddEnclosure(
     url string, enclosureType EnclosureType, lengthInSeconds int64)
 ```
 AddEnclosure adds the downloadable asset to the podcast Item.
 
-
-
-
-## <a name="Podcast">type</a> [Podcast](/src/target/podcast.go?s=176:1822#L9)
+## <a name="Podcast">type</a> [Podcast](./podcast.go#L19-L58)
 ``` go
 type Podcast struct {
     XMLName        xml.Name `xml:"channel"`
@@ -354,13 +283,7 @@ type Podcast struct {
 ```
 Podcast represents a podcast.
 
-
-
-
-
-
-
-### <a name="New">func</a> [New](/src/target/podcast.go?s=1988:2073#L54)
+### <a name="New">func</a> [New](./podcast.go#L64-L65)
 ``` go
 func New(title, link, description string,
     pubDate, lastBuildDate *time.Time) Podcast
@@ -370,20 +293,13 @@ New instantiates a Podcast with required parameters.
 Nil-able fields are optional but recommended as they are formatted
 to the expected proper formats.
 
-
-
-
-
-### <a name="Podcast.AddAuthor">func</a> (\*Podcast) [AddAuthor](/src/target/podcast.go?s=2719:2766#L79)
+### <a name="Podcast.AddAuthor">func</a> (\*Podcast) [AddAuthor](./podcast.go#L89)
 ``` go
 func (p *Podcast) AddAuthor(name, email string)
 ```
 AddAuthor adds the specified Author to the podcast.
 
-
-
-
-### <a name="Podcast.AddCategory">func</a> (\*Podcast) [AddCategory](/src/target/podcast.go?s=2998:3068#L90)
+### <a name="Podcast.AddCategory">func</a> (\*Podcast) [AddCategory](./podcast.go#L100)
 ``` go
 func (p *Podcast) AddCategory(category string, subCategories []string)
 ```
@@ -391,10 +307,7 @@ AddCategory adds the categories to the Podcast in comma delimited format.
 
 subCategories are optional.
 
-
-
-
-### <a name="Podcast.AddImage">func</a> (\*Podcast) [AddImage](/src/target/podcast.go?s=3845:3883#L118)
+### <a name="Podcast.AddImage">func</a> (\*Podcast) [AddImage](./podcast.go#L128)
 ``` go
 func (p *Podcast) AddImage(url string)
 ```
@@ -407,10 +320,7 @@ extensions (.jpg, .png), and in the RGB colorspace. To optimize
 images for mobile devices, Apple recommends compressing your
 image files.
 
-
-
-
-### <a name="Podcast.AddItem">func</a> (\*Podcast) [AddItem](/src/target/podcast.go?s=5354:5400#L166)
+### <a name="Podcast.AddItem">func</a> (\*Podcast) [AddItem](./podcast.go#L176)
 ``` go
 func (p *Podcast) AddItem(i Item) (int, error)
 ```
@@ -452,45 +362,31 @@ Recommendations:
 * Always set an Enclosure.Length, to be nice to your downloaders.
 * Follow Apple's best practices to enrich your podcasts:
 
-
 	<a href="https://help.apple.com/itc/podcasts_connect/#/itc2b3780e76">https://help.apple.com/itc/podcasts_connect/#/itc2b3780e76</a>
 
 * For specifications of itunes tags, see:
 
-
 	<a href="https://help.apple.com/itc/podcasts_connect/#/itcb54353390">https://help.apple.com/itc/podcasts_connect/#/itcb54353390</a>
 
-
-
-
-### <a name="Podcast.Bytes">func</a> (\*Podcast) [Bytes](/src/target/podcast.go?s=7223:7255#L234)
+### <a name="Podcast.Bytes">func</a> (\*Podcast) [Bytes](./podcast.go#L244)
 ``` go
 func (p *Podcast) Bytes() []byte
 ```
 Bytes returns an encoded []byte slice.
 
-
-
-
-### <a name="Podcast.Encode">func</a> (\*Podcast) [Encode](/src/target/podcast.go?s=7365:7408#L239)
+### <a name="Podcast.Encode">func</a> (\*Podcast) [Encode](./podcast.go#L249)
 ``` go
 func (p *Podcast) Encode(w io.Writer) error
 ```
 Encode writes the bytes to the io.Writer stream in RSS 2.0 specification.
 
-
-
-
-### <a name="Podcast.String">func</a> (\*Podcast) [String](/src/target/podcast.go?s=7677:7710#L250)
+### <a name="Podcast.String">func</a> (\*Podcast) [String](./podcast.go#L260)
 ``` go
 func (p *Podcast) String() string
 ```
 String encodes the Podcast state to a string.
 
-
-
-
-## <a name="TextInput">type</a> [TextInput](/src/target/textinput.go?s=77:290#L1)
+## <a name="TextInput">type</a> [TextInput](./textinput.go#L6-L12)
 ``` go
 type TextInput struct {
     XMLName     xml.Name `xml:"textInput"`
@@ -502,18 +398,5 @@ type TextInput struct {
 ```
 TextInput represents text inputs.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 - - -
-Generated by [godoc2md](http://godoc.org/github.com/davecheney/godoc2md)
+Generated by [godoc2ghmd](https://github.com/eduncan911/godoc2ghmd)

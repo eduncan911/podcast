@@ -1,21 +1,25 @@
-// Package podcast is an iTunes and RSS 2.0 podcast generator for GoLang that
-// enforces strict compliance by using its simple interface.
+// Package podcast generates a fully compliant iTunes and RSS 2.0 podcast feed
+// for GoLang using a simple API.
 //
 // Full documentation with detailed examples located at https://godoc.org/github.com/eduncan911/podcast
 //
 // Usage
 //
+// To use, `go get` and `import` the package like your typical GoLang library.
+//
 //     $ go get -u github.com/eduncan911/podcast
+//
+//     import "github.com/eduncan911/podcast"
 //
 // The API exposes a number of method receivers on structs that implements the
 // logic required to comply with the specifications and ensure a compliant feed.
 // A number of overrides occur to help with iTunes visibility of your episodes.
 //
-// Notably, the [Podcast.AddItem(i Item)](#Podcast.AddItem) function performs most of the
-// heavy lifting by taking the [Item](#Item) input and performing validation, overrides
-// and duplicate setters through the feed.
+// Notably, the [Podcast.AddItem(i Item)](#Podcast.AddItem) function performs most
+// of the heavy lifting by taking the [Item](#Item) input and performing
+// validation, overrides and duplicate setters through the feed.
 //
-// See the detailed Examples in the GoDocs for complete usage.
+// See the detailed Examples of the API at https://godoc.org/github.com/eduncan911/podcast.
 //
 // Extensibility
 //
