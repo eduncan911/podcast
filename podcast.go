@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	pVersion = "1.0.0"
+	pVersion = "1.1.0"
 )
 
 // Podcast represents a podcast.
