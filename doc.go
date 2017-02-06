@@ -37,6 +37,9 @@
 //
 // Release Notes
 //
+// 1.1.0
+// * Enabling CDATA in ISummary fields for Podcast and Channel.
+//
 // 1.0.0
 // * Initial release.
 // * Full documentation, full examples and complete code coverage.

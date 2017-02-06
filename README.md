@@ -40,6 +40,9 @@ RSS 2.0: <a href="https://cyber.harvard.edu/rss/rss.html">https://cyber.harvard.
 Podcasts: <a href="https://help.apple.com/itc/podcasts_connect/#/itca5b22233">https://help.apple.com/itc/podcasts_connect/#/itca5b22233</a>
 
 ### Release Notes
+1.1.0
+* Enabling CDATA in ISummary fields for Podcast and Channel.
+
 1.0.0
 * Initial release.
 * Full documentation, full examples and complete code coverage.
@@ -61,15 +64,18 @@ Podcasts: <a href="https://help.apple.com/itc/podcasts_connect/#/itca5b22233">ht
   * [func (et EnclosureType) String() string](#EnclosureType.String)
 * [type ICategory](#ICategory)
 * [type IImage](#IImage)
+* [type ISummary](#ISummary)
 * [type Image](#Image)
 * [type Item](#Item)
   * [func (i \*Item) AddEnclosure(url string, enclosureType EnclosureType, lengthInSeconds int64)](#Item.AddEnclosure)
+  * [func (i \*Item) AddSummary(summary string)](#Item.AddSummary)
 * [type Podcast](#Podcast)
   * [func New(title, link, description string, pubDate, lastBuildDate \*time.Time) Podcast](#New)
   * [func (p \*Podcast) AddAuthor(name, email string)](#Podcast.AddAuthor)
   * [func (p \*Podcast) AddCategory(category string, subCategories []string)](#Podcast.AddCategory)
   * [func (p \*Podcast) AddImage(url string)](#Podcast.AddImage)
   * [func (p \*Podcast) AddItem(i Item) (int, error)](#Podcast.AddItem)
+  * [func (p \*Podcast) AddSummary(summary string)](#Podcast.AddSummary)
   * [func (p \*Podcast) Bytes() []byte](#Podcast.Bytes)
   * [func (p \*Podcast) Encode(w io.Writer) error](#Podcast.Encode)
   * [func (p \*Podcast) String() string](#Podcast.String)
@@ -81,6 +87,7 @@ Podcasts: <a href="https://help.apple.com/itc/podcasts_connect/#/itca5b22233">ht
 * [Podcast.AddCategory](#example_Podcast_AddCategory)
 * [Podcast.AddImage](#example_Podcast_AddImage)
 * [Podcast.AddItem](#example_Podcast_AddItem)
+* [Podcast.AddSummary](#example_Podcast_AddSummary)
 * [Podcast.Bytes](#example_Podcast_Bytes)
 * [Package (HttpHandlers)](#example__httpHandlers)
 * [Package (IoWriter)](#example__ioWriter)
@@ -138,7 +145,7 @@ func (et EnclosureType) String() string
 ```
 String returns the MIME type encoding of the specified EnclosureType.
 
-## <a name="ICategory">type</a> [ICategory](./itunes.go#L22-L26)
+## <a name="ICategory">type</a> [ICategory](./itunes.go#L9-L13)
 ``` go
 type ICategory struct {
     XMLName     xml.Name `xml:"itunes:category"`
@@ -148,7 +155,7 @@ type ICategory struct {
 ```
 ICategory is a 2-tier classification system for iTunes.
 
-## <a name="IImage">type</a> [IImage](./itunes.go#L16-L19)
+## <a name="IImage">type</a> [IImage](./itunes.go#L23-L26)
 ``` go
 type IImage struct {
     XMLName xml.Name `xml:"itunes:image"`
@@ -163,6 +170,17 @@ Podcast feeds contain artwork that is a minimum size of
 extensions (.jpg, .png), and in the RGB colorspace. To optimize
 images for mobile devices, Apple recommends compressing your
 image files.
+
+## <a name="ISummary">type</a> [ISummary](./itunes.go#L31-L34)
+``` go
+type ISummary struct {
+    XMLName xml.Name `xml:"itunes:summary"`
+    Text    string   `xml:",cdata"`
+}
+```
+ISummary is a 4000 character rich-text field for the itunes:summary tag.
+
+This is rendered as CDATA which allows for HTML tags such as <a href="">.
 
 ## <a name="Image">type</a> [Image](./image.go#L13-L21)
 ``` go
@@ -185,7 +203,7 @@ extensions (.jpg, .png), and in the RGB colorspace. To optimize
 images for mobile devices, Apple recommends compressing your
 image files.
 
-## <a name="Item">type</a> [Item](./item.go#L25-L50)
+## <a name="Item">type</a> [Item](./item.go#L25-L49)
 ``` go
 type Item struct {
     XMLName          xml.Name   `xml:"item"`
@@ -203,10 +221,9 @@ type Item struct {
     Enclosure        *Enclosure
 
     // https://help.apple.com/itc/podcasts_connect/#/itcb54353390
-    IAuthor   string `xml:"itunes:author,omitempty"`
-    ISubtitle string `xml:"itunes:subtitle,omitempty"`
-    // TODO: CDATA
-    ISummary           string `xml:"itunes:summary,omitempty"`
+    IAuthor            string `xml:"itunes:author,omitempty"`
+    ISubtitle          string `xml:"itunes:subtitle,omitempty"`
+    ISummary           *ISummary
     IImage             *IImage
     IDuration          string `xml:"itunes:duration,omitempty"`
     IExplicit          string `xml:"itunes:explicit,omitempty"`
@@ -232,14 +249,25 @@ Recommendations:
 - Always set an Enclosure.Length, to be nice to your downloaders.
 - Use Enclosure.Type instead of setting TypeFormatted for valid extensions.
 
-### <a name="Item.AddEnclosure">func</a> (\*Item) [AddEnclosure](./item.go#L53-L54)
+### <a name="Item.AddEnclosure">func</a> (\*Item) [AddEnclosure](./item.go#L52-L53)
 ``` go
 func (i *Item) AddEnclosure(
     url string, enclosureType EnclosureType, lengthInSeconds int64)
 ```
 AddEnclosure adds the downloadable asset to the podcast Item.
 
-## <a name="Podcast">type</a> [Podcast](./podcast.go#L19-L58)
+### <a name="Item.AddSummary">func</a> (\*Item) [AddSummary](./item.go#L67)
+``` go
+func (i *Item) AddSummary(summary string)
+```
+AddSummary adds the iTunes summary.
+
+Limit: 4000 characters
+
+Note that this field is a CDATA encoded field which allows for rich text
+such as html links: <a href="<a href="http://www.apple.com">http://www.apple.com</a>">Apple</a>.
+
+## <a name="Podcast">type</a> [Podcast](./podcast.go#L19-L57)
 ``` go
 type Podcast struct {
     XMLName        xml.Name `xml:"channel"`
@@ -264,10 +292,9 @@ type Podcast struct {
     TextInput      *TextInput
 
     // https://help.apple.com/itc/podcasts_connect/#/itcb54353390
-    IAuthor   string `xml:"itunes:author,omitempty"`
-    ISubtitle string `xml:"itunes:subtitle,omitempty"`
-    // TODO: CDATA
-    ISummary    string `xml:"itunes:summary,omitempty"`
+    IAuthor     string `xml:"itunes:author,omitempty"`
+    ISubtitle   string `xml:"itunes:subtitle,omitempty"`
+    ISummary    *ISummary
     IBlock      string `xml:"itunes:block,omitempty"`
     IImage      *IImage
     IDuration   string  `xml:"itunes:duration,omitempty"`
@@ -283,7 +310,7 @@ type Podcast struct {
 ```
 Podcast represents a podcast.
 
-### <a name="New">func</a> [New](./podcast.go#L64-L65)
+### <a name="New">func</a> [New](./podcast.go#L63-L64)
 ``` go
 func New(title, link, description string,
     pubDate, lastBuildDate *time.Time) Podcast
@@ -293,13 +320,13 @@ New instantiates a Podcast with required parameters.
 Nil-able fields are optional but recommended as they are formatted
 to the expected proper formats.
 
-### <a name="Podcast.AddAuthor">func</a> (\*Podcast) [AddAuthor](./podcast.go#L89)
+### <a name="Podcast.AddAuthor">func</a> (\*Podcast) [AddAuthor](./podcast.go#L80)
 ``` go
 func (p *Podcast) AddAuthor(name, email string)
 ```
 AddAuthor adds the specified Author to the podcast.
 
-### <a name="Podcast.AddCategory">func</a> (\*Podcast) [AddCategory](./podcast.go#L100)
+### <a name="Podcast.AddCategory">func</a> (\*Podcast) [AddCategory](./podcast.go#L91)
 ``` go
 func (p *Podcast) AddCategory(category string, subCategories []string)
 ```
@@ -307,7 +334,7 @@ AddCategory adds the categories to the Podcast in comma delimited format.
 
 subCategories are optional.
 
-### <a name="Podcast.AddImage">func</a> (\*Podcast) [AddImage](./podcast.go#L128)
+### <a name="Podcast.AddImage">func</a> (\*Podcast) [AddImage](./podcast.go#L119)
 ``` go
 func (p *Podcast) AddImage(url string)
 ```
@@ -320,7 +347,7 @@ extensions (.jpg, .png), and in the RGB colorspace. To optimize
 images for mobile devices, Apple recommends compressing your
 image files.
 
-### <a name="Podcast.AddItem">func</a> (\*Podcast) [AddItem](./podcast.go#L176)
+### <a name="Podcast.AddItem">func</a> (\*Podcast) [AddItem](./podcast.go#L167)
 ``` go
 func (p *Podcast) AddItem(i Item) (int, error)
 ```
@@ -368,19 +395,30 @@ Recommendations:
 
 	<a href="https://help.apple.com/itc/podcasts_connect/#/itcb54353390">https://help.apple.com/itc/podcasts_connect/#/itcb54353390</a>
 
-### <a name="Podcast.Bytes">func</a> (\*Podcast) [Bytes](./podcast.go#L244)
+### <a name="Podcast.AddSummary">func</a> (\*Podcast) [AddSummary](./podcast.go#L240)
+``` go
+func (p *Podcast) AddSummary(summary string)
+```
+AddSummary adds the iTunes summary.
+
+Limit: 4000 characters
+
+Note that this field is a CDATA encoded field which allows for rich text
+such as html links: <a href="<a href="http://www.apple.com">http://www.apple.com</a>">Apple</a>.
+
+### <a name="Podcast.Bytes">func</a> (\*Podcast) [Bytes](./podcast.go#L251)
 ``` go
 func (p *Podcast) Bytes() []byte
 ```
 Bytes returns an encoded []byte slice.
 
-### <a name="Podcast.Encode">func</a> (\*Podcast) [Encode](./podcast.go#L249)
+### <a name="Podcast.Encode">func</a> (\*Podcast) [Encode](./podcast.go#L256)
 ``` go
 func (p *Podcast) Encode(w io.Writer) error
 ```
 Encode writes the bytes to the io.Writer stream in RSS 2.0 specification.
 
-### <a name="Podcast.String">func</a> (\*Podcast) [String](./podcast.go#L260)
+### <a name="Podcast.String">func</a> (\*Podcast) [String](./podcast.go#L267)
 ``` go
 func (p *Podcast) String() string
 ```
