@@ -2,8 +2,15 @@ package podcast
 
 import "encoding/xml"
 
-// Speicfication: https://help.apple.com/itc/podcasts_connect/#/itcb54353390
+// Specifications: https://help.apple.com/itc/podcasts_connect/#/itcb54353390
 //
+
+// ICategory is a 2-tier classification system for iTunes.
+type ICategory struct {
+	XMLName     xml.Name `xml:"itunes:category"`
+	Text        string   `xml:"text,attr"`
+	ICategories []*ICategory
+}
 
 // IImage represents an iTunes image.
 //
@@ -18,9 +25,10 @@ type IImage struct {
 	HREF    string   `xml:"href,attr"`
 }
 
-// ICategory is a 2-tier classification system for iTunes.
-type ICategory struct {
-	XMLName     xml.Name `xml:"itunes:category"`
-	Text        string   `xml:"text,attr"`
-	ICategories []*ICategory
+// ISummary is a 4000 character rich-text field for the itunes:summary tag.
+//
+// This is rendered as CDATA which allows for HTML tags such as <a href="">.
+type ISummary struct {
+	XMLName xml.Name `xml:"itunes:summary"`
+	Text    string   `xml:",cdata"`
 }

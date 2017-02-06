@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"strconv"
-	"time"
 
 	"github.com/eduncan911/podcast"
 )
@@ -71,7 +70,7 @@ func ExamplePodcast_AddItem() {
 	p.AddImage("http://example.com/image.jpg")
 
 	// create an Item
-	date := pubDate.Add(time.Duration(-60))
+	date := pubDate.AddDate(0, 0, 77)
 	item := podcast.Item{
 		Title:       "Episode 1",
 		Description: "Description for Episode 1",
@@ -83,6 +82,8 @@ func ExamplePodcast_AddItem() {
 		podcast.MP3,
 		183,
 	)
+	item.AddSummary("See more at <a href=\"http://example.com\">Here</a>")
+
 	// add the Item
 	if _, err := p.AddItem(item); err != nil {
 		fmt.Println("item validation error: " + err.Error())
@@ -99,7 +100,25 @@ func ExamplePodcast_AddItem() {
 		pp.IAuthor, pp.IDuration, pp.IExplicit, pp.IIsClosedCaptioned,
 		pp.IOrder, pp.ISubtitle, pp.ISummary)
 	// Output:
-	// http://example.com/1.mp3 Episode 1 http://example.com/1.mp3 Description for Episode 1 &{{ }  me@test.com (the name)}     2017-02-04 08:21:51.99999994 +0000 UTC Sat, 04 Feb 2017 08:21:51 +0000 {{ } http://example.com/1.mp3 183 183 audio/mpeg audio/mpeg} me@test.com (the name) 183    A simple episode 1
+	// http://example.com/1.mp3 Episode 1 http://example.com/1.mp3 Description for Episode 1 &{{ }  me@test.com (the name)}     2017-04-22 08:21:52 +0000 UTC Sat, 22 Apr 2017 08:21:52 +0000 {{ } http://example.com/1.mp3 183 183 audio/mpeg audio/mpeg} me@test.com (the name) 183    A simple episode 1 &{{ } See more at <a href="http://example.com">Here</a>}
+}
+
+func ExamplePodcast_AddSummary() {
+	p := podcast.New("title", "link", "description", nil, nil)
+
+	// add the Image
+	p.AddSummary(`A very cool podcast with a long summary!
+
+See more at our website: <a href="http://example.com">example.com</a>
+`)
+
+	if p.ISummary != nil {
+		fmt.Println(p.ISummary.Text)
+	}
+	// Output:
+	// A very cool podcast with a long summary!
+	//
+	// See more at our website: <a href="http://example.com">example.com</a>
 }
 
 func ExamplePodcast_Bytes() {
@@ -111,6 +130,10 @@ func ExamplePodcast_Bytes() {
 	)
 	p.AddAuthor("Jane Doe", "me@janedoe.com")
 	p.AddImage("http://janedoe.com/i.jpg")
+	p.AddSummary(`A very cool podcast with a long summary using Bytes()!
+
+See more at our website: <a href="http://example.com">example.com</a>
+`)
 
 	for i := int64(5); i < 7; i++ {
 		n := strconv.FormatInt(i, 10)
@@ -147,6 +170,10 @@ func ExamplePodcast_Bytes() {
 	//       <url>http://janedoe.com/i.jpg</url>
 	//     </image>
 	//     <itunes:author>me@janedoe.com (Jane Doe)</itunes:author>
+	//     <itunes:summary><![CDATA[A very cool podcast with a long summary using Bytes()!
+	//
+	// See more at our website: <a href="http://example.com">example.com</a>
+	// ]]></itunes:summary>
 	//     <itunes:image href="http://janedoe.com/i.jpg"></itunes:image>
 	//     <item>
 	//       <guid>http://example.com/5.mp3</guid>

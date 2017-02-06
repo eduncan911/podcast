@@ -38,10 +38,9 @@ type Item struct {
 	Enclosure        *Enclosure
 
 	// https://help.apple.com/itc/podcasts_connect/#/itcb54353390
-	IAuthor   string `xml:"itunes:author,omitempty"`
-	ISubtitle string `xml:"itunes:subtitle,omitempty"`
-	// TODO: CDATA
-	ISummary           string `xml:"itunes:summary,omitempty"`
+	IAuthor            string `xml:"itunes:author,omitempty"`
+	ISubtitle          string `xml:"itunes:subtitle,omitempty"`
+	ISummary           *ISummary
 	IImage             *IImage
 	IDuration          string `xml:"itunes:duration,omitempty"`
 	IExplicit          string `xml:"itunes:explicit,omitempty"`
@@ -56,5 +55,21 @@ func (i *Item) AddEnclosure(
 		URL:    url,
 		Type:   enclosureType,
 		Length: lengthInSeconds,
+	}
+}
+
+// AddSummary adds the iTunes summary.
+//
+// Limit: 4000 characters
+//
+// Note that this field is a CDATA encoded field which allows for rich text
+// such as html links: <a href="http://www.apple.com">Apple</a>.
+func (i *Item) AddSummary(summary string) {
+	if len(summary) > 4000 {
+		s := []rune(summary)
+		summary = string(s[0:4000])
+	}
+	i.ISummary = &ISummary{
+		Text: summary,
 	}
 }

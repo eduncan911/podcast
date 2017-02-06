@@ -264,3 +264,27 @@ func TestAddItemRootIAuthorSetsAuthorIAuthor(t *testing.T) {
 	assert.EqualValues(t, "me@janedoe.com", p.Items[0].Author.Email)
 	assert.EqualValues(t, "me@janedoe.com", p.Items[0].IAuthor)
 }
+
+func TestAddSummaryTooLong(t *testing.T) {
+	t.Parallel()
+
+	// arrange
+	p := podcast.New(
+		"title",
+		"desc",
+		"Link",
+		nil, nil)
+	summary := ""
+	for {
+		if len(summary) >= 4051 {
+			break
+		}
+		summary = summary + "jax ss 7 "
+	}
+
+	// act
+	p.AddSummary(summary)
+
+	// assert
+	assert.Len(t, p.ISummary.Text, 4000)
+}

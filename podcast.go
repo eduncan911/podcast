@@ -39,10 +39,9 @@ type Podcast struct {
 	TextInput      *TextInput
 
 	// https://help.apple.com/itc/podcasts_connect/#/itcb54353390
-	IAuthor   string `xml:"itunes:author,omitempty"`
-	ISubtitle string `xml:"itunes:subtitle,omitempty"`
-	// TODO: CDATA
-	ISummary    string `xml:"itunes:summary,omitempty"`
+	IAuthor     string `xml:"itunes:author,omitempty"`
+	ISubtitle   string `xml:"itunes:subtitle,omitempty"`
+	ISummary    *ISummary
 	IBlock      string `xml:"itunes:block,omitempty"`
 	IImage      *IImage
 	IDuration   string  `xml:"itunes:duration,omitempty"`
@@ -63,7 +62,7 @@ type Podcast struct {
 // to the expected proper formats.
 func New(title, link, description string,
 	pubDate, lastBuildDate *time.Time) Podcast {
-	p := Podcast{
+	return Podcast{
 		Title:         title,
 		Link:          link,
 		Description:   description,
@@ -71,18 +70,10 @@ func New(title, link, description string,
 		PubDate:       parseDateRFC1123Z(pubDate),
 		LastBuildDate: parseDateRFC1123Z(lastBuildDate),
 		Language:      "en-us",
-	}
 
-	// setup dependency (could inject later)
-	p.encode = func(w io.Writer, o interface{}) error {
-		e := xml.NewEncoder(w)
-		e.Indent("", "  ")
-		if err := e.Encode(o); err != nil {
-			return errors.Wrap(err, "podcast.encode: Encode returned error")
-		}
-		return nil
+		// setup dependency (could inject later)
+		encode: encoder,
 	}
-	return p
 }
 
 // AddAuthor adds the specified Author to the podcast.
@@ -240,6 +231,22 @@ func (p *Podcast) AddItem(i Item) (int, error) {
 	return len(p.Items), nil
 }
 
+// AddSummary adds the iTunes summary.
+//
+// Limit: 4000 characters
+//
+// Note that this field is a CDATA encoded field which allows for rich text
+// such as html links: <a href="http://www.apple.com">Apple</a>.
+func (p *Podcast) AddSummary(summary string) {
+	if len(summary) > 4000 {
+		s := []rune(summary)
+		summary = string(s[0:4000])
+	}
+	p.ISummary = &ISummary{
+		Text: summary,
+	}
+}
+
 // Bytes returns an encoded []byte slice.
 func (p *Podcast) Bytes() []byte {
 	return []byte(p.String())
@@ -280,6 +287,15 @@ type podcastWrapper struct {
 	Version string   `xml:"version,attr"`
 	XMLNS   string   `xml:"xmlns:itunes,attr"`
 	Channel *Podcast
+}
+
+var encoder = func(w io.Writer, o interface{}) error {
+	e := xml.NewEncoder(w)
+	e.Indent("", "  ")
+	if err := e.Encode(o); err != nil {
+		return errors.Wrap(err, "podcast.encode: Encode returned error")
+	}
+	return nil
 }
 
 var parseDateRFC1123Z = func(t *time.Time) string {

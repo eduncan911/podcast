@@ -27,6 +27,7 @@ func Example_httpHandlers() {
 		// add some channel properties
 		p.AddAuthor("Jane Doe", "me@janedoe.com")
 		p.AddImage("http://janedoe.com/i.jpg")
+		p.AddSummary(`link <a href="http://example.com">example.com</a>`)
 
 		for i := int64(1); i < 3; i++ {
 			n := strconv.FormatInt(i, 10)
@@ -39,6 +40,7 @@ func Example_httpHandlers() {
 				Description: "Description for Episode " + n,
 				PubDate:     &d,
 			}
+			item.AddSummary(`item <a href="http://example.com">example.com</a>`)
 			// add a Download to the Item
 			item.AddEnclosure("http://e.com/"+n+".mp3", podcast.MP3, 55*(i+1))
 
@@ -82,6 +84,7 @@ func Example_httpHandlers() {
 	//       <url>http://janedoe.com/i.jpg</url>
 	//     </image>
 	//     <itunes:author>me@janedoe.com (Jane Doe)</itunes:author>
+	//     <itunes:summary><![CDATA[link <a href="http://example.com">example.com</a>]]></itunes:summary>
 	//     <itunes:image href="http://janedoe.com/i.jpg"></itunes:image>
 	//     <item>
 	//       <guid>http://e.com/1.mp3</guid>
@@ -91,6 +94,7 @@ func Example_httpHandlers() {
 	//       <pubDate>Sun, 05 Feb 2017 08:21:52 +0000</pubDate>
 	//       <enclosure url="http://e.com/1.mp3" length="110" type="audio/mpeg"></enclosure>
 	//       <itunes:author>me@janedoe.com (Jane Doe)</itunes:author>
+	//       <itunes:summary><![CDATA[item <a href="http://example.com">example.com</a>]]></itunes:summary>
 	//       <itunes:image href="http://janedoe.com/i.jpg"></itunes:image>
 	//       <itunes:duration>110</itunes:duration>
 	//     </item>
@@ -102,12 +106,12 @@ func Example_httpHandlers() {
 	//       <pubDate>Mon, 06 Feb 2017 08:21:52 +0000</pubDate>
 	//       <enclosure url="http://e.com/2.mp3" length="165" type="audio/mpeg"></enclosure>
 	//       <itunes:author>me@janedoe.com (Jane Doe)</itunes:author>
+	//       <itunes:summary><![CDATA[item <a href="http://example.com">example.com</a>]]></itunes:summary>
 	//       <itunes:image href="http://janedoe.com/i.jpg"></itunes:image>
 	//       <itunes:duration>165</itunes:duration>
 	//     </item>
 	//   </channel>
 	// </rss>
-
 }
 
 func Example_ioWriter() {
@@ -122,6 +126,7 @@ func Example_ioWriter() {
 
 	// add some channel properties
 	p.ISubtitle = "A simple Podcast"
+	p.AddSummary(`link <a href="http://example.com">example.com</a>`)
 	p.AddImage("http://example.com/podcast.jpg")
 	p.AddAuthor("Jane Doe", "jane.doe@example.com")
 
@@ -136,6 +141,7 @@ func Example_ioWriter() {
 			ISubtitle:   "A simple episode " + n,
 			PubDate:     &d,
 		}
+		item.AddSummary(`item k <a href="http://example.com">example.com</a>`)
 		// add a Download to the Item
 		item.AddEnclosure("http://example.com/"+n+".mp3", podcast.MP3, 55*(i+1))
 
@@ -167,6 +173,7 @@ func Example_ioWriter() {
 	//     </image>
 	//     <itunes:author>jane.doe@example.com (Jane Doe)</itunes:author>
 	//     <itunes:subtitle>A simple Podcast</itunes:subtitle>
+	//     <itunes:summary><![CDATA[link <a href="http://example.com">example.com</a>]]></itunes:summary>
 	//     <itunes:image href="http://example.com/podcast.jpg"></itunes:image>
 	//     <item>
 	//       <guid>http://example.com/9.mp3</guid>
@@ -177,6 +184,7 @@ func Example_ioWriter() {
 	//       <enclosure url="http://example.com/9.mp3" length="550" type="audio/mpeg"></enclosure>
 	//       <itunes:author>jane.doe@example.com (Jane Doe)</itunes:author>
 	//       <itunes:subtitle>A simple episode 9</itunes:subtitle>
+	//       <itunes:summary><![CDATA[item k <a href="http://example.com">example.com</a>]]></itunes:summary>
 	//       <itunes:image href="http://example.com/podcast.jpg"></itunes:image>
 	//       <itunes:duration>550</itunes:duration>
 	//     </item>
@@ -189,6 +197,7 @@ func Example_ioWriter() {
 	//       <enclosure url="http://example.com/10.mp3" length="605" type="audio/mpeg"></enclosure>
 	//       <itunes:author>jane.doe@example.com (Jane Doe)</itunes:author>
 	//       <itunes:subtitle>A simple episode 10</itunes:subtitle>
+	//       <itunes:summary><![CDATA[item k <a href="http://example.com">example.com</a>]]></itunes:summary>
 	//       <itunes:image href="http://example.com/podcast.jpg"></itunes:image>
 	//       <itunes:duration>605</itunes:duration>
 	//     </item>
