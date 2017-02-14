@@ -68,7 +68,9 @@ func (i *Item) AddEnclosure(
 // images for mobile devices, Apple recommends compressing your
 // image files.
 func (i *Item) AddImage(url string) {
-	i.IImage = &IImage{HREF: url}
+	if len(url) > 0 {
+		i.IImage = &IImage{HREF: url}
+	}
 }
 
 // AddPubDate adds the datetime as a parsed PubDate.

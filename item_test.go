@@ -30,3 +30,20 @@ func TestItemAddSummaryTooLong(t *testing.T) {
 	// assert
 	assert.Len(t, i.ISummary.Text, 4000)
 }
+
+func TestItemAddImageEmptyUrl(t *testing.T) {
+	t.Parallel()
+
+	// arrange
+	i := podcast.Item{
+		Title:       "item.title",
+		Description: "item.desc",
+		Link:        "http://example.com/article.html",
+	}
+
+	// act
+	i.AddImage("")
+
+	// assert
+	assert.Nil(t, i.IImage)
+}
