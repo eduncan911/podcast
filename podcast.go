@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	pVersion = "1.1.0"
+	pVersion = "1.2.0"
 )
 
 // Podcast represents a podcast.
@@ -229,6 +229,20 @@ func (p *Podcast) AddItem(i Item) (int, error) {
 
 	p.Items = append(p.Items, &i)
 	return len(p.Items), nil
+}
+
+// AddPubDate adds the datetime as a parsed PubDate.
+//
+// UTC time is used by default.
+func (p *Podcast) AddPubDate(datetime *time.Time) {
+	p.PubDate = parseDateRFC1123Z(datetime)
+}
+
+// AddLastBuildDate adds the datetime as a parsed PubDate.
+//
+// UTC time is used by default.
+func (p *Podcast) AddLastBuildDate(datetime *time.Time) {
+	p.LastBuildDate = parseDateRFC1123Z(datetime)
 }
 
 // AddSummary adds the iTunes summary.

@@ -103,10 +103,32 @@ func ExamplePodcast_AddItem() {
 	// http://example.com/1.mp3 Episode 1 http://example.com/1.mp3 Description for Episode 1 &{{ }  me@test.com (the name)}     2017-04-22 08:21:52 +0000 UTC Sat, 22 Apr 2017 08:21:52 +0000 {{ } http://example.com/1.mp3 183 183 audio/mpeg audio/mpeg} me@test.com (the name) 183    A simple episode 1 &{{ } See more at <a href="http://example.com">Here</a>}
 }
 
+func ExamplePodcast_AddLastBuildDate() {
+	p := podcast.New("title", "link", "description", nil, nil)
+	d := pubDate.AddDate(0, 0, -7)
+
+	p.AddLastBuildDate(&d)
+
+	fmt.Println(p.LastBuildDate)
+	// Output:
+	// Sat, 28 Jan 2017 08:21:52 +0000
+}
+
+func ExamplePodcast_AddPubDate() {
+	p := podcast.New("title", "link", "description", nil, nil)
+	d := pubDate.AddDate(0, 0, -5)
+
+	p.AddPubDate(&d)
+
+	fmt.Println(p.PubDate)
+	// Output:
+	// Mon, 30 Jan 2017 08:21:52 +0000
+}
+
 func ExamplePodcast_AddSummary() {
 	p := podcast.New("title", "link", "description", nil, nil)
 
-	// add the Image
+	// add a summary
 	p.AddSummary(`A very cool podcast with a long summary!
 
 See more at our website: <a href="http://example.com">example.com</a>
@@ -161,7 +183,7 @@ See more at our website: <a href="http://example.com">example.com</a>
 	//     <title>eduncan911 Podcasts</title>
 	//     <link>http://eduncan911.com/</link>
 	//     <description>An example Podcast</description>
-	//     <generator>go podcast v1.1.0 (github.com/eduncan911/podcast)</generator>
+	//     <generator>go podcast v1.2.0 (github.com/eduncan911/podcast)</generator>
 	//     <language>en-us</language>
 	//     <lastBuildDate>Mon, 06 Feb 2017 08:21:52 +0000</lastBuildDate>
 	//     <managingEditor>me@janedoe.com (Jane Doe)</managingEditor>
@@ -195,4 +217,26 @@ See more at our website: <a href="http://example.com">example.com</a>
 	//     </item>
 	//   </channel>
 	// </rss>
+}
+
+func ExampleItem_AddPubDate() {
+	p := podcast.New("title", "link", "description", nil, nil)
+	i := podcast.Item{
+		Title:       "item title",
+		Description: "item desc",
+		Link:        "item link",
+	}
+	d := pubDate.AddDate(0, 0, -11)
+
+	// add the pub date
+	i.AddPubDate(&d)
+
+	if i.PubDate != nil {
+		fmt.Println(i.PubDateFormatted, *i.PubDate)
+	}
+	p.AddItem(i) // this should not override with Podcast.PubDate
+	fmt.Println(i.PubDateFormatted, *i.PubDate)
+	// Output:
+	// Tue, 24 Jan 2017 08:21:52 +0000 2017-01-24 08:21:52 +0000 UTC
+	// Tue, 24 Jan 2017 08:21:52 +0000 2017-01-24 08:21:52 +0000 UTC
 }

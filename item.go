@@ -58,6 +58,27 @@ func (i *Item) AddEnclosure(
 	}
 }
 
+// AddImage adds the image as an iTunes-only IImage.  RSS 2.0 does not have
+// the specification of Images at the Item level.
+//
+// Podcast feeds contain artwork that is a minimum size of
+// 1400 x 1400 pixels and a maximum size of 3000 x 3000 pixels,
+// 72 dpi, in JPEG or PNG format with appropriate file
+// extensions (.jpg, .png), and in the RGB colorspace. To optimize
+// images for mobile devices, Apple recommends compressing your
+// image files.
+func (i *Item) AddImage(url string) {
+	i.IImage = &IImage{HREF: url}
+}
+
+// AddPubDate adds the datetime as a parsed PubDate.
+//
+// UTC time is used by default.
+func (i *Item) AddPubDate(datetime *time.Time) {
+	i.PubDate = datetime
+	i.PubDateFormatted = parseDateRFC1123Z(i.PubDate)
+}
+
 // AddSummary adds the iTunes summary.
 //
 // Limit: 4000 characters

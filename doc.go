@@ -37,6 +37,13 @@
 //
 // Release Notes
 //
+// 1.2.0
+// * added Podcast.AddPubDate() and Podcast.AddLastBuildDate() overrides.
+// * added Item.AddImage() to mask some cumbersome addition of IImage.
+// * added Item.AddPubDate to simply datetime setters.
+// * added more examples (mostly around Item struct).
+// * tweaked some documentation.
+//
 // 1.1.0
 // * Enabling CDATA in ISummary fields for Podcast and Channel.
 //
