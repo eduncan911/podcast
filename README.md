@@ -40,6 +40,13 @@ RSS 2.0: <a href="https://cyber.harvard.edu/rss/rss.html">https://cyber.harvard.
 Podcasts: <a href="https://help.apple.com/itc/podcasts_connect/#/itca5b22233">https://help.apple.com/itc/podcasts_connect/#/itca5b22233</a>
 
 ### Release Notes
+1.2.0
+* added Podcast.AddPubDate() and Podcast.AddLastBuildDate() overrides.
+* added Item.AddImage() to mask some cumbersome addition of IImage.
+* added Item.AddPubDate to simply datetime setters.
+* added more examples (mostly around Item struct).
+* tweaked some documentation.
+
 1.1.0
 * Enabling CDATA in ISummary fields for Podcast and Channel.
 
@@ -68,6 +75,8 @@ Podcasts: <a href="https://help.apple.com/itc/podcasts_connect/#/itca5b22233">ht
 * [type Image](#Image)
 * [type Item](#Item)
   * [func (i \*Item) AddEnclosure(url string, enclosureType EnclosureType, lengthInSeconds int64)](#Item.AddEnclosure)
+  * [func (i \*Item) AddImage(url string)](#Item.AddImage)
+  * [func (i \*Item) AddPubDate(datetime \*time.Time)](#Item.AddPubDate)
   * [func (i \*Item) AddSummary(summary string)](#Item.AddSummary)
 * [type Podcast](#Podcast)
   * [func New(title, link, description string, pubDate, lastBuildDate \*time.Time) Podcast](#New)
@@ -75,6 +84,8 @@ Podcasts: <a href="https://help.apple.com/itc/podcasts_connect/#/itca5b22233">ht
   * [func (p \*Podcast) AddCategory(category string, subCategories []string)](#Podcast.AddCategory)
   * [func (p \*Podcast) AddImage(url string)](#Podcast.AddImage)
   * [func (p \*Podcast) AddItem(i Item) (int, error)](#Podcast.AddItem)
+  * [func (p \*Podcast) AddLastBuildDate(datetime \*time.Time)](#Podcast.AddLastBuildDate)
+  * [func (p \*Podcast) AddPubDate(datetime \*time.Time)](#Podcast.AddPubDate)
   * [func (p \*Podcast) AddSummary(summary string)](#Podcast.AddSummary)
   * [func (p \*Podcast) Bytes() []byte](#Podcast.Bytes)
   * [func (p \*Podcast) Encode(w io.Writer) error](#Podcast.Encode)
@@ -82,11 +93,14 @@ Podcasts: <a href="https://help.apple.com/itc/podcasts_connect/#/itca5b22233">ht
 * [type TextInput](#TextInput)
 
 #### <a name="pkg-examples">Examples</a>
+* [Item.AddPubDate](#example_Item_AddPubDate)
 * [New](#example_New)
 * [Podcast.AddAuthor](#example_Podcast_AddAuthor)
 * [Podcast.AddCategory](#example_Podcast_AddCategory)
 * [Podcast.AddImage](#example_Podcast_AddImage)
 * [Podcast.AddItem](#example_Podcast_AddItem)
+* [Podcast.AddLastBuildDate](#example_Podcast_AddLastBuildDate)
+* [Podcast.AddPubDate](#example_Podcast_AddPubDate)
 * [Podcast.AddSummary](#example_Podcast_AddSummary)
 * [Podcast.Bytes](#example_Podcast_Bytes)
 * [Package (HttpHandlers)](#example__httpHandlers)
@@ -256,7 +270,29 @@ func (i *Item) AddEnclosure(
 ```
 AddEnclosure adds the downloadable asset to the podcast Item.
 
-### <a name="Item.AddSummary">func</a> (\*Item) [AddSummary](./item.go#L67)
+### <a name="Item.AddImage">func</a> (\*Item) [AddImage](./item.go#L70)
+``` go
+func (i *Item) AddImage(url string)
+```
+AddImage adds the image as an iTunes-only IImage.  RSS 2.0 does not have
+the specification of Images at the Item level.
+
+Podcast feeds contain artwork that is a minimum size of
+1400 x 1400 pixels and a maximum size of 3000 x 3000 pixels,
+72 dpi, in JPEG or PNG format with appropriate file
+extensions (.jpg, .png), and in the RGB colorspace. To optimize
+images for mobile devices, Apple recommends compressing your
+image files.
+
+### <a name="Item.AddPubDate">func</a> (\*Item) [AddPubDate](./item.go#L77)
+``` go
+func (i *Item) AddPubDate(datetime *time.Time)
+```
+AddPubDate adds the datetime as a parsed PubDate.
+
+UTC time is used by default.
+
+### <a name="Item.AddSummary">func</a> (\*Item) [AddSummary](./item.go#L88)
 ``` go
 func (i *Item) AddSummary(summary string)
 ```
@@ -395,7 +431,23 @@ Recommendations:
 
 	<a href="https://help.apple.com/itc/podcasts_connect/#/itcb54353390">https://help.apple.com/itc/podcasts_connect/#/itcb54353390</a>
 
-### <a name="Podcast.AddSummary">func</a> (\*Podcast) [AddSummary](./podcast.go#L240)
+### <a name="Podcast.AddLastBuildDate">func</a> (\*Podcast) [AddLastBuildDate](./podcast.go#L244)
+``` go
+func (p *Podcast) AddLastBuildDate(datetime *time.Time)
+```
+AddLastBuildDate adds the datetime as a parsed PubDate.
+
+UTC time is used by default.
+
+### <a name="Podcast.AddPubDate">func</a> (\*Podcast) [AddPubDate](./podcast.go#L237)
+``` go
+func (p *Podcast) AddPubDate(datetime *time.Time)
+```
+AddPubDate adds the datetime as a parsed PubDate.
+
+UTC time is used by default.
+
+### <a name="Podcast.AddSummary">func</a> (\*Podcast) [AddSummary](./podcast.go#L254)
 ``` go
 func (p *Podcast) AddSummary(summary string)
 ```
@@ -406,19 +458,19 @@ Limit: 4000 characters
 Note that this field is a CDATA encoded field which allows for rich text
 such as html links: <a href="<a href="http://www.apple.com">http://www.apple.com</a>">Apple</a>.
 
-### <a name="Podcast.Bytes">func</a> (\*Podcast) [Bytes](./podcast.go#L251)
+### <a name="Podcast.Bytes">func</a> (\*Podcast) [Bytes](./podcast.go#L265)
 ``` go
 func (p *Podcast) Bytes() []byte
 ```
 Bytes returns an encoded []byte slice.
 
-### <a name="Podcast.Encode">func</a> (\*Podcast) [Encode](./podcast.go#L256)
+### <a name="Podcast.Encode">func</a> (\*Podcast) [Encode](./podcast.go#L270)
 ``` go
 func (p *Podcast) Encode(w io.Writer) error
 ```
 Encode writes the bytes to the io.Writer stream in RSS 2.0 specification.
 
-### <a name="Podcast.String">func</a> (\*Podcast) [String](./podcast.go#L267)
+### <a name="Podcast.String">func</a> (\*Podcast) [String](./podcast.go#L281)
 ``` go
 func (p *Podcast) String() string
 ```
