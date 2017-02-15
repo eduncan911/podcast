@@ -251,6 +251,22 @@ func (p *Podcast) AddLastBuildDate(datetime *time.Time) {
 	p.LastBuildDate = parseDateRFC1123Z(datetime)
 }
 
+// AddSubTitle adds the iTunes subtitle that is displayed with the title
+// in iTunes.
+//
+// Note that this field should be just a few words long according to Apple.
+// This method will truncate the string to 64 chars if too long with "..."
+func (p *Podcast) AddSubTitle(subTitle string) {
+	if len(subTitle) == 0 {
+		return
+	}
+	if len(subTitle) > 64 {
+		s := []rune(subTitle)
+		subTitle = string(s[0:61]) + "..."
+	}
+	p.ISubtitle = subTitle
+}
+
 // AddSummary adds the iTunes summary.
 //
 // Limit: 4000 characters
