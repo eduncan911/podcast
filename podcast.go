@@ -102,6 +102,9 @@ func (p *Podcast) AddCategory(category string, subCategories []string) {
 
 	icat := ICategory{Text: category}
 	for _, c := range subCategories {
+		if len(c) == 0 {
+			continue
+		}
 		icat2 := ICategory{Text: c}
 		icat.ICategories = append(icat.ICategories, &icat2)
 	}
@@ -117,6 +120,9 @@ func (p *Podcast) AddCategory(category string, subCategories []string) {
 // images for mobile devices, Apple recommends compressing your
 // image files.
 func (p *Podcast) AddImage(url string) {
+	if len(url) == 0 {
+		return
+	}
 	p.Image = &Image{
 		URL: url,
 	}
@@ -252,6 +258,9 @@ func (p *Podcast) AddLastBuildDate(datetime *time.Time) {
 // Note that this field is a CDATA encoded field which allows for rich text
 // such as html links: <a href="http://www.apple.com">Apple</a>.
 func (p *Podcast) AddSummary(summary string) {
+	if len(summary) == 0 {
+		return
+	}
 	if len(summary) > 4000 {
 		s := []rune(summary)
 		summary = string(s[0:4000])
