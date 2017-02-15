@@ -64,6 +64,50 @@ func TestAddCategoryEmpty(t *testing.T) {
 	assert.Len(t, p.Category, 0)
 }
 
+func TestAddCategorySubCatEmpty1(t *testing.T) {
+	t.Parallel()
+
+	// arrange
+	p := podcast.New("title", "link", "description", nil, nil)
+
+	// act
+	p.AddCategory("mycat", []string{""})
+
+	// assert
+	assert.Len(t, p.ICategories, 1)
+	assert.EqualValues(t, p.Category, "mycat")
+	assert.Len(t, p.ICategories[0].ICategories, 0)
+}
+
+func TestAddCategorySubCatEmpty2(t *testing.T) {
+	t.Parallel()
+
+	// arrange
+	p := podcast.New("title", "link", "description", nil, nil)
+
+	// act
+	p.AddCategory("mycat", []string{"xyz", "", "abc"})
+
+	// assert
+	assert.Len(t, p.ICategories, 1)
+	assert.EqualValues(t, p.Category, "mycat")
+	assert.Len(t, p.ICategories[0].ICategories, 2)
+}
+
+func TestAddImageEmpty(t *testing.T) {
+	t.Parallel()
+
+	// arrange
+	p := podcast.New("title", "link", "description", nil, nil)
+
+	// act
+	p.AddImage("")
+
+	// assert
+	assert.Nil(t, p.Image)
+	assert.Nil(t, p.IImage)
+}
+
 func TestAddItemEmptyTitleDescription(t *testing.T) {
 	t.Parallel()
 
@@ -287,4 +331,17 @@ func TestAddSummaryTooLong(t *testing.T) {
 
 	// assert
 	assert.Len(t, p.ISummary.Text, 4000)
+}
+
+func TestAddSummaryEmpty(t *testing.T) {
+	t.Parallel()
+
+	// arrange
+	p := podcast.New("title", "desc", "Link", nil, nil)
+
+	// act
+	p.AddSummary("")
+
+	// assert
+	assert.Nil(t, p.ISummary)
 }
