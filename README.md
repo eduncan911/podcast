@@ -40,6 +40,10 @@ RSS 2.0: <a href="https://cyber.harvard.edu/rss/rss.html">https://cyber.harvard.
 Podcasts: <a href="https://help.apple.com/itc/podcasts_connect/#/itca5b22233">https://help.apple.com/itc/podcasts_connect/#/itca5b22233</a>
 
 ### Release Notes
+1.2.1
+* added Podcast.AddSubTitle() and truncating to 64 chars.
+* added a number of Guards to protect against empty fields.
+
 1.2.0
 * added Podcast.AddPubDate() and Podcast.AddLastBuildDate() overrides.
 * added Item.AddImage() to mask some cumbersome addition of IImage.
@@ -86,6 +90,7 @@ Podcasts: <a href="https://help.apple.com/itc/podcasts_connect/#/itca5b22233">ht
   * [func (p \*Podcast) AddItem(i Item) (int, error)](#Podcast.AddItem)
   * [func (p \*Podcast) AddLastBuildDate(datetime \*time.Time)](#Podcast.AddLastBuildDate)
   * [func (p \*Podcast) AddPubDate(datetime \*time.Time)](#Podcast.AddPubDate)
+  * [func (p \*Podcast) AddSubTitle(subTitle string)](#Podcast.AddSubTitle)
   * [func (p \*Podcast) AddSummary(summary string)](#Podcast.AddSummary)
   * [func (p \*Podcast) Bytes() []byte](#Podcast.Bytes)
   * [func (p \*Podcast) Encode(w io.Writer) error](#Podcast.Encode)
@@ -284,7 +289,7 @@ extensions (.jpg, .png), and in the RGB colorspace. To optimize
 images for mobile devices, Apple recommends compressing your
 image files.
 
-### <a name="Item.AddPubDate">func</a> (\*Item) [AddPubDate](./item.go#L77)
+### <a name="Item.AddPubDate">func</a> (\*Item) [AddPubDate](./item.go#L79)
 ``` go
 func (i *Item) AddPubDate(datetime *time.Time)
 ```
@@ -292,7 +297,7 @@ AddPubDate adds the datetime as a parsed PubDate.
 
 UTC time is used by default.
 
-### <a name="Item.AddSummary">func</a> (\*Item) [AddSummary](./item.go#L88)
+### <a name="Item.AddSummary">func</a> (\*Item) [AddSummary](./item.go#L90)
 ``` go
 func (i *Item) AddSummary(summary string)
 ```
@@ -370,7 +375,7 @@ AddCategory adds the categories to the Podcast in comma delimited format.
 
 subCategories are optional.
 
-### <a name="Podcast.AddImage">func</a> (\*Podcast) [AddImage](./podcast.go#L119)
+### <a name="Podcast.AddImage">func</a> (\*Podcast) [AddImage](./podcast.go#L122)
 ``` go
 func (p *Podcast) AddImage(url string)
 ```
@@ -383,7 +388,7 @@ extensions (.jpg, .png), and in the RGB colorspace. To optimize
 images for mobile devices, Apple recommends compressing your
 image files.
 
-### <a name="Podcast.AddItem">func</a> (\*Podcast) [AddItem](./podcast.go#L167)
+### <a name="Podcast.AddItem">func</a> (\*Podcast) [AddItem](./podcast.go#L173)
 ``` go
 func (p *Podcast) AddItem(i Item) (int, error)
 ```
@@ -431,7 +436,7 @@ Recommendations:
 
 	<a href="https://help.apple.com/itc/podcasts_connect/#/itcb54353390">https://help.apple.com/itc/podcasts_connect/#/itcb54353390</a>
 
-### <a name="Podcast.AddLastBuildDate">func</a> (\*Podcast) [AddLastBuildDate](./podcast.go#L244)
+### <a name="Podcast.AddLastBuildDate">func</a> (\*Podcast) [AddLastBuildDate](./podcast.go#L250)
 ``` go
 func (p *Podcast) AddLastBuildDate(datetime *time.Time)
 ```
@@ -439,7 +444,7 @@ AddLastBuildDate adds the datetime as a parsed PubDate.
 
 UTC time is used by default.
 
-### <a name="Podcast.AddPubDate">func</a> (\*Podcast) [AddPubDate](./podcast.go#L237)
+### <a name="Podcast.AddPubDate">func</a> (\*Podcast) [AddPubDate](./podcast.go#L243)
 ``` go
 func (p *Podcast) AddPubDate(datetime *time.Time)
 ```
@@ -447,7 +452,17 @@ AddPubDate adds the datetime as a parsed PubDate.
 
 UTC time is used by default.
 
-### <a name="Podcast.AddSummary">func</a> (\*Podcast) [AddSummary](./podcast.go#L254)
+### <a name="Podcast.AddSubTitle">func</a> (\*Podcast) [AddSubTitle](./podcast.go#L259)
+``` go
+func (p *Podcast) AddSubTitle(subTitle string)
+```
+AddSubTitle adds the iTunes subtitle that is displayed with the title
+in iTunes.
+
+Note that this field should be just a few words long according to Apple.
+This method will truncate the string to 64 chars if too long with "..."
+
+### <a name="Podcast.AddSummary">func</a> (\*Podcast) [AddSummary](./podcast.go#L276)
 ``` go
 func (p *Podcast) AddSummary(summary string)
 ```
@@ -458,19 +473,19 @@ Limit: 4000 characters
 Note that this field is a CDATA encoded field which allows for rich text
 such as html links: <a href="<a href="http://www.apple.com">http://www.apple.com</a>">Apple</a>.
 
-### <a name="Podcast.Bytes">func</a> (\*Podcast) [Bytes](./podcast.go#L265)
+### <a name="Podcast.Bytes">func</a> (\*Podcast) [Bytes](./podcast.go#L290)
 ``` go
 func (p *Podcast) Bytes() []byte
 ```
 Bytes returns an encoded []byte slice.
 
-### <a name="Podcast.Encode">func</a> (\*Podcast) [Encode](./podcast.go#L270)
+### <a name="Podcast.Encode">func</a> (\*Podcast) [Encode](./podcast.go#L295)
 ``` go
 func (p *Podcast) Encode(w io.Writer) error
 ```
 Encode writes the bytes to the io.Writer stream in RSS 2.0 specification.
 
-### <a name="Podcast.String">func</a> (\*Podcast) [String](./podcast.go#L281)
+### <a name="Podcast.String">func</a> (\*Podcast) [String](./podcast.go#L306)
 ``` go
 func (p *Podcast) String() string
 ```

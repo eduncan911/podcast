@@ -37,6 +37,10 @@
 //
 // Release Notes
 //
+// 1.2.1
+// * added Podcast.AddSubTitle() and truncating to 64 chars.
+// * added a number of Guards to protect against empty fields.
+//
 // 1.2.0
 // * added Podcast.AddPubDate() and Podcast.AddLastBuildDate() overrides.
 // * added Item.AddImage() to mask some cumbersome addition of IImage.
