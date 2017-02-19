@@ -37,6 +37,12 @@
 //
 // Release Notes
 //
+// 1.3.0
+// * fixes Item.Duration being set incorrectly.
+// * changed Item.AddEnclosure() parameter definition (Bytes not Seconds!).
+// * added Item.AddDuration formatting and override.
+// * added more documentation surrounding Item.Enclosure{}
+//
 // 1.2.1
 // * added Podcast.AddSubTitle() and truncating to 64 chars.
 // * added a number of Guards to protect against empty fields.

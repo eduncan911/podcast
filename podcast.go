@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	pVersion = "1.2.1"
+	pVersion = "1.3.0"
 )
 
 // Podcast represents a podcast.
@@ -228,9 +228,6 @@ func (p *Podcast) AddItem(i Item) (int, error) {
 		if p.Image != nil {
 			i.IImage = &IImage{HREF: p.Image.URL}
 		}
-	}
-	if i.Enclosure != nil {
-		i.IDuration = parseDuration(i.Enclosure.Length)
 	}
 
 	p.Items = append(p.Items, &i)

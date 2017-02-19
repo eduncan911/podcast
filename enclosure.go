@@ -44,10 +44,22 @@ func (et EnclosureType) String() string {
 
 // Enclosure represents a download enclosure.
 type Enclosure struct {
-	XMLName         xml.Name      `xml:"enclosure"`
-	URL             string        `xml:"url,attr"`
-	Length          int64         `xml:"-"`
-	LengthFormatted string        `xml:"length,attr"`
-	Type            EnclosureType `xml:"-"`
-	TypeFormatted   string        `xml:"type,attr"`
+	XMLName xml.Name `xml:"enclosure"`
+
+	// URL is the downloadable url for the content. (Required)
+	URL string `xml:"url,attr"`
+
+	// Length is the size in Bytes of the download. (Required)
+	Length int64 `xml:"-"`
+	// LengthFormatted is the size in Bytes of the download. (Required)
+	//
+	// This field gets overwritten with the API when setting Length.
+	LengthFormatted string `xml:"length,attr"`
+
+	// Type is MIME type encoding of the download. (Required)
+	Type EnclosureType `xml:"-"`
+	// TypeFormatted is MIME type encoding of the download. (Required)
+	//
+	// This field gets overwritten with the API when setting Type.
+	TypeFormatted string `xml:"type,attr"`
 }

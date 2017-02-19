@@ -40,6 +40,12 @@ RSS 2.0: <a href="https://cyber.harvard.edu/rss/rss.html">https://cyber.harvard.
 Podcasts: <a href="https://help.apple.com/itc/podcasts_connect/#/itca5b22233">https://help.apple.com/itc/podcasts_connect/#/itca5b22233</a>
 
 ### Release Notes
+1.3.0
+* fixes Item.Duration being set incorrectly.
+* changed Item.AddEnclosure() parameter definition (Bytes not Seconds!).
+* added Item.AddDuration formatting and override.
+* added more documentation surrounding Item.Enclosure{}
+
 1.2.1
 * added Podcast.AddSubTitle() and truncating to 64 chars.
 * added a number of Guards to protect against empty fields.
@@ -78,7 +84,8 @@ Podcasts: <a href="https://help.apple.com/itc/podcasts_connect/#/itca5b22233">ht
 * [type ISummary](#ISummary)
 * [type Image](#Image)
 * [type Item](#Item)
-  * [func (i \*Item) AddEnclosure(url string, enclosureType EnclosureType, lengthInSeconds int64)](#Item.AddEnclosure)
+  * [func (i \*Item) AddDuration(durationInSeconds int64)](#Item.AddDuration)
+  * [func (i \*Item) AddEnclosure(url string, enclosureType EnclosureType, lengthInBytes int64)](#Item.AddEnclosure)
   * [func (i \*Item) AddImage(url string)](#Item.AddImage)
   * [func (i \*Item) AddPubDate(datetime \*time.Time)](#Item.AddPubDate)
   * [func (i \*Item) AddSummary(summary string)](#Item.AddSummary)
@@ -98,6 +105,7 @@ Podcasts: <a href="https://help.apple.com/itc/podcasts_connect/#/itca5b22233">ht
 * [type TextInput](#TextInput)
 
 #### <a name="pkg-examples">Examples</a>
+* [Item.AddDuration](#example_Item_AddDuration)
 * [Item.AddPubDate](#example_Item_AddPubDate)
 * [New](#example_New)
 * [Podcast.AddAuthor](#example_Podcast_AddAuthor)
@@ -126,15 +134,27 @@ Author represents a named author and email.
 
 For iTunes compliance, both Name and Email are required.
 
-## <a name="Enclosure">type</a> [Enclosure](./enclosure.go#L46-L53)
+## <a name="Enclosure">type</a> [Enclosure](./enclosure.go#L46-L65)
 ``` go
 type Enclosure struct {
-    XMLName         xml.Name      `xml:"enclosure"`
-    URL             string        `xml:"url,attr"`
-    Length          int64         `xml:"-"`
-    LengthFormatted string        `xml:"length,attr"`
-    Type            EnclosureType `xml:"-"`
-    TypeFormatted   string        `xml:"type,attr"`
+    XMLName xml.Name `xml:"enclosure"`
+
+    // URL is the downloadable url for the content. (Required)
+    URL string `xml:"url,attr"`
+
+    // Length is the size in Bytes of the download. (Required)
+    Length int64 `xml:"-"`
+    // LengthFormatted is the size in Bytes of the download. (Required)
+    //
+    // This field gets overwritten with the API when setting Length.
+    LengthFormatted string `xml:"length,attr"`
+
+    // Type is MIME type encoding of the download. (Required)
+    Type EnclosureType `xml:"-"`
+    // TypeFormatted is MIME type encoding of the download. (Required)
+    //
+    // This field gets overwritten with the API when setting Type.
+    TypeFormatted string `xml:"type,attr"`
 }
 ```
 Enclosure represents a download enclosure.
@@ -268,10 +288,16 @@ Recommendations:
 - Always set an Enclosure.Length, to be nice to your downloaders.
 - Use Enclosure.Type instead of setting TypeFormatted for valid extensions.
 
+### <a name="Item.AddDuration">func</a> (\*Item) [AddDuration](./item.go#L101)
+``` go
+func (i *Item) AddDuration(durationInSeconds int64)
+```
+AddDuration adds the duration to the iTunes duration field.
+
 ### <a name="Item.AddEnclosure">func</a> (\*Item) [AddEnclosure](./item.go#L52-L53)
 ``` go
 func (i *Item) AddEnclosure(
-    url string, enclosureType EnclosureType, lengthInSeconds int64)
+    url string, enclosureType EnclosureType, lengthInBytes int64)
 ```
 AddEnclosure adds the downloadable asset to the podcast Item.
 
@@ -436,7 +462,7 @@ Recommendations:
 
 	<a href="https://help.apple.com/itc/podcasts_connect/#/itcb54353390">https://help.apple.com/itc/podcasts_connect/#/itcb54353390</a>
 
-### <a name="Podcast.AddLastBuildDate">func</a> (\*Podcast) [AddLastBuildDate](./podcast.go#L250)
+### <a name="Podcast.AddLastBuildDate">func</a> (\*Podcast) [AddLastBuildDate](./podcast.go#L247)
 ``` go
 func (p *Podcast) AddLastBuildDate(datetime *time.Time)
 ```
@@ -444,7 +470,7 @@ AddLastBuildDate adds the datetime as a parsed PubDate.
 
 UTC time is used by default.
 
-### <a name="Podcast.AddPubDate">func</a> (\*Podcast) [AddPubDate](./podcast.go#L243)
+### <a name="Podcast.AddPubDate">func</a> (\*Podcast) [AddPubDate](./podcast.go#L240)
 ``` go
 func (p *Podcast) AddPubDate(datetime *time.Time)
 ```
@@ -452,7 +478,7 @@ AddPubDate adds the datetime as a parsed PubDate.
 
 UTC time is used by default.
 
-### <a name="Podcast.AddSubTitle">func</a> (\*Podcast) [AddSubTitle](./podcast.go#L259)
+### <a name="Podcast.AddSubTitle">func</a> (\*Podcast) [AddSubTitle](./podcast.go#L256)
 ``` go
 func (p *Podcast) AddSubTitle(subTitle string)
 ```
@@ -462,7 +488,7 @@ in iTunes.
 Note that this field should be just a few words long according to Apple.
 This method will truncate the string to 64 chars if too long with "..."
 
-### <a name="Podcast.AddSummary">func</a> (\*Podcast) [AddSummary](./podcast.go#L276)
+### <a name="Podcast.AddSummary">func</a> (\*Podcast) [AddSummary](./podcast.go#L273)
 ``` go
 func (p *Podcast) AddSummary(summary string)
 ```
@@ -473,19 +499,19 @@ Limit: 4000 characters
 Note that this field is a CDATA encoded field which allows for rich text
 such as html links: <a href="<a href="http://www.apple.com">http://www.apple.com</a>">Apple</a>.
 
-### <a name="Podcast.Bytes">func</a> (\*Podcast) [Bytes](./podcast.go#L290)
+### <a name="Podcast.Bytes">func</a> (\*Podcast) [Bytes](./podcast.go#L287)
 ``` go
 func (p *Podcast) Bytes() []byte
 ```
 Bytes returns an encoded []byte slice.
 
-### <a name="Podcast.Encode">func</a> (\*Podcast) [Encode](./podcast.go#L295)
+### <a name="Podcast.Encode">func</a> (\*Podcast) [Encode](./podcast.go#L292)
 ``` go
 func (p *Podcast) Encode(w io.Writer) error
 ```
 Encode writes the bytes to the io.Writer stream in RSS 2.0 specification.
 
-### <a name="Podcast.String">func</a> (\*Podcast) [String](./podcast.go#L306)
+### <a name="Podcast.String">func</a> (\*Podcast) [String](./podcast.go#L303)
 ``` go
 func (p *Podcast) String() string
 ```

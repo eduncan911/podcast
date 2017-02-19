@@ -50,11 +50,11 @@ type Item struct {
 
 // AddEnclosure adds the downloadable asset to the podcast Item.
 func (i *Item) AddEnclosure(
-	url string, enclosureType EnclosureType, lengthInSeconds int64) {
+	url string, enclosureType EnclosureType, lengthInBytes int64) {
 	i.Enclosure = &Enclosure{
 		URL:    url,
 		Type:   enclosureType,
-		Length: lengthInSeconds,
+		Length: lengthInBytes,
 	}
 }
 
@@ -95,4 +95,12 @@ func (i *Item) AddSummary(summary string) {
 	i.ISummary = &ISummary{
 		Text: summary,
 	}
+}
+
+// AddDuration adds the duration to the iTunes duration field.
+func (i *Item) AddDuration(durationInSeconds int64) {
+	if durationInSeconds <= 0 {
+		return
+	}
+	i.IDuration = parseDuration(durationInSeconds)
 }
