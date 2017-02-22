@@ -2,8 +2,8 @@ package podcast
 
 import "encoding/xml"
 
-// Atom represents the Atom reference link.
-type Atom struct {
+// AtomLink represents the Atom reference link.
+type AtomLink struct {
 	XMLName xml.Name `xml:"atom:link"`
 	HREF    string   `xml:"href,attr"`
 	Rel     string   `xml:"rel,attr"`

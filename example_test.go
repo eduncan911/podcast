@@ -26,8 +26,10 @@ func Example_httpHandlers() {
 
 		// add some channel properties
 		p.AddAuthor("Jane Doe", "me@janedoe.com")
+		p.AddAtomLink("http://eduncan911.com/feed.rss")
 		p.AddImage("http://janedoe.com/i.jpg")
 		p.AddSummary(`link <a href="http://example.com">example.com</a>`)
+		p.IExplicit = "no"
 
 		for i := int64(1); i < 3; i++ {
 			n := strconv.FormatInt(i, 10)
@@ -71,7 +73,7 @@ func Example_httpHandlers() {
 	os.Stdout.Write(rr.Body.Bytes())
 	// Output:
 	// <?xml version="1.0" encoding="UTF-8"?>
-	// <rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
+	// <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
 	//   <channel>
 	//     <title>eduncan911 Podcasts</title>
 	//     <link>http://eduncan911.com/</link>
@@ -83,10 +85,14 @@ func Example_httpHandlers() {
 	//     <pubDate>Sat, 04 Feb 2017 08:21:52 +0000</pubDate>
 	//     <image>
 	//       <url>http://janedoe.com/i.jpg</url>
+	//       <title>eduncan911 Podcasts</title>
+	//       <link>http://eduncan911.com/</link>
 	//     </image>
+	//     <atom:link href="http://eduncan911.com/feed.rss" rel="self" type="application/rss+xml"></atom:link>
 	//     <itunes:author>me@janedoe.com (Jane Doe)</itunes:author>
 	//     <itunes:summary><![CDATA[link <a href="http://example.com">example.com</a>]]></itunes:summary>
 	//     <itunes:image href="http://janedoe.com/i.jpg"></itunes:image>
+	//     <itunes:explicit>no</itunes:explicit>
 	//     <item>
 	//       <guid>http://e.com/1.mp3</guid>
 	//       <title>Episode 1</title>
@@ -128,6 +134,7 @@ func Example_ioWriter() {
 	p.AddSummary(`link <a href="http://example.com">example.com</a>`)
 	p.AddImage("http://example.com/podcast.jpg")
 	p.AddAuthor("Jane Doe", "jane.doe@example.com")
+	p.AddAtomLink("http://example.com/atom.rss")
 
 	for i := int64(9); i < 11; i++ {
 		n := strconv.FormatInt(i, 10)
@@ -158,7 +165,7 @@ func Example_ioWriter() {
 
 	// Output:
 	// <?xml version="1.0" encoding="UTF-8"?>
-	// <rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
+	// <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
 	//   <channel>
 	//     <title>Sample Podcasts</title>
 	//     <link>http://example.com/</link>
@@ -170,7 +177,10 @@ func Example_ioWriter() {
 	//     <pubDate>Wed, 01 Feb 2017 08:21:52 +0000</pubDate>
 	//     <image>
 	//       <url>http://example.com/podcast.jpg</url>
+	//       <title>Sample Podcasts</title>
+	//       <link>http://example.com/</link>
 	//     </image>
+	//     <atom:link href="http://example.com/atom.rss" rel="self" type="application/rss+xml"></atom:link>
 	//     <itunes:author>jane.doe@example.com (Jane Doe)</itunes:author>
 	//     <itunes:subtitle>A simple Podcast</itunes:subtitle>
 	//     <itunes:summary><![CDATA[link <a href="http://example.com">example.com</a>]]></itunes:summary>

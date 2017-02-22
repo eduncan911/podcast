@@ -37,7 +37,7 @@ type Podcast struct {
 	WebMaster      string   `xml:"webMaster,omitempty"`
 	Image          *Image
 	TextInput      *TextInput
-	Atom           *Atom
+	AtomLink       *AtomLink
 
 	// https://help.apple.com/itc/podcasts_connect/#/itcb54353390
 	IAuthor     string `xml:"itunes:author,omitempty"`
@@ -79,6 +79,9 @@ func New(title, link, description string,
 
 // AddAuthor adds the specified Author to the podcast.
 func (p *Podcast) AddAuthor(name, email string) {
+	if len(email) == 0 {
+		return
+	}
 	p.ManagingEditor = parseAuthorNameEmail(&Author{
 		Name:  name,
 		Email: email,
@@ -91,7 +94,7 @@ func (p *Podcast) AddAtomLink(href string) {
 	if len(href) == 0 {
 		return
 	}
-	p.Atom = &Atom{
+	p.AtomLink = &AtomLink{
 		HREF: href,
 		Rel:  "self",
 		Type: "application/rss+xml",
@@ -382,13 +385,13 @@ func (p *Podcast) Bytes() []byte {
 func (p *Podcast) Encode(w io.Writer) error {
 	w.Write([]byte("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"))
 
-	atom := ""
-	if p.Atom != nil {
-		atom = "http://www.w3.org/2005/Atom"
+	atomLink := ""
+	if p.AtomLink != nil {
+		atomLink = "http://www.w3.org/2005/Atom"
 	}
 	wrapped := podcastWrapper{
 		ITUNESNS: "http://www.itunes.com/dtds/podcast-1.0.dtd",
-		ATOMNS:   atom,
+		ATOMNS:   atomLink,
 		Version:  "2.0",
 		Channel:  p,
 	}

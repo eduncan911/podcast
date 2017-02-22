@@ -50,6 +50,33 @@ func TestNewNils(t *testing.T) {
 	assert.True(t, now >= p.LastBuildDate)
 }
 
+func TestAddAuthorEmailEmpty(t *testing.T) {
+	t.Parallel()
+
+	// arrange
+	p := podcast.New("title", "link", "description", nil, nil)
+
+	// act
+	p.AddAuthor("", "")
+
+	// assert
+	assert.Len(t, p.ManagingEditor, 0)
+	assert.Len(t, p.IAuthor, 0)
+}
+
+func TestAddAtomLinkHrefEmpty(t *testing.T) {
+	t.Parallel()
+
+	// arrange
+	p := podcast.New("title", "link", "description", nil, nil)
+
+	// act
+	p.AddAtomLink("")
+
+	// assert
+	assert.Nil(t, p.AtomLink)
+}
+
 func TestAddCategoryEmpty(t *testing.T) {
 	t.Parallel()
 

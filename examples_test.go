@@ -190,6 +190,8 @@ See more at our website: <a href="http://example.com">example.com</a>
 	//     <pubDate>Sat, 04 Feb 2017 08:21:52 +0000</pubDate>
 	//     <image>
 	//       <url>http://janedoe.com/i.jpg</url>
+	//       <title>eduncan911 Podcasts</title>
+	//       <link>http://eduncan911.com/</link>
 	//     </image>
 	//     <itunes:author>me@janedoe.com (Jane Doe)</itunes:author>
 	//     <itunes:summary><![CDATA[A very cool podcast with a long summary using Bytes()!
