@@ -37,6 +37,7 @@ type Podcast struct {
 	WebMaster      string   `xml:"webMaster,omitempty"`
 	Image          *Image
 	TextInput      *TextInput
+	Atom           *Atom
 
 	// https://help.apple.com/itc/podcasts_connect/#/itcb54353390
 	IAuthor     string `xml:"itunes:author,omitempty"`
@@ -85,9 +86,96 @@ func (p *Podcast) AddAuthor(name, email string) {
 	p.IAuthor = p.ManagingEditor
 }
 
-// AddCategory adds the categories to the Podcast in comma delimited format.
+// AddAtomLink adds a FQDN reference to an atom feed.
+func (p *Podcast) AddAtomLink(href string) {
+	if len(href) == 0 {
+		return
+	}
+	p.Atom = &Atom{
+		HREF: href,
+		Rel:  "self",
+		Type: "application/rss+xml",
+	}
+}
+
+// AddCategory adds the category to the Podcast.
 //
-// subCategories are optional.
+// ICategory can be listed multiple times.
+//
+// Calling this method multiple times will APPEND the category to the existing
+// list, if any, including ICategory.
+//
+// Note that Apple iTunes has a specific list of categories that only can be
+// used and will invalidate the feed if deviated from the list.  That list is
+// as follows.
+//
+// Arts
+// * Design
+// * Fashion & Beauty
+// * Food
+// * Literature
+// * Performing Arts
+// * Visual Arts
+// Business
+// * Business News
+// * Careers
+// * Investing
+// * Management & Marketing
+// * Shopping
+// Comedy
+// Education
+// * Education Technology
+// * Higher Education
+// * K-12
+// * Language Courses
+// * Training
+// Games & Hobbies
+// * Automotive
+// * Aviation
+// * Hobbies
+// * Other Games
+// * Video Games
+// Government & Organizations
+// * Local
+// * National
+// * Non-Profit
+// * Regional
+// Health
+// * Alternative Health
+// * Fitness & Nutrition
+// * Self-Help
+// * Sexuality
+// Kids & Family
+// Music
+// News & Politics
+// Religion & Spirituality
+// * Buddhism
+// * Christianity
+// * Hinduism
+// * Islam
+// * Judaism
+// * Other
+// * Spirituality
+// Science & Medicine
+// * Medicine
+// * Natural Sciences
+// * Social Sciences
+// Society & Culture
+// * History
+// * Personal Journals
+// * Philosophy
+// * Places & Travel
+// Sports & Recreation
+// * Amateur
+// * College & High School
+// * Outdoor
+// * Professional
+// Technology
+// * Gadgets
+// * Podcasting
+// * Software How-To
+// * Tech News
+// TV & Film
 func (p *Podcast) AddCategory(category string, subCategories []string) {
 	if len(category) == 0 {
 		return
@@ -124,7 +212,9 @@ func (p *Podcast) AddImage(url string) {
 		return
 	}
 	p.Image = &Image{
-		URL: url,
+		URL:   url,
+		Title: p.Title,
+		Link:  p.Link,
 	}
 	p.IImage = &IImage{HREF: url}
 }
@@ -291,10 +381,16 @@ func (p *Podcast) Bytes() []byte {
 // Encode writes the bytes to the io.Writer stream in RSS 2.0 specification.
 func (p *Podcast) Encode(w io.Writer) error {
 	w.Write([]byte("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"))
+
+	atom := ""
+	if p.Atom != nil {
+		atom = "http://www.w3.org/2005/Atom"
+	}
 	wrapped := podcastWrapper{
-		XMLNS:   "http://www.itunes.com/dtds/podcast-1.0.dtd",
-		Version: "2.0",
-		Channel: p,
+		ITUNESNS: "http://www.itunes.com/dtds/podcast-1.0.dtd",
+		ATOMNS:   atom,
+		Version:  "2.0",
+		Channel:  p,
 	}
 	return p.encode(w, wrapped)
 }
@@ -319,10 +415,11 @@ func (p *Podcast) String() string {
 // }
 
 type podcastWrapper struct {
-	XMLName xml.Name `xml:"rss"`
-	Version string   `xml:"version,attr"`
-	XMLNS   string   `xml:"xmlns:itunes,attr"`
-	Channel *Podcast
+	XMLName  xml.Name `xml:"rss"`
+	Version  string   `xml:"version,attr"`
+	ATOMNS   string   `xml:"xmlns:atom,attr,omitempty"`
+	ITUNESNS string   `xml:"xmlns:itunes,attr"`
+	Channel  *Podcast
 }
 
 var encoder = func(w io.Writer, o interface{}) error {

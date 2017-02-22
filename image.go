@@ -11,11 +11,11 @@ import "encoding/xml"
 // images for mobile devices, Apple recommends compressing your
 // image files.
 type Image struct {
-	XMLName xml.Name `xml:"image"`
-	// TODO: is it URL or Link? which is it?
-	URL    string `xml:"url"`
-	Title  string `xml:"title,omitempty"`
-	Link   string `xml:"link,omitempty"`
-	Width  int    `xml:"width,omitempty"`
-	Height int    `xml:"height,omitempty"`
+	XMLName     xml.Name `xml:"image"`
+	URL         string   `xml:"url"`
+	Title       string   `xml:"title"`
+	Link        string   `xml:"link"`
+	Description string   `xml:"description,omitempty"`
+	Width       int      `xml:"width,omitempty"`
+	Height      int      `xml:"height,omitempty"`
 }
