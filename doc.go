@@ -37,6 +37,12 @@
 //
 // Release Notes
 //
+// 1.3.1
+// * increased itunes compliance after feedback from Apple:
+// - specified what categories should be set with AddCategory().
+// - enforced title and link as part of Image.
+// * added Podcast.AddAtomLink() for more broad compliance to readers.
+//
 // 1.3.0
 // * fixes Item.Duration being set incorrectly.
 // * changed Item.AddEnclosure() parameter definition (Bytes not Seconds!).

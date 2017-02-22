@@ -40,6 +40,12 @@ RSS 2.0: <a href="https://cyber.harvard.edu/rss/rss.html">https://cyber.harvard.
 Podcasts: <a href="https://help.apple.com/itc/podcasts_connect/#/itca5b22233">https://help.apple.com/itc/podcasts_connect/#/itca5b22233</a>
 
 ### Release Notes
+1.3.1
+* increased itunes compliance after feedback from Apple:
+- specified what categories should be set with AddCategory().
+- enforced title and link as part of Image.
+* added Podcast.AddAtomLink() for more broad compliance to readers.
+
 1.3.0
 * fixes Item.Duration being set incorrectly.
 * changed Item.AddEnclosure() parameter definition (Bytes not Seconds!).
