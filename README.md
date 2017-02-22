@@ -75,6 +75,7 @@ Podcasts: <a href="https://help.apple.com/itc/podcasts_connect/#/itca5b22233">ht
 - [github.com/pkg/errors](https://godoc.org/github.com/pkg/errors)
 
 ## <a name="pkg-index">Index</a>
+* [type AtomLink](#AtomLink)
 * [type Author](#Author)
 * [type Enclosure](#Enclosure)
 * [type EnclosureType](#EnclosureType)
@@ -91,6 +92,7 @@ Podcasts: <a href="https://help.apple.com/itc/podcasts_connect/#/itca5b22233">ht
   * [func (i \*Item) AddSummary(summary string)](#Item.AddSummary)
 * [type Podcast](#Podcast)
   * [func New(title, link, description string, pubDate, lastBuildDate \*time.Time) Podcast](#New)
+  * [func (p \*Podcast) AddAtomLink(href string)](#Podcast.AddAtomLink)
   * [func (p \*Podcast) AddAuthor(name, email string)](#Podcast.AddAuthor)
   * [func (p \*Podcast) AddCategory(category string, subCategories []string)](#Podcast.AddCategory)
   * [func (p \*Podcast) AddImage(url string)](#Podcast.AddImage)
@@ -120,7 +122,18 @@ Podcasts: <a href="https://help.apple.com/itc/podcasts_connect/#/itca5b22233">ht
 * [Package (IoWriter)](#example__ioWriter)
 
 #### <a name="pkg-files">Package files</a>
-[author.go](./author.go) [doc.go](./doc.go) [enclosure.go](./enclosure.go) [image.go](./image.go) [item.go](./item.go) [itunes.go](./itunes.go) [podcast.go](./podcast.go) [textinput.go](./textinput.go) 
+[atomlink.go](./atomlink.go) [author.go](./author.go) [doc.go](./doc.go) [enclosure.go](./enclosure.go) [image.go](./image.go) [item.go](./item.go) [itunes.go](./itunes.go) [podcast.go](./podcast.go) [textinput.go](./textinput.go) 
+
+## <a name="AtomLink">type</a> [AtomLink](./atomlink.go#L6-L11)
+``` go
+type AtomLink struct {
+    XMLName xml.Name `xml:"atom:link"`
+    HREF    string   `xml:"href,attr"`
+    Rel     string   `xml:"rel,attr"`
+    Type    string   `xml:"type,attr"`
+}
+```
+AtomLink represents the Atom reference link.
 
 ## <a name="Author">type</a> [Author](./author.go#L8-L12)
 ``` go
@@ -224,13 +237,13 @@ This is rendered as CDATA which allows for HTML tags such as <a href="">.
 ## <a name="Image">type</a> [Image](./image.go#L13-L21)
 ``` go
 type Image struct {
-    XMLName xml.Name `xml:"image"`
-    // TODO: is it URL or Link? which is it?
-    URL    string `xml:"url"`
-    Title  string `xml:"title,omitempty"`
-    Link   string `xml:"link,omitempty"`
-    Width  int    `xml:"width,omitempty"`
-    Height int    `xml:"height,omitempty"`
+    XMLName     xml.Name `xml:"image"`
+    URL         string   `xml:"url"`
+    Title       string   `xml:"title"`
+    Link        string   `xml:"link"`
+    Description string   `xml:"description,omitempty"`
+    Width       int      `xml:"width,omitempty"`
+    Height      int      `xml:"height,omitempty"`
 }
 ```
 Image represents an image.
@@ -334,7 +347,7 @@ Limit: 4000 characters
 Note that this field is a CDATA encoded field which allows for rich text
 such as html links: <a href="<a href="http://www.apple.com">http://www.apple.com</a>">Apple</a>.
 
-## <a name="Podcast">type</a> [Podcast](./podcast.go#L19-L57)
+## <a name="Podcast">type</a> [Podcast](./podcast.go#L19-L58)
 ``` go
 type Podcast struct {
     XMLName        xml.Name `xml:"channel"`
@@ -357,6 +370,7 @@ type Podcast struct {
     WebMaster      string   `xml:"webMaster,omitempty"`
     Image          *Image
     TextInput      *TextInput
+    AtomLink       *AtomLink
 
     // https://help.apple.com/itc/podcasts_connect/#/itcb54353390
     IAuthor     string `xml:"itunes:author,omitempty"`
@@ -377,7 +391,7 @@ type Podcast struct {
 ```
 Podcast represents a podcast.
 
-### <a name="New">func</a> [New](./podcast.go#L63-L64)
+### <a name="New">func</a> [New](./podcast.go#L64-L65)
 ``` go
 func New(title, link, description string,
     pubDate, lastBuildDate *time.Time) Podcast
@@ -387,21 +401,102 @@ New instantiates a Podcast with required parameters.
 Nil-able fields are optional but recommended as they are formatted
 to the expected proper formats.
 
-### <a name="Podcast.AddAuthor">func</a> (\*Podcast) [AddAuthor](./podcast.go#L80)
+### <a name="Podcast.AddAtomLink">func</a> (\*Podcast) [AddAtomLink](./podcast.go#L93)
+``` go
+func (p *Podcast) AddAtomLink(href string)
+```
+AddAtomLink adds a FQDN reference to an atom feed.
+
+### <a name="Podcast.AddAuthor">func</a> (\*Podcast) [AddAuthor](./podcast.go#L81)
 ``` go
 func (p *Podcast) AddAuthor(name, email string)
 ```
 AddAuthor adds the specified Author to the podcast.
 
-### <a name="Podcast.AddCategory">func</a> (\*Podcast) [AddCategory](./podcast.go#L91)
+### <a name="Podcast.AddCategory">func</a> (\*Podcast) [AddCategory](./podcast.go#L182)
 ``` go
 func (p *Podcast) AddCategory(category string, subCategories []string)
 ```
-AddCategory adds the categories to the Podcast in comma delimited format.
+AddCategory adds the category to the Podcast.
 
-subCategories are optional.
+ICategory can be listed multiple times.
 
-### <a name="Podcast.AddImage">func</a> (\*Podcast) [AddImage](./podcast.go#L122)
+Calling this method multiple times will APPEND the category to the existing
+list, if any, including ICategory.
+
+Note that Apple iTunes has a specific list of categories that only can be
+used and will invalidate the feed if deviated from the list.  That list is
+as follows.
+
+Arts
+* Design
+* Fashion & Beauty
+* Food
+* Literature
+* Performing Arts
+* Visual Arts
+Business
+* Business News
+* Careers
+* Investing
+* Management & Marketing
+* Shopping
+Comedy
+Education
+* Education Technology
+* Higher Education
+* K-12
+* Language Courses
+* Training
+Games & Hobbies
+* Automotive
+* Aviation
+* Hobbies
+* Other Games
+* Video Games
+Government & Organizations
+* Local
+* National
+* Non-Profit
+* Regional
+Health
+* Alternative Health
+* Fitness & Nutrition
+* Self-Help
+* Sexuality
+Kids & Family
+Music
+News & Politics
+Religion & Spirituality
+* Buddhism
+* Christianity
+* Hinduism
+* Islam
+* Judaism
+* Other
+* Spirituality
+Science & Medicine
+* Medicine
+* Natural Sciences
+* Social Sciences
+Society & Culture
+* History
+* Personal Journals
+* Philosophy
+* Places & Travel
+Sports & Recreation
+* Amateur
+* College & High School
+* Outdoor
+* Professional
+Technology
+* Gadgets
+* Podcasting
+* Software How-To
+* Tech News
+TV & Film
+
+### <a name="Podcast.AddImage">func</a> (\*Podcast) [AddImage](./podcast.go#L213)
 ``` go
 func (p *Podcast) AddImage(url string)
 ```
@@ -414,7 +509,7 @@ extensions (.jpg, .png), and in the RGB colorspace. To optimize
 images for mobile devices, Apple recommends compressing your
 image files.
 
-### <a name="Podcast.AddItem">func</a> (\*Podcast) [AddItem](./podcast.go#L173)
+### <a name="Podcast.AddItem">func</a> (\*Podcast) [AddItem](./podcast.go#L266)
 ``` go
 func (p *Podcast) AddItem(i Item) (int, error)
 ```
@@ -462,7 +557,7 @@ Recommendations:
 
 	<a href="https://help.apple.com/itc/podcasts_connect/#/itcb54353390">https://help.apple.com/itc/podcasts_connect/#/itcb54353390</a>
 
-### <a name="Podcast.AddLastBuildDate">func</a> (\*Podcast) [AddLastBuildDate](./podcast.go#L247)
+### <a name="Podcast.AddLastBuildDate">func</a> (\*Podcast) [AddLastBuildDate](./podcast.go#L340)
 ``` go
 func (p *Podcast) AddLastBuildDate(datetime *time.Time)
 ```
@@ -470,7 +565,7 @@ AddLastBuildDate adds the datetime as a parsed PubDate.
 
 UTC time is used by default.
 
-### <a name="Podcast.AddPubDate">func</a> (\*Podcast) [AddPubDate](./podcast.go#L240)
+### <a name="Podcast.AddPubDate">func</a> (\*Podcast) [AddPubDate](./podcast.go#L333)
 ``` go
 func (p *Podcast) AddPubDate(datetime *time.Time)
 ```
@@ -478,7 +573,7 @@ AddPubDate adds the datetime as a parsed PubDate.
 
 UTC time is used by default.
 
-### <a name="Podcast.AddSubTitle">func</a> (\*Podcast) [AddSubTitle](./podcast.go#L256)
+### <a name="Podcast.AddSubTitle">func</a> (\*Podcast) [AddSubTitle](./podcast.go#L349)
 ``` go
 func (p *Podcast) AddSubTitle(subTitle string)
 ```
@@ -488,7 +583,7 @@ in iTunes.
 Note that this field should be just a few words long according to Apple.
 This method will truncate the string to 64 chars if too long with "..."
 
-### <a name="Podcast.AddSummary">func</a> (\*Podcast) [AddSummary](./podcast.go#L273)
+### <a name="Podcast.AddSummary">func</a> (\*Podcast) [AddSummary](./podcast.go#L366)
 ``` go
 func (p *Podcast) AddSummary(summary string)
 ```
@@ -499,19 +594,19 @@ Limit: 4000 characters
 Note that this field is a CDATA encoded field which allows for rich text
 such as html links: <a href="<a href="http://www.apple.com">http://www.apple.com</a>">Apple</a>.
 
-### <a name="Podcast.Bytes">func</a> (\*Podcast) [Bytes](./podcast.go#L287)
+### <a name="Podcast.Bytes">func</a> (\*Podcast) [Bytes](./podcast.go#L380)
 ``` go
 func (p *Podcast) Bytes() []byte
 ```
 Bytes returns an encoded []byte slice.
 
-### <a name="Podcast.Encode">func</a> (\*Podcast) [Encode](./podcast.go#L292)
+### <a name="Podcast.Encode">func</a> (\*Podcast) [Encode](./podcast.go#L385)
 ``` go
 func (p *Podcast) Encode(w io.Writer) error
 ```
 Encode writes the bytes to the io.Writer stream in RSS 2.0 specification.
 
-### <a name="Podcast.String">func</a> (\*Podcast) [String](./podcast.go#L303)
+### <a name="Podcast.String">func</a> (\*Podcast) [String](./podcast.go#L402)
 ``` go
 func (p *Podcast) String() string
 ```
