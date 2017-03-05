@@ -25,7 +25,7 @@ Notably, the [Podcast.AddItem(i Item)](#Podcast.AddItem) function performs most
 of the heavy lifting by taking the [Item](#Item) input and performing
 validation, overrides and duplicate setters through the feed.
 
-See the detailed Examples of the API at <a href="https://godoc.org/github.com/eduncan911/podcast">https://godoc.org/github.com/eduncan911/podcast</a>.
+Full detailed Examples of the API are at <a href="https://godoc.org/github.com/eduncan911/podcast">https://godoc.org/github.com/eduncan911/podcast</a>.
 
 ### Extensibility
 In no way are you restricted in having full control over your feeds.  You may
@@ -38,6 +38,17 @@ iTunes specific fields are all prefixed with the letter `I`.
 RSS 2.0: <a href="https://cyber.harvard.edu/rss/rss.html">https://cyber.harvard.edu/rss/rss.html</a>
 
 Podcasts: <a href="https://help.apple.com/itc/podcasts_connect/#/itca5b22233">https://help.apple.com/itc/podcasts_connect/#/itca5b22233</a>
+
+### Final Release
+This project is now in maintenance mode.  This means no more planned releases expected.
+
+With the success of 6 iTunes-accepted podcasts I have published with this library, and
+with the feedback from the community, this library is now considered stable and complete.
+
+Feel free to open an issue, file a bug or suggest a non-breaking enhancement and I will
+address it as soon as possible.
+
+Thank you!
 
 ### Release Notes
 1.3.1

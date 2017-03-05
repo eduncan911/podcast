@@ -19,7 +19,7 @@
 // of the heavy lifting by taking the [Item](#Item) input and performing
 // validation, overrides and duplicate setters through the feed.
 //
-// See the detailed Examples of the API at https://godoc.org/github.com/eduncan911/podcast.
+// Full detailed Examples of the API are at https://godoc.org/github.com/eduncan911/podcast.
 //
 // Extensibility
 //
@@ -34,6 +34,18 @@
 // RSS 2.0: https://cyber.harvard.edu/rss/rss.html
 //
 // Podcasts: https://help.apple.com/itc/podcasts_connect/#/itca5b22233
+//
+// Final Release
+//
+// This project is now in maintenance mode.  This means no more planned releases expected.
+//
+// With the success of 6 iTunes-accepted podcasts I have published with this library, and
+// with the feedback from the community, this library is now considered stable and complete.
+//
+// Feel free to open an issue, file a bug or suggest a non-breaking enhancement and I will
+// address it as soon as possible.
+//
+// Thank you!
 //
 // Release Notes
 //
