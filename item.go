@@ -37,18 +37,21 @@ type Item struct {
 	Source           string     `xml:"source,omitempty"`
 	PubDate          *time.Time `xml:"-"`
 	PubDateFormatted string     `xml:"pubDate,omitempty"`
-	Enclosure        *Enclosure
+	Enclosure        *Enclosure `xml:"enclosure"`
 
 	// https://help.apple.com/itc/podcasts_connect/#/itcb54353390
-	IAuthor            string `xml:"itunes:author,omitempty"`
-	ISubtitle          string `xml:"itunes:subtitle,omitempty"`
-	ISummary           *ISummary
-	IImage             *IImage
-	IDuration          string `xml:"itunes:duration,omitempty"`
-	IExplicit          string `xml:"itunes:explicit,omitempty"`
-	IIsClosedCaptioned string `xml:"itunes:isClosedCaptioned,omitempty"`
-	IOrder             string `xml:"itunes:order,omitempty"`
+	IAuthor            string    `xml:"itunes:author,omitempty"`
+	ISubtitle          string    `xml:"itunes:subtitle,omitempty"`
+	ISummary           *ISummary `xml:"itunes:summary"`
+	IImage             *IImage   `xml:"itunes:image"`
+	IDuration          string    `xml:"itunes:duration,omitempty"`
+	IExplicit          string    `xml:"itunes:explicit,omitempty"`
+	IIsClosedCaptioned string    `xml:"itunes:isClosedCaptioned,omitempty"`
+	IOrder             string    `xml:"itunes:order,omitempty"`
 }
+
+// TODO: add Decoding logic for Author and PubDate
+//
 
 // AddEnclosure adds the downloadable asset to the podcast Item.
 func (i *Item) AddEnclosure(
@@ -56,7 +59,7 @@ func (i *Item) AddEnclosure(
 	i.Enclosure = &Enclosure{
 		URL:    url,
 		Type:   enclosureType,
-		Length: lengthInBytes,
+		Length: EnclosureLength(lengthInBytes),
 	}
 }
 

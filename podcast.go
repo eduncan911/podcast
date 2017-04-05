@@ -18,42 +18,42 @@ const (
 
 // Podcast represents a podcast.
 type Podcast struct {
-	XMLName        xml.Name `xml:"channel"`
-	Title          string   `xml:"title"`
-	Link           string   `xml:"link"`
-	Description    string   `xml:"description"`
-	Category       string   `xml:"category,omitempty"`
-	Cloud          string   `xml:"cloud,omitempty"`
-	Copyright      string   `xml:"copyright,omitempty"`
-	Docs           string   `xml:"docs,omitempty"`
-	Generator      string   `xml:"generator,omitempty"`
-	Language       string   `xml:"language,omitempty"`
-	LastBuildDate  string   `xml:"lastBuildDate,omitempty"`
-	ManagingEditor string   `xml:"managingEditor,omitempty"`
-	PubDate        string   `xml:"pubDate,omitempty"`
-	Rating         string   `xml:"rating,omitempty"`
-	SkipHours      string   `xml:"skipHours,omitempty"`
-	SkipDays       string   `xml:"skipDays,omitempty"`
-	TTL            int      `xml:"ttl,omitempty"`
-	WebMaster      string   `xml:"webMaster,omitempty"`
-	Image          *Image
-	TextInput      *TextInput
-	AtomLink       *AtomLink
+	XMLName        xml.Name   `xml:"channel"`
+	Title          string     `xml:"title"`
+	Link           string     `xml:"link"`
+	Description    string     `xml:"description"`
+	Category       string     `xml:"category,omitempty"`
+	Cloud          string     `xml:"cloud,omitempty"`
+	Copyright      string     `xml:"copyright,omitempty"`
+	Docs           string     `xml:"docs,omitempty"`
+	Generator      string     `xml:"generator,omitempty"`
+	Language       string     `xml:"language,omitempty"`
+	LastBuildDate  string     `xml:"lastBuildDate,omitempty"`
+	ManagingEditor string     `xml:"managingEditor,omitempty"`
+	PubDate        string     `xml:"pubDate,omitempty"`
+	Rating         string     `xml:"rating,omitempty"`
+	SkipHours      string     `xml:"skipHours,omitempty"`
+	SkipDays       string     `xml:"skipDays,omitempty"`
+	TTL            int        `xml:"ttl,omitempty"`
+	WebMaster      string     `xml:"webMaster,omitempty"`
+	Image          *Image     `xml:"image"`
+	TextInput      *TextInput `xml:"textInput"`
+	AtomLink       *AtomLink  `xml:"atom:link"`
 
 	// https://help.apple.com/itc/podcasts_connect/#/itcb54353390
-	IAuthor     string `xml:"itunes:author,omitempty"`
-	ISubtitle   string `xml:"itunes:subtitle,omitempty"`
-	ISummary    *ISummary
-	IBlock      string `xml:"itunes:block,omitempty"`
-	IImage      *IImage
-	IDuration   string  `xml:"itunes:duration,omitempty"`
-	IExplicit   string  `xml:"itunes:explicit,omitempty"`
-	IComplete   string  `xml:"itunes:complete,omitempty"`
-	INewFeedURL string  `xml:"itunes:new-feed-url,omitempty"`
-	IOwner      *Author // Author is formatted for itunes as-is
-	ICategories []*ICategory
+	IAuthor     string       `xml:"itunes:author,omitempty"`
+	ISubtitle   string       `xml:"itunes:subtitle,omitempty"`
+	ISummary    *ISummary    `xml:"itunes:summary"`
+	IBlock      string       `xml:"itunes:block,omitempty"`
+	IImage      *IImage      `xml:"itunes:image"`
+	IDuration   string       `xml:"itunes:duration,omitempty"`
+	IExplicit   string       `xml:"itunes:explicit,omitempty"`
+	IComplete   string       `xml:"itunes:complete,omitempty"`
+	INewFeedURL string       `xml:"itunes:new-feed-url,omitempty"`
+	IOwner      *Author      `xml:"itunes:owner"` // Author is formatted for itunes as-is
+	ICategories []*ICategory `xml:"itunes:category"`
 
-	Items []*Item
+	Items []*Item `xml:"item"`
 
 	encode func(w io.Writer, o interface{}) error
 }
@@ -274,7 +274,7 @@ func (p *Podcast) AddItem(i Item) (int, error) {
 			return len(p.Items),
 				errors.New(i.Title + ": Enclosure.URL is required")
 		}
-		if i.Enclosure.Type.String() == enclosureDefault {
+		if i.Enclosure.Type.String() == cDefault {
 			return len(p.Items),
 				errors.New(i.Title + ": Enclosure.Type is required")
 		}
@@ -295,8 +295,6 @@ func (p *Podcast) AddItem(i Item) (int, error) {
 		if i.Enclosure.Length < 0 {
 			i.Enclosure.Length = 0
 		}
-		i.Enclosure.LengthFormatted = strconv.FormatInt(i.Enclosure.Length, 10)
-		i.Enclosure.TypeFormatted = i.Enclosure.Type.String()
 
 		// allow Link to be set for article references to Downloads,
 		// otherwise set it to the enclosurer's URL.

@@ -7,9 +7,9 @@ import "encoding/xml"
 
 // ICategory is a 2-tier classification system for iTunes.
 type ICategory struct {
-	XMLName     xml.Name `xml:"itunes:category"`
-	Text        string   `xml:"text,attr"`
-	ICategories []*ICategory
+	XMLName     xml.Name     `xml:"itunes:category"`
+	Text        string       `xml:"text,attr"`
+	ICategories []*ICategory `xml:"itunes:category"`
 }
 
 // IImage represents an iTunes image.
