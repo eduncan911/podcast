@@ -413,6 +413,53 @@ func (p *Podcast) String() string {
 	return b.String()
 }
 
+// UnmarshalXML handles the custom formatting to a strongly typed value.
+func (p *Podcast) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+	// Podcast represents an actual Channel (which should have been called
+	// "Channel" to begin with - doh!).  1.0 also didn't account for the root
+	// element <rss>, which is manually added during the encoders.
+	//
+	// therefore, for backwards compatibility, we implement this method that
+	// effectively "skips" the RSS definition and pulls out the Channel element.
+	//
+	// the downside is obviously that the re-encoded RSS may be different
+	// because of skipping the namespaces defined in <rss>.
+	//
+	// a better approach may be to break the API and implement a real <rss>
+	// struct, along with <channel> and channel would look similar to Podcast
+	// today.  the issue there is Podcast goes away - which breaks anyone who
+	// previously is trying to use this package directly, skipping the API.
+	//
+
+	decode := func(d *xml.Decoder, start xml.StartElement) error {
+		var c Podcast
+		if err := d.DecodeElement(&c, &start); err != nil {
+			return errors.Wrap(err, "Podcast.UnmarshalXML d.DecodeElement error")
+		}
+		*p = c
+		return nil
+	}
+	if start.Name.Local == "channel" {
+		return decode(d, start)
+	}
+	for {
+		t, err := d.Token()
+		if err != nil && err != io.EOF {
+			return errors.Wrap(err, "Podcast.UnmarshalXML d.Token() error")
+		}
+		if t == nil {
+			break
+		}
+		switch channel := t.(type) {
+		case xml.StartElement:
+			if start.Name.Local == "channel" {
+				return decode(d, channel)
+			}
+		}
+	}
+	return nil
+}
+
 // // Write implements the io.Writer interface to write an RSS 2.0 stream
 // // that is compliant to the RSS 2.0 specification.
 // func (p *Podcast) Write(b []byte) (n int, err error) {
