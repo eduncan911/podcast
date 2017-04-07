@@ -389,36 +389,68 @@ Podcasts: <a href="https://help.apple.com/itc/podcasts_connect/#/itca5b22233">ht
 - [github.com/pkg/errors](https://godoc.org/github.com/pkg/errors)
 
 ## <a name="pkg-index">Index</a>
-* [type AtomLink](#AtomLink)
-* [type Author](#Author)
-* [type Enclosure](#Enclosure)
-* [type EnclosureType](#EnclosureType)
-  * [func (et EnclosureType) String() string](#EnclosureType.String)
-* [type ICategory](#ICategory)
-* [type IImage](#IImage)
-* [type ISummary](#ISummary)
-* [type Image](#Image)
-* [type Item](#Item)
-  * [func (i \*Item) AddDuration(durationInSeconds int64)](#Item.AddDuration)
-  * [func (i \*Item) AddEnclosure(url string, enclosureType EnclosureType, lengthInBytes int64)](#Item.AddEnclosure)
-  * [func (i \*Item) AddImage(url string)](#Item.AddImage)
-  * [func (i \*Item) AddPubDate(datetime \*time.Time)](#Item.AddPubDate)
-  * [func (i \*Item) AddSummary(summary string)](#Item.AddSummary)
-* [type Podcast](#Podcast)
-  * [func New(title, link, description string, pubDate, lastBuildDate \*time.Time) Podcast](#New)
-  * [func (p \*Podcast) AddAtomLink(href string)](#Podcast.AddAtomLink)
-  * [func (p \*Podcast) AddAuthor(name, email string)](#Podcast.AddAuthor)
-  * [func (p \*Podcast) AddCategory(category string, subCategories []string)](#Podcast.AddCategory)
-  * [func (p \*Podcast) AddImage(url string)](#Podcast.AddImage)
-  * [func (p \*Podcast) AddItem(i Item) (int, error)](#Podcast.AddItem)
-  * [func (p \*Podcast) AddLastBuildDate(datetime \*time.Time)](#Podcast.AddLastBuildDate)
-  * [func (p \*Podcast) AddPubDate(datetime \*time.Time)](#Podcast.AddPubDate)
-  * [func (p \*Podcast) AddSubTitle(subTitle string)](#Podcast.AddSubTitle)
-  * [func (p \*Podcast) AddSummary(summary string)](#Podcast.AddSummary)
-  * [func (p \*Podcast) Bytes() []byte](#Podcast.Bytes)
-  * [func (p \*Podcast) Encode(w io.Writer) error](#Podcast.Encode)
-  * [func (p \*Podcast) String() string](#Podcast.String)
-* [type TextInput](#TextInput)
+- [podcast](#podcast)
+		- [Usage](#usage)
+		- [Go Modules](#go-modules)
+		- [Extensibility](#extensibility)
+		- [Fuzzing Inputs](#fuzzing-inputs)
+		- [Roadmap](#roadmap)
+		- [Versioning](#versioning)
+		- [Release Notes](#release-notes)
+		- [References](#references)
+			- [Example:](#example)
+			- [Example:](#example-1)
+	- [Table of Contents](#table-of-contents)
+	- [<a name="pkg-imports">Imported Packages</a>](#imported-packages)
+	- [<a name="pkg-index">Index</a>](#index)
+			- [<a name="pkg-examples">Examples</a>](#examples)
+			- [<a name="pkg-files">Package files</a>](#package-files)
+	- [<a name="AtomLink">type</a> AtomLink](#type-atomlink)
+	- [<a name="Author">type</a> Author](#type-author)
+	- [<a name="Enclosure">type</a> Enclosure](#type-enclosure)
+	- [<a name="EnclosureLength">type</a> EnclosureLength](#type-enclosurelength)
+		- [<a name="EnclosureLength.MarshalXMLAttr">func</a> (\*EnclosureLength) MarshalXMLAttr](#func-enclosurelength-marshalxmlattr)
+		- [<a name="EnclosureLength.UnmarshalXMLAttr">func</a> (\*EnclosureLength) UnmarshalXMLAttr](#func-enclosurelength-unmarshalxmlattr)
+	- [<a name="EnclosureType">type</a> EnclosureType](#type-enclosuretype)
+		- [<a name="EnclosureType.MarshalXMLAttr">func</a> (\*EnclosureType) MarshalXMLAttr](#func-enclosuretype-marshalxmlattr)
+		- [<a name="EnclosureType.String">func</a> (EnclosureType) String](#func-enclosuretype-string)
+		- [<a name="EnclosureType.UnmarshalXMLAttr">func</a> (\*EnclosureType) UnmarshalXMLAttr](#func-enclosuretype-unmarshalxmlattr)
+	- [<a name="ICategory">type</a> ICategory](#type-icategory)
+	- [<a name="IImage">type</a> IImage](#type-iimage)
+	- [<a name="ISummary">type</a> ISummary](#type-isummary)
+	- [<a name="Image">type</a> Image](#type-image)
+	- [<a name="Item">type</a> Item](#type-item)
+		- [<a name="Item.AddDuration">func</a> (\*Item) AddDuration](#func-item-addduration)
+			- [Example:](#example-2)
+		- [<a name="Item.AddEnclosure">func</a> (\*Item) AddEnclosure](#func-item-addenclosure)
+		- [<a name="Item.AddImage">func</a> (\*Item) AddImage](#func-item-addimage)
+		- [<a name="Item.AddPubDate">func</a> (\*Item) AddPubDate](#func-item-addpubdate)
+			- [Example:](#example-3)
+		- [<a name="Item.AddSummary">func</a> (\*Item) AddSummary](#func-item-addsummary)
+	- [<a name="Podcast">type</a> Podcast](#type-podcast)
+		- [<a name="New">func</a> New](#func-new)
+			- [Example:](#example-4)
+		- [<a name="Podcast.AddAtomLink">func</a> (\*Podcast) AddAtomLink](#func-podcast-addatomlink)
+		- [<a name="Podcast.AddAuthor">func</a> (\*Podcast) AddAuthor](#func-podcast-addauthor)
+			- [Example:](#example-5)
+		- [<a name="Podcast.AddCategory">func</a> (\*Podcast) AddCategory](#func-podcast-addcategory)
+			- [Example:](#example-6)
+		- [<a name="Podcast.AddImage">func</a> (\*Podcast) AddImage](#func-podcast-addimage)
+			- [Example:](#example-7)
+		- [<a name="Podcast.AddItem">func</a> (\*Podcast) AddItem](#func-podcast-additem)
+			- [Example:](#example-8)
+		- [<a name="Podcast.AddLastBuildDate">func</a> (\*Podcast) AddLastBuildDate](#func-podcast-addlastbuilddate)
+			- [Example:](#example-9)
+		- [<a name="Podcast.AddPubDate">func</a> (\*Podcast) AddPubDate](#func-podcast-addpubdate)
+			- [Example:](#example-10)
+		- [<a name="Podcast.AddSubTitle">func</a> (\*Podcast) AddSubTitle](#func-podcast-addsubtitle)
+		- [<a name="Podcast.AddSummary">func</a> (\*Podcast) AddSummary](#func-podcast-addsummary)
+			- [Example:](#example-11)
+		- [<a name="Podcast.Bytes">func</a> (\*Podcast) Bytes](#func-podcast-bytes)
+			- [Example:](#example-12)
+		- [<a name="Podcast.Encode">func</a> (\*Podcast) Encode](#func-podcast-encode)
+		- [<a name="Podcast.String">func</a> (\*Podcast) String](#func-podcast-string)
+	- [<a name="TextInput">type</a> TextInput](#type-textinput)
 
 #### <a name="pkg-examples">Examples</a>
 * [Item.AddDuration](#example_Item_AddDuration)
@@ -461,7 +493,7 @@ Author represents a named author and email.
 
 For iTunes compliance, both Name and Email are required.
 
-## <a name="Enclosure">type</a> [Enclosure](./enclosure.go#L46-L65)
+## <a name="Enclosure">type</a> [Enclosure](./enclosure.go#L32-L43)
 ``` go
 type Enclosure struct {
     XMLName xml.Name `xml:"enclosure"`
@@ -470,23 +502,33 @@ type Enclosure struct {
     URL string `xml:"url,attr"`
 
     // Length is the size in Bytes of the download. (Required)
-    Length int64 `xml:"-"`
-    // LengthFormatted is the size in Bytes of the download. (Required)
-    //
-    // This field gets overwritten with the API when setting Length.
-    LengthFormatted string `xml:"length,attr"`
+    Length EnclosureLength `xml:"length,attr"`
 
     // Type is MIME type encoding of the download. (Required)
-    Type EnclosureType `xml:"-"`
-    // TypeFormatted is MIME type encoding of the download. (Required)
-    //
-    // This field gets overwritten with the API when setting Type.
-    TypeFormatted string `xml:"type,attr"`
+    Type EnclosureType `xml:"type,attr"`
 }
 ```
 Enclosure represents a download enclosure.
 
-## <a name="EnclosureType">type</a> [EnclosureType](./enclosure.go#L21)
+## <a name="EnclosureLength">type</a> [EnclosureLength](./enclosure.go#L46)
+``` go
+type EnclosureLength int64
+```
+EnclosureLength specifies the length of the enclosure.
+
+### <a name="EnclosureLength.MarshalXMLAttr">func</a> (\*EnclosureLength) [MarshalXMLAttr](./enclosure.go#L49)
+``` go
+func (et *EnclosureLength) MarshalXMLAttr(name xml.Name) (xml.Attr, error)
+```
+MarshalXMLAttr handles the custom formatting from a strongly typed value.
+
+### <a name="EnclosureLength.UnmarshalXMLAttr">func</a> (\*EnclosureLength) [UnmarshalXMLAttr](./enclosure.go#L59)
+``` go
+func (et *EnclosureLength) UnmarshalXMLAttr(attr xml.Attr) error
+```
+UnmarshalXMLAttr handles the custom formatting to a strongly typed value.
+
+## <a name="EnclosureType">type</a> [EnclosureType](./enclosure.go#L69)
 ``` go
 type EnclosureType int
 ```
@@ -505,18 +547,30 @@ const (
 ```
 EnclosureType specifies the type of the enclosure.
 
-### <a name="EnclosureType.String">func</a> (EnclosureType) [String](./enclosure.go#L24)
+### <a name="EnclosureType.MarshalXMLAttr">func</a> (\*EnclosureType) [MarshalXMLAttr](./enclosure.go#L94)
+``` go
+func (et *EnclosureType) MarshalXMLAttr(name xml.Name) (xml.Attr, error)
+```
+MarshalXMLAttr handles the custom formatting from a strongly typed value.
+
+### <a name="EnclosureType.String">func</a> (EnclosureType) [String](./enclosure.go#L72)
 ``` go
 func (et EnclosureType) String() string
 ```
 String returns the MIME type encoding of the specified EnclosureType.
 
+### <a name="EnclosureType.UnmarshalXMLAttr">func</a> (\*EnclosureType) [UnmarshalXMLAttr](./enclosure.go#L104)
+``` go
+func (et *EnclosureType) UnmarshalXMLAttr(attr xml.Attr) error
+```
+UnmarshalXMLAttr handles the custom formatting to a strongly typed value.
+
 ## <a name="ICategory">type</a> [ICategory](./itunes.go#L9-L13)
 ``` go
 type ICategory struct {
-    XMLName     xml.Name `xml:"itunes:category"`
-    Text        string   `xml:"text,attr"`
-    ICategories []*ICategory
+    XMLName     xml.Name     `xml:"itunes:category"`
+    Text        string       `xml:"text,attr"`
+    ICategories []*ICategory `xml:"itunes:category"`
 }
 ```
 ICategory is a 2-tier classification system for iTunes.
@@ -584,17 +638,17 @@ type Item struct {
     Source           string     `xml:"source,omitempty"`
     PubDate          *time.Time `xml:"-"`
     PubDateFormatted string     `xml:"pubDate,omitempty"`
-    Enclosure        *Enclosure
+    Enclosure        *Enclosure `xml:"enclosure"`
 
     // https://help.apple.com/itc/podcasts_connect/#/itcb54353390
-    IAuthor            string `xml:"itunes:author,omitempty"`
-    ISubtitle          string `xml:"itunes:subtitle,omitempty"`
-    ISummary           *ISummary
-    IImage             *IImage
-    IDuration          string `xml:"itunes:duration,omitempty"`
-    IExplicit          string `xml:"itunes:explicit,omitempty"`
-    IIsClosedCaptioned string `xml:"itunes:isClosedCaptioned,omitempty"`
-    IOrder             string `xml:"itunes:order,omitempty"`
+    IAuthor            string    `xml:"itunes:author,omitempty"`
+    ISubtitle          string    `xml:"itunes:subtitle,omitempty"`
+    ISummary           *ISummary `xml:"itunes:summary"`
+    IImage             *IImage   `xml:"itunes:image"`
+    IDuration          string    `xml:"itunes:duration,omitempty"`
+    IExplicit          string    `xml:"itunes:explicit,omitempty"`
+    IIsClosedCaptioned string    `xml:"itunes:isClosedCaptioned,omitempty"`
+    IOrder             string    `xml:"itunes:order,omitempty"`
 }
 ```
 Item represents a single entry in a podcast.
@@ -723,42 +777,42 @@ such as html links: `<a href="<a href="http://www.apple.com">http://www.apple.co
 ## <a name="Podcast">type</a> [Podcast](./podcast.go#L20-L59)
 ``` go
 type Podcast struct {
-    XMLName        xml.Name `xml:"channel"`
-    Title          string   `xml:"title"`
-    Link           string   `xml:"link"`
-    Description    string   `xml:"description"`
-    Category       string   `xml:"category,omitempty"`
-    Cloud          string   `xml:"cloud,omitempty"`
-    Copyright      string   `xml:"copyright,omitempty"`
-    Docs           string   `xml:"docs,omitempty"`
-    Generator      string   `xml:"generator,omitempty"`
-    Language       string   `xml:"language,omitempty"`
-    LastBuildDate  string   `xml:"lastBuildDate,omitempty"`
-    ManagingEditor string   `xml:"managingEditor,omitempty"`
-    PubDate        string   `xml:"pubDate,omitempty"`
-    Rating         string   `xml:"rating,omitempty"`
-    SkipHours      string   `xml:"skipHours,omitempty"`
-    SkipDays       string   `xml:"skipDays,omitempty"`
-    TTL            int      `xml:"ttl,omitempty"`
-    WebMaster      string   `xml:"webMaster,omitempty"`
-    Image          *Image
-    TextInput      *TextInput
-    AtomLink       *AtomLink
+    XMLName        xml.Name   `xml:"channel"`
+    Title          string     `xml:"title"`
+    Link           string     `xml:"link"`
+    Description    string     `xml:"description"`
+    Category       string     `xml:"category,omitempty"`
+    Cloud          string     `xml:"cloud,omitempty"`
+    Copyright      string     `xml:"copyright,omitempty"`
+    Docs           string     `xml:"docs,omitempty"`
+    Generator      string     `xml:"generator,omitempty"`
+    Language       string     `xml:"language,omitempty"`
+    LastBuildDate  string     `xml:"lastBuildDate,omitempty"`
+    ManagingEditor string     `xml:"managingEditor,omitempty"`
+    PubDate        string     `xml:"pubDate,omitempty"`
+    Rating         string     `xml:"rating,omitempty"`
+    SkipHours      string     `xml:"skipHours,omitempty"`
+    SkipDays       string     `xml:"skipDays,omitempty"`
+    TTL            int        `xml:"ttl,omitempty"`
+    WebMaster      string     `xml:"webMaster,omitempty"`
+    Image          *Image     `xml:"image"`
+    TextInput      *TextInput `xml:"textInput"`
+    AtomLink       *AtomLink  `xml:"atom:link"`
 
     // https://help.apple.com/itc/podcasts_connect/#/itcb54353390
-    IAuthor     string `xml:"itunes:author,omitempty"`
-    ISubtitle   string `xml:"itunes:subtitle,omitempty"`
-    ISummary    *ISummary
-    IBlock      string `xml:"itunes:block,omitempty"`
-    IImage      *IImage
-    IDuration   string  `xml:"itunes:duration,omitempty"`
-    IExplicit   string  `xml:"itunes:explicit,omitempty"`
-    IComplete   string  `xml:"itunes:complete,omitempty"`
-    INewFeedURL string  `xml:"itunes:new-feed-url,omitempty"`
-    IOwner      *Author // Author is formatted for itunes as-is
-    ICategories []*ICategory
+    IAuthor     string       `xml:"itunes:author,omitempty"`
+    ISubtitle   string       `xml:"itunes:subtitle,omitempty"`
+    ISummary    *ISummary    `xml:"itunes:summary"`
+    IBlock      string       `xml:"itunes:block,omitempty"`
+    IImage      *IImage      `xml:"itunes:image"`
+    IDuration   string       `xml:"itunes:duration,omitempty"`
+    IExplicit   string       `xml:"itunes:explicit,omitempty"`
+    IComplete   string       `xml:"itunes:complete,omitempty"`
+    INewFeedURL string       `xml:"itunes:new-feed-url,omitempty"`
+    IOwner      *Author      `xml:"itunes:owner"` // Author is formatted for itunes as-is
+    ICategories []*ICategory `xml:"itunes:category"`
 
-    Items []*Item
+    Items []*Item `xml:"item"`
     // contains filtered or unexported fields
 }
 ```

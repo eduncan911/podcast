@@ -100,6 +100,22 @@
 //
 // Release Notes
 //
+// v2.0.0
+//   * Major release that implements a few small breaking changes
+//   * Full refresh of iTunes tags per April 2019 iTunes updates
+//   * Added ability to read existing Podcast feeds
+//	 * Added full Un-marshalling and Marshalling support
+//
+//   Please see the 2.0.0 release for all breaking changes.
+//
+// Todo:
+// * finish implementing custom UnmarhalXML and MarshalXML work.
+// * add logic to handle <rss> root element (Breaking Changes?).
+// * if we have to make a breaking change, rename Podcast -> Channel.
+// * add Examples for reading existing Feeds.
+// * determine if we should blow up, or allow malformed feeds?
+// * update README.
+//
 // v1.4.2
 //   * Slim down Go Modules for consumers (#32)
 //
