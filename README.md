@@ -158,125 +158,29 @@ v1.0.0
 	* Initial release.
 	* Full documentation, full examples and complete code coverage.
 
+The only limitation you may run into is with formatting of certain fields, such
+as Enclosure.EnclosureType and Item.PubDate.  You should really let the package
+handle these for you as it would remain compliant.
+
 ### References
 RSS 2.0: <a href="https://cyber.harvard.edu/rss/rss.html">https://cyber.harvard.edu/rss/rss.html</a>
 
 Podcasts: <a href="https://help.apple.com/itc/podcasts_connect/#/itca5b22233">https://help.apple.com/itc/podcasts_connect/#/itca5b22233</a>
 
-#### Example:
+### Contributing
+Use standard git-flow patterns here.
 
-<details>
-<summary>Click to expand code.</summary>
+* "develop" should remain stable and releasable at all times (100% code coverage,
+full Examples, doc.go updated, etc).
+* Branch from "develop" into your feature or bug branch.
+* Create a PR against "develop" branch.
 
-```go
-// ResponseWriter example using Podcast.Encode(w io.Writer).
-	//
-	httpHandler := func(w http.ResponseWriter, r *http.Request) {
-	
-	    // instantiate a new Podcast
-	    p := podcast.New(
-	        "eduncan911 Podcasts",
-	        "http://eduncan911.com/",
-	        "An example Podcast",
-	        &pubDate, &updatedDate,
-	    )
-	
-	    // add some channel properties
-	    p.AddAuthor("Jane Doe", "me@janedoe.com")
-	    p.AddAtomLink("http://eduncan911.com/feed.rss")
-	    p.AddImage("http://janedoe.com/i.jpg")
-	    p.AddSummary(`link <a href="http://example.com">example.com</a>`)
-	    p.IExplicit = "no"
-	
-	    for i := int64(1); i < 3; i++ {
-	        n := strconv.FormatInt(i, 10)
-	        d := pubDate.AddDate(0, 0, int(i))
-	
-	        // create an Item
-	        item := podcast.Item{
-	            Title:       "Episode " + n,
-	            Link:        "http://example.com/" + n + ".mp3",
-	            Description: "Description for Episode " + n,
-	            PubDate:     &d,
-	        }
-	        item.AddImage("http://example.com/episode-" + n + ".png")
-	        item.AddSummary(`item <a href="http://example.com">example.com</a>`)
-	        // add a Download to the Item
-	        item.AddEnclosure("http://e.com/"+n+".mp3", podcast.MP3, 55*(i+1))
-	
-	        // add the Item and check for validation errors
-	        if _, err := p.AddItem(item); err != nil {
-	            fmt.Println(item.Title, ": error", err.Error())
-	            return
-	        }
-	    }
-	
-	    // set the Content Type to that of XML
-	    w.Header().Set("Content-Type", "application/xml")
-	
-	    // finally, Encode and write the Podcast to the ResponseWriter.
-	    //
-	    // a simple pattern is to handle any errors within this check.
-	    // alternatively if using middleware, you can just return
-	    // the Podcast entity as it also implements the io.Writer interface
-	    // that complies with several middleware packages.
-	    if err := p.Encode(w); err != nil {
-	        http.Error(w, err.Error(), http.StatusInternalServerError)
-	    }
-	}
-	
-	rr := httptest.NewRecorder()
-	httpHandler(rr, nil)
-	os.Stdout.Write(rr.Body.Bytes())
-	// Output:
-	// <?xml version="1.0" encoding="UTF-8"?>
-	// <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
-	//   <channel>
-	//     <title>eduncan911 Podcasts</title>
-	//     <link>http://eduncan911.com/</link>
-	//     <description>An example Podcast</description>
-	//     <generator>go podcast v1.3.1 (github.com/eduncan911/podcast)</generator>
-	//     <language>en-us</language>
-	//     <lastBuildDate>Mon, 06 Feb 2017 08:21:52 +0000</lastBuildDate>
-	//     <managingEditor>me@janedoe.com (Jane Doe)</managingEditor>
-	//     <pubDate>Sat, 04 Feb 2017 08:21:52 +0000</pubDate>
-	//     <image>
-	//       <url>http://janedoe.com/i.jpg</url>
-	//       <title>eduncan911 Podcasts</title>
-	//       <link>http://eduncan911.com/</link>
-	//     </image>
-	//     <atom:link href="http://eduncan911.com/feed.rss" rel="self" type="application/rss+xml"></atom:link>
-	//     <itunes:author>me@janedoe.com (Jane Doe)</itunes:author>
-	//     <itunes:summary><![CDATA[link <a href="http://example.com">example.com</a>]]></itunes:summary>
-	//     <itunes:image href="http://janedoe.com/i.jpg"></itunes:image>
-	//     <itunes:explicit>no</itunes:explicit>
-	//     <item>
-	//       <guid>http://e.com/1.mp3</guid>
-	//       <title>Episode 1</title>
-	//       <link>http://example.com/1.mp3</link>
-	//       <description>Description for Episode 1</description>
-	//       <pubDate>Sun, 05 Feb 2017 08:21:52 +0000</pubDate>
-	//       <enclosure url="http://e.com/1.mp3" length="110" type="audio/mpeg"></enclosure>
-	//       <itunes:author>me@janedoe.com (Jane Doe)</itunes:author>
-	//       <itunes:summary><![CDATA[item <a href="http://example.com">example.com</a>]]></itunes:summary>
-	//       <itunes:image href="http://example.com/episode-1.png"></itunes:image>
-	//     </item>
-	//     <item>
-	//       <guid>http://e.com/2.mp3</guid>
-	//       <title>Episode 2</title>
-	//       <link>http://example.com/2.mp3</link>
-	//       <description>Description for Episode 2</description>
-	//       <pubDate>Mon, 06 Feb 2017 08:21:52 +0000</pubDate>
-	//       <enclosure url="http://e.com/2.mp3" length="165" type="audio/mpeg"></enclosure>
-	//       <itunes:author>me@janedoe.com (Jane Doe)</itunes:author>
-	//       <itunes:summary><![CDATA[item <a href="http://example.com">example.com</a>]]></itunes:summary>
-	//       <itunes:image href="http://example.com/episode-2.png"></itunes:image>
-	//     </item>
-	//   </channel>
-	// </rss>
-```
+In addition, I ask that you rebase from "develop" and Squash all of your commits
+into a single commit. (git rebase -i origin/develop)  I like single clean code
+commits into develop and master to track what changed, by who and when.
 
-</details>
+### Final Release
+This project is now in maintenance mode.  This means no more planned releases expected.
 
 #### Example:
 
@@ -398,8 +302,9 @@ Podcasts: <a href="https://help.apple.com/itc/podcasts_connect/#/itca5b22233">ht
 		- [Versioning](#versioning)
 		- [Release Notes](#release-notes)
 		- [References](#references)
+		- [Contributing](#contributing)
+		- [Final Release](#final-release)
 			- [Example:](#example)
-			- [Example:](#example-1)
 	- [Table of Contents](#table-of-contents)
 	- [<a name="pkg-imports">Imported Packages</a>](#imported-packages)
 	- [<a name="pkg-index">Index</a>](#index)
@@ -421,35 +326,36 @@ Podcasts: <a href="https://help.apple.com/itc/podcasts_connect/#/itca5b22233">ht
 	- [<a name="Image">type</a> Image](#type-image)
 	- [<a name="Item">type</a> Item](#type-item)
 		- [<a name="Item.AddDuration">func</a> (\*Item) AddDuration](#func-item-addduration)
-			- [Example:](#example-2)
+			- [Example:](#example-1)
 		- [<a name="Item.AddEnclosure">func</a> (\*Item) AddEnclosure](#func-item-addenclosure)
 		- [<a name="Item.AddImage">func</a> (\*Item) AddImage](#func-item-addimage)
 		- [<a name="Item.AddPubDate">func</a> (\*Item) AddPubDate](#func-item-addpubdate)
-			- [Example:](#example-3)
+			- [Example:](#example-2)
 		- [<a name="Item.AddSummary">func</a> (\*Item) AddSummary](#func-item-addsummary)
 	- [<a name="Podcast">type</a> Podcast](#type-podcast)
 		- [<a name="New">func</a> New](#func-new)
-			- [Example:](#example-4)
+			- [Example:](#example-3)
 		- [<a name="Podcast.AddAtomLink">func</a> (\*Podcast) AddAtomLink](#func-podcast-addatomlink)
 		- [<a name="Podcast.AddAuthor">func</a> (\*Podcast) AddAuthor](#func-podcast-addauthor)
-			- [Example:](#example-5)
+			- [Example:](#example-4)
 		- [<a name="Podcast.AddCategory">func</a> (\*Podcast) AddCategory](#func-podcast-addcategory)
-			- [Example:](#example-6)
+			- [Example:](#example-5)
 		- [<a name="Podcast.AddImage">func</a> (\*Podcast) AddImage](#func-podcast-addimage)
-			- [Example:](#example-7)
+			- [Example:](#example-6)
 		- [<a name="Podcast.AddItem">func</a> (\*Podcast) AddItem](#func-podcast-additem)
-			- [Example:](#example-8)
+			- [Example:](#example-7)
 		- [<a name="Podcast.AddLastBuildDate">func</a> (\*Podcast) AddLastBuildDate](#func-podcast-addlastbuilddate)
-			- [Example:](#example-9)
+			- [Example:](#example-8)
 		- [<a name="Podcast.AddPubDate">func</a> (\*Podcast) AddPubDate](#func-podcast-addpubdate)
-			- [Example:](#example-10)
+			- [Example:](#example-9)
 		- [<a name="Podcast.AddSubTitle">func</a> (\*Podcast) AddSubTitle](#func-podcast-addsubtitle)
 		- [<a name="Podcast.AddSummary">func</a> (\*Podcast) AddSummary](#func-podcast-addsummary)
-			- [Example:](#example-11)
+			- [Example:](#example-10)
 		- [<a name="Podcast.Bytes">func</a> (\*Podcast) Bytes](#func-podcast-bytes)
-			- [Example:](#example-12)
+			- [Example:](#example-11)
 		- [<a name="Podcast.Encode">func</a> (\*Podcast) Encode](#func-podcast-encode)
 		- [<a name="Podcast.String">func</a> (\*Podcast) String](#func-podcast-string)
+		- [<a name="Podcast.UnmarshalXML">func</a> (\*Podcast) UnmarshalXML](#func-podcast-unmarshalxml)
 	- [<a name="TextInput">type</a> TextInput](#type-textinput)
 
 #### <a name="pkg-examples">Examples</a>
@@ -1311,6 +1217,12 @@ Encode writes the bytes to the io.Writer stream in RSS 2.0 specification.
 func (p *Podcast) String() string
 ```
 String encodes the Podcast state to a string.
+
+### <a name="Podcast.UnmarshalXML">func</a> (\*Podcast) [UnmarshalXML](./podcast.go#L409)
+``` go
+func (p *Podcast) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error
+```
+UnmarshalXML handles the custom formatting to a strongly typed value.
 
 ## <a name="TextInput">type</a> [TextInput](./textinput.go#L6-L12)
 ``` go

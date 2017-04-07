@@ -48,6 +48,11 @@
 // be unmarshalled - hence the work for 2.x).
 //
 // Fuzzing Inputs
+// The only limitation you may run into is with formatting of certain fields, such
+// as Enclosure.EnclosureType and Item.PubDate.  You should really let the package
+// handle these for you as it would remain compliant.
+//
+// References
 //
 // `go-fuzz` has been added in 1.4.1, covering all exported API methods.  They have been
 // ran extensively and no issues have come out of them yet (most tests were ran overnight,
@@ -64,6 +69,20 @@
 //   go-fuzz -func FuzzPodcastAddItem
 //
 // To obtain a list of available funcs to pass, just run `go-fuzz` without any parameters:
+// Contributing
+//
+// Use standard git-flow patterns here.
+//
+// * "develop" should remain stable and releasable at all times (100% code coverage,
+// full Examples, doc.go updated, etc).
+// * Branch from "develop" into your feature or bug branch.
+// * Create a PR against "develop" branch.
+//
+// In addition, I ask that you rebase from "develop" and Squash all of your commits
+// into a single commit. (git rebase -i origin/develop)  I like single clean code
+// commits into develop and master to track what changed, by who and when.
+//
+// Final Release
 //
 //   $ go-fuzz
 //   2020/02/13 07:27:32 -func flag not provided, but multiple fuzz functions available:
