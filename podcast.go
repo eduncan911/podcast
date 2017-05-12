@@ -266,7 +266,7 @@ func (p *Podcast) AddImage(url string) {
 func (p *Podcast) AddItem(i Item) (int, error) {
 	// initial guards for required fields
 	if len(i.Title) == 0 || len(i.Description) == 0 {
-		return len(p.Items), errors.New("Title and Description are reuired")
+		return len(p.Items), errors.New("Title and Description are required")
 	}
 	if i.Enclosure != nil {
 		if len(i.Enclosure.URL) == 0 {

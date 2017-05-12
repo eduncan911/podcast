@@ -150,6 +150,7 @@ func TestAddItemEmptyTitleDescription(t *testing.T) {
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "Title")
 	assert.Contains(t, err.Error(), "Description")
+	assert.Contains(t, err.Error(), "required")
 }
 
 func TestAddItemEmptyEnclosureURL(t *testing.T) {
