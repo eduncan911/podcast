@@ -7,6 +7,7 @@ import (
 	"io"
 	"strconv"
 	"time"
+	"unicode/utf8"
 
 	"github.com/pkg/errors"
 )
@@ -347,10 +348,11 @@ func (p *Podcast) AddLastBuildDate(datetime *time.Time) {
 // Note that this field should be just a few words long according to Apple.
 // This method will truncate the string to 64 chars if too long with "..."
 func (p *Podcast) AddSubTitle(subTitle string) {
-	if len(subTitle) == 0 {
+	count := utf8.RuneCountInString(subTitle)
+	if count == 0 {
 		return
 	}
-	if len(subTitle) > 64 {
+	if count > 64 {
 		s := []rune(subTitle)
 		subTitle = string(s[0:61]) + "..."
 	}
@@ -364,10 +366,11 @@ func (p *Podcast) AddSubTitle(subTitle string) {
 // Note that this field is a CDATA encoded field which allows for rich text
 // such as html links: <a href="http://www.apple.com">Apple</a>.
 func (p *Podcast) AddSummary(summary string) {
-	if len(summary) == 0 {
+	count := utf8.RuneCountInString(summary)
+	if count == 0 {
 		return
 	}
-	if len(summary) > 4000 {
+	if count > 4000 {
 		s := []rune(summary)
 		summary = string(s[0:4000])
 	}

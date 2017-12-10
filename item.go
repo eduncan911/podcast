@@ -3,6 +3,7 @@ package podcast
 import (
 	"encoding/xml"
 	"time"
+	"unicode/utf8"
 )
 
 // Item represents a single entry in a podcast.
@@ -88,7 +89,8 @@ func (i *Item) AddPubDate(datetime *time.Time) {
 // Note that this field is a CDATA encoded field which allows for rich text
 // such as html links: <a href="http://www.apple.com">Apple</a>.
 func (i *Item) AddSummary(summary string) {
-	if len(summary) > 4000 {
+	count := utf8.RuneCountInString(summary)
+	if count > 4000 {
 		s := []rune(summary)
 		summary = string(s[0:4000])
 	}
