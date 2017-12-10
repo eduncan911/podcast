@@ -456,12 +456,29 @@ var parseAuthorNameEmail = func(a *Author) string {
 }
 
 var parseDuration = func(duration int64) string {
-	// TODO: parse the output into iTunes nicely formatted version.
-	//
-	// iTunes supports the following:
-	//  HH:MM:SS
-	//  H:MM:SS
-	//  MM:SS
-	//  M:SS
-	return strconv.FormatInt(duration, 10)
+	h := duration / 3600
+	duration = duration % 3600
+
+	m := duration / 60
+	duration = duration % 60
+
+	s := duration
+
+	// HH:MM:SS
+	if h > 9 {
+		return fmt.Sprintf("%02d:%02d:%02d", h, m, s)
+	}
+
+	// H:MM:SS
+	if h > 0 {
+		return fmt.Sprintf("%d:%02d:%02d", h, m, s)
+	}
+
+	// MM:SS
+	if m > 9 {
+		return fmt.Sprintf("%02d:%02d", m, s)
+	}
+
+	// M:SS
+	return fmt.Sprintf("%d:%02d", m, s)
 }
