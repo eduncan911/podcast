@@ -437,13 +437,6 @@ var encoder = func(w io.Writer, o interface{}) error {
 	return nil
 }
 
-var parseDateRFC1123Z = func(t *time.Time) string {
-	if t != nil && !t.IsZero() {
-		return t.Format(time.RFC1123Z)
-	}
-	return time.Now().UTC().Format(time.RFC1123Z)
-}
-
 var parseAuthorNameEmail = func(a *Author) string {
 	var author string
 	if a != nil {
@@ -453,32 +446,4 @@ var parseAuthorNameEmail = func(a *Author) string {
 		}
 	}
 	return author
-}
-
-var parseDuration = func(duration int64) string {
-	h := duration / 3600
-	duration = duration % 3600
-
-	m := duration / 60
-	duration = duration % 60
-
-	s := duration
-
-	// HH:MM:SS
-	if h > 9 {
-		return fmt.Sprintf("%02d:%02d:%02d", h, m, s)
-	}
-
-	// H:MM:SS
-	if h > 0 {
-		return fmt.Sprintf("%d:%02d:%02d", h, m, s)
-	}
-
-	// MM:SS
-	if m > 9 {
-		return fmt.Sprintf("%02d:%02d", m, s)
-	}
-
-	// M:SS
-	return fmt.Sprintf("%d:%02d", m, s)
 }
