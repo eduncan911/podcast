@@ -278,6 +278,32 @@ func TestAddItemNoEnclosureGUIDValid(t *testing.T) {
 	assert.EqualValues(t, theLink, p.Items[0].GUID)
 }
 
+func TestAddItemWithEnclosureGUIDSet(t *testing.T) {
+	t.Parallel()
+
+	// arrange
+	theLink := "http://someotherurl.com/story.html"
+	theGUID := "someGUID"
+	length := 3
+	p := podcast.New("title", "link", "description", nil, nil)
+	i := podcast.Item{
+		Title:       "title",
+		Description: "desc",
+		GUID:        theGUID,
+	}
+	i.AddEnclosure(theLink, podcast.MP3, int64(length))
+
+	// act
+	added, err := p.AddItem(i)
+
+	// assert
+	assert.EqualValues(t, 1, added)
+	assert.NoError(t, err)
+	assert.Len(t, p.Items, 1)
+	assert.EqualValues(t, theGUID, p.Items[0].GUID)
+	assert.EqualValues(t, length, p.Items[0].Enclosure.Length)
+}
+
 func TestAddItemAuthor(t *testing.T) {
 	t.Parallel()
 
