@@ -87,7 +87,7 @@ func (i *Item) AddPubDate(datetime *time.Time) {
 // Limit: 4000 characters
 //
 // Note that this field is a CDATA encoded field which allows for rich text
-// such as html links: <a href="http://www.apple.com">Apple</a>.
+// such as html links: `<a href="http://www.apple.com">Apple</a>`.
 func (i *Item) AddSummary(summary string) {
 	count := utf8.RuneCountInString(summary)
 	if count > 4000 {

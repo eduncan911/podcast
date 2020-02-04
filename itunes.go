@@ -27,7 +27,7 @@ type IImage struct {
 
 // ISummary is a 4000 character rich-text field for the itunes:summary tag.
 //
-// This is rendered as CDATA which allows for HTML tags such as <a href="">.
+// This is rendered as CDATA which allows for HTML tags such as `<a href="">`.
 type ISummary struct {
 	XMLName xml.Name `xml:"itunes:summary"`
 	Text    string   `xml:",cdata"`

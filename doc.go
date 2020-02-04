@@ -15,8 +15,8 @@
 // logic required to comply with the specifications and ensure a compliant feed.
 // A number of overrides occur to help with iTunes visibility of your episodes.
 //
-// Notably, the [Podcast.AddItem(i Item)](#Podcast.AddItem) function performs most
-// of the heavy lifting by taking the [Item](#Item) input and performing
+// Notably, the `Podcast.AddItem` function performs most
+// of the heavy lifting by taking the `Item` input and performing
 // validation, overrides and duplicate setters through the feed.
 //
 // Full detailed Examples of the API are at https://godoc.org/github.com/eduncan911/podcast.
@@ -50,33 +50,33 @@
 // Release Notes
 //
 // 1.3.1
-// * increased itunes compliance after feedback from Apple:
-// - specified what categories should be set with AddCategory().
-// - enforced title and link as part of Image.
-// * added Podcast.AddAtomLink() for more broad compliance to readers.
+//   * increased itunes compliance after feedback from Apple:
+//     - specified what categories should be set with AddCategory().
+//     - enforced title and link as part of Image.
+//   * added Podcast.AddAtomLink() for more broad compliance to readers.
 //
 // 1.3.0
-// * fixes Item.Duration being set incorrectly.
-// * changed Item.AddEnclosure() parameter definition (Bytes not Seconds!).
-// * added Item.AddDuration formatting and override.
-// * added more documentation surrounding Item.Enclosure{}
+//   * fixes Item.Duration being set incorrectly.
+//   * changed Item.AddEnclosure() parameter definition (Bytes not Seconds!).
+//   * added Item.AddDuration formatting and override.
+//   * added more documentation surrounding Item.Enclosure{}
 //
 // 1.2.1
-// * added Podcast.AddSubTitle() and truncating to 64 chars.
-// * added a number of Guards to protect against empty fields.
+//   * added Podcast.AddSubTitle() and truncating to 64 chars.
+//   * added a number of Guards to protect against empty fields.
 //
 // 1.2.0
-// * added Podcast.AddPubDate() and Podcast.AddLastBuildDate() overrides.
-// * added Item.AddImage() to mask some cumbersome addition of IImage.
-// * added Item.AddPubDate to simply datetime setters.
-// * added more examples (mostly around Item struct).
-// * tweaked some documentation.
+//   * added Podcast.AddPubDate() and Podcast.AddLastBuildDate() overrides.
+//   * added Item.AddImage() to mask some cumbersome addition of IImage.
+//   * added Item.AddPubDate to simply datetime setters.
+//   * added more examples (mostly around Item struct).
+//   * tweaked some documentation.
 //
 // 1.1.0
-// * Enabling CDATA in ISummary fields for Podcast and Channel.
+//   * Enabling CDATA in ISummary fields for Podcast and Channel.
 //
 // 1.0.0
-// * Initial release.
-// * Full documentation, full examples and complete code coverage.
+//   * Initial release.
+//   * Full documentation, full examples and complete code coverage.
 //
 package podcast
