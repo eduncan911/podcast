@@ -21,8 +21,8 @@ The API exposes a number of method receivers on structs that implements the
 logic required to comply with the specifications and ensure a compliant feed.
 A number of overrides occur to help with iTunes visibility of your episodes.
 
-Notably, the [Podcast.AddItem(i Item)](#Podcast.AddItem) function performs most
-of the heavy lifting by taking the [Item](#Item) input and performing
+Notably, the `Podcast.AddItem` function performs most
+of the heavy lifting by taking the `Item` input and performing
 validation, overrides and duplicate setters through the feed.
 
 Full detailed Examples of the API are at <a href="https://godoc.org/github.com/eduncan911/podcast">https://godoc.org/github.com/eduncan911/podcast</a>.
@@ -39,47 +39,71 @@ RSS 2.0: <a href="https://cyber.harvard.edu/rss/rss.html">https://cyber.harvard.
 
 Podcasts: <a href="https://help.apple.com/itc/podcasts_connect/#/itca5b22233">https://help.apple.com/itc/podcasts_connect/#/itca5b22233</a>
 
-### Final Release
-This project is now in maintenance mode.  This means no more planned releases expected.
+### Roadmap
+The 1.x branch is now mostly in maintenance mode, open to PRs.  This means no
+more planned features on the 1.x feature branch is expected. With the success of 6
+iTunes-accepted podcasts I have published with this library, and with the feedback from
+the community, the 1.x releases are now considered stable.
 
-With the success of 6 iTunes-accepted podcasts I have published with this library, and
-with the feedback from the community, this library is now considered stable and complete.
+The 2.x branch's primary focus is to allow for bi-direction marshalling both ways.
+Currently, the 1.x branch only allows unmarshalling to a serial feed.  An attempt to marshall
+a serialized feed back into a Podcast form will error or not work correctly.  Note that while
+the 2.x branch is targeted to remain backwards compatible, it is true if using the public
+API funcs to set parameters only.  Several of the underlying public fields are being removed
+in order to accommodate the marshalling of serialized data.  Therefore, a version 2.x is denoted
+for this release.
 
-Feel free to open an issue, file a bug or suggest a non-breaking enhancement and I will
-address it as soon as possible.
+### Versioning
+We use SemVer versioning schema.  You can rest assured that pulling 1.x branches will
+remain backwards compatible now and into the future.
 
-Thank you!
+However, the new 2.x branch, while keeping the same API, is expected break those that
+bypass the API methods and use the underlying public properties instead.
 
 ### Release Notes
+1.3.2
+
+	* Correct count len of UTF8 strings (#9)
+	* Implement duration parser (#8)
+	* Fix Github and GoDocs Markdown (#14)
+	* Move podcast.go Private Methods to Respected Files (#12)
+	* Allow providing GUID on Podcast (#15)
+
 1.3.1
-* increased itunes compliance after feedback from Apple:
-- specified what categories should be set with AddCategory().
-- enforced title and link as part of Image.
-* added Podcast.AddAtomLink() for more broad compliance to readers.
+
+	* increased itunes compliance after feedback from Apple:
+	  - specified what categories should be set with AddCategory().
+	  - enforced title and link as part of Image.
+	* added Podcast.AddAtomLink() for more broad compliance to readers.
 
 1.3.0
-* fixes Item.Duration being set incorrectly.
-* changed Item.AddEnclosure() parameter definition (Bytes not Seconds!).
-* added Item.AddDuration formatting and override.
-* added more documentation surrounding Item.Enclosure{}
+
+	* fixes Item.Duration being set incorrectly.
+	* changed Item.AddEnclosure() parameter definition (Bytes not Seconds!).
+	* added Item.AddDuration formatting and override.
+	* added more documentation surrounding Item.Enclosure{}
 
 1.2.1
-* added Podcast.AddSubTitle() and truncating to 64 chars.
-* added a number of Guards to protect against empty fields.
+
+	* added Podcast.AddSubTitle() and truncating to 64 chars.
+	* added a number of Guards to protect against empty fields.
 
 1.2.0
-* added Podcast.AddPubDate() and Podcast.AddLastBuildDate() overrides.
-* added Item.AddImage() to mask some cumbersome addition of IImage.
-* added Item.AddPubDate to simply datetime setters.
-* added more examples (mostly around Item struct).
-* tweaked some documentation.
+
+	* added Podcast.AddPubDate() and Podcast.AddLastBuildDate() overrides.
+	* added Item.AddImage() to mask some cumbersome addition of IImage.
+	* added Item.AddPubDate to simply datetime setters.
+	* added more examples (mostly around Item struct).
+	* tweaked some documentation.
 
 1.1.0
-* Enabling CDATA in ISummary fields for Podcast and Channel.
+
+	* Enabling CDATA in ISummary fields for Podcast and Channel.
 
 1.0.0
-* Initial release.
-* Full documentation, full examples and complete code coverage.
+
+	* Initial release.
+	* Full documentation, full examples and complete code coverage.
 
 ## Table of Contents
 
@@ -249,7 +273,7 @@ type ISummary struct {
 ```
 ISummary is a 4000 character rich-text field for the itunes:summary tag.
 
-This is rendered as CDATA which allows for HTML tags such as <a href="">.
+This is rendered as CDATA which allows for HTML tags such as `<a href="">`.
 
 ## <a name="Image">type</a> [Image](./image.go#L13-L21)
 ``` go
@@ -272,7 +296,7 @@ extensions (.jpg, .png), and in the RGB colorspace. To optimize
 images for mobile devices, Apple recommends compressing your
 image files.
 
-## <a name="Item">type</a> [Item](./item.go#L25-L49)
+## <a name="Item">type</a> [Item](./item.go#L27-L51)
 ``` go
 type Item struct {
     XMLName          xml.Name   `xml:"item"`
@@ -318,20 +342,20 @@ Recommendations:
 - Always set an Enclosure.Length, to be nice to your downloaders.
 - Use Enclosure.Type instead of setting TypeFormatted for valid extensions.
 
-### <a name="Item.AddDuration">func</a> (\*Item) [AddDuration](./item.go#L101)
+### <a name="Item.AddDuration">func</a> (\*Item) [AddDuration](./item.go#L104)
 ``` go
 func (i *Item) AddDuration(durationInSeconds int64)
 ```
 AddDuration adds the duration to the iTunes duration field.
 
-### <a name="Item.AddEnclosure">func</a> (\*Item) [AddEnclosure](./item.go#L52-L53)
+### <a name="Item.AddEnclosure">func</a> (\*Item) [AddEnclosure](./item.go#L54-L55)
 ``` go
 func (i *Item) AddEnclosure(
     url string, enclosureType EnclosureType, lengthInBytes int64)
 ```
 AddEnclosure adds the downloadable asset to the podcast Item.
 
-### <a name="Item.AddImage">func</a> (\*Item) [AddImage](./item.go#L70)
+### <a name="Item.AddImage">func</a> (\*Item) [AddImage](./item.go#L72)
 ``` go
 func (i *Item) AddImage(url string)
 ```
@@ -345,7 +369,7 @@ extensions (.jpg, .png), and in the RGB colorspace. To optimize
 images for mobile devices, Apple recommends compressing your
 image files.
 
-### <a name="Item.AddPubDate">func</a> (\*Item) [AddPubDate](./item.go#L79)
+### <a name="Item.AddPubDate">func</a> (\*Item) [AddPubDate](./item.go#L81)
 ``` go
 func (i *Item) AddPubDate(datetime *time.Time)
 ```
@@ -353,7 +377,7 @@ AddPubDate adds the datetime as a parsed PubDate.
 
 UTC time is used by default.
 
-### <a name="Item.AddSummary">func</a> (\*Item) [AddSummary](./item.go#L90)
+### <a name="Item.AddSummary">func</a> (\*Item) [AddSummary](./item.go#L92)
 ``` go
 func (i *Item) AddSummary(summary string)
 ```
@@ -362,9 +386,9 @@ AddSummary adds the iTunes summary.
 Limit: 4000 characters
 
 Note that this field is a CDATA encoded field which allows for rich text
-such as html links: <a href="<a href="http://www.apple.com">http://www.apple.com</a>">Apple</a>.
+such as html links: `<a href="<a href="http://www.apple.com">http://www.apple.com</a>">Apple</a>`.
 
-## <a name="Podcast">type</a> [Podcast](./podcast.go#L19-L58)
+## <a name="Podcast">type</a> [Podcast](./podcast.go#L20-L59)
 ``` go
 type Podcast struct {
     XMLName        xml.Name `xml:"channel"`
@@ -408,7 +432,7 @@ type Podcast struct {
 ```
 Podcast represents a podcast.
 
-### <a name="New">func</a> [New](./podcast.go#L64-L65)
+### <a name="New">func</a> [New](./podcast.go#L65-L66)
 ``` go
 func New(title, link, description string,
     pubDate, lastBuildDate *time.Time) Podcast
@@ -418,19 +442,19 @@ New instantiates a Podcast with required parameters.
 Nil-able fields are optional but recommended as they are formatted
 to the expected proper formats.
 
-### <a name="Podcast.AddAtomLink">func</a> (\*Podcast) [AddAtomLink](./podcast.go#L93)
+### <a name="Podcast.AddAtomLink">func</a> (\*Podcast) [AddAtomLink](./podcast.go#L94)
 ``` go
 func (p *Podcast) AddAtomLink(href string)
 ```
 AddAtomLink adds a FQDN reference to an atom feed.
 
-### <a name="Podcast.AddAuthor">func</a> (\*Podcast) [AddAuthor](./podcast.go#L81)
+### <a name="Podcast.AddAuthor">func</a> (\*Podcast) [AddAuthor](./podcast.go#L82)
 ``` go
 func (p *Podcast) AddAuthor(name, email string)
 ```
 AddAuthor adds the specified Author to the podcast.
 
-### <a name="Podcast.AddCategory">func</a> (\*Podcast) [AddCategory](./podcast.go#L182)
+### <a name="Podcast.AddCategory">func</a> (\*Podcast) [AddCategory](./podcast.go#L183)
 ``` go
 func (p *Podcast) AddCategory(category string, subCategories []string)
 ```
@@ -445,75 +469,75 @@ Note that Apple iTunes has a specific list of categories that only can be
 used and will invalidate the feed if deviated from the list.  That list is
 as follows.
 
-Arts
-* Design
-* Fashion & Beauty
-* Food
-* Literature
-* Performing Arts
-* Visual Arts
-Business
-* Business News
-* Careers
-* Investing
-* Management & Marketing
-* Shopping
-Comedy
-Education
-* Education Technology
-* Higher Education
-* K-12
-* Language Courses
-* Training
-Games & Hobbies
-* Automotive
-* Aviation
-* Hobbies
-* Other Games
-* Video Games
-Government & Organizations
-* Local
-* National
-* Non-Profit
-* Regional
-Health
-* Alternative Health
-* Fitness & Nutrition
-* Self-Help
-* Sexuality
-Kids & Family
-Music
-News & Politics
-Religion & Spirituality
-* Buddhism
-* Christianity
-* Hinduism
-* Islam
-* Judaism
-* Other
-* Spirituality
-Science & Medicine
-* Medicine
-* Natural Sciences
-* Social Sciences
-Society & Culture
-* History
-* Personal Journals
-* Philosophy
-* Places & Travel
-Sports & Recreation
-* Amateur
-* College & High School
-* Outdoor
-* Professional
-Technology
-* Gadgets
-* Podcasting
-* Software How-To
-* Tech News
-TV & Film
+	* Arts
+	  * Design
+	  * Fashion & Beauty
+	  * Food
+	  * Literature
+	  * Performing Arts
+	  * Visual Arts
+	* Business
+	  * Business News
+	  * Careers
+	  * Investing
+	  * Management & Marketing
+	  * Shopping
+	* Comedy
+	* Education
+	  * Education Technology
+	  * Higher Education
+	  * K-12
+	  * Language Courses
+	  * Training
+	* Games & Hobbies
+	  * Automotive
+	  * Aviation
+	  * Hobbies
+	  * Other Games
+	  * Video Games
+	* Government & Organizations
+	  * Local
+	  * National
+	  * Non-Profit
+	  * Regional
+	* Health
+	  * Alternative Health
+	  * Fitness & Nutrition
+	  * Self-Help
+	  * Sexuality
+	* Kids & Family
+	* Music
+	* News & Politics
+	* Religion & Spirituality
+	  * Buddhism
+	  * Christianity
+	  * Hinduism
+	  * Islam
+	  * Judaism
+	  * Other
+	  * Spirituality
+	* Science & Medicine
+	  * Medicine
+	  * Natural Sciences
+	  * Social Sciences
+	* Society & Culture
+	  * History
+	  * Personal Journals
+	  * Philosophy
+	  * Places & Travel
+	* Sports & Recreation
+	  * Amateur
+	  * College & High School
+	  * Outdoor
+	  * Professional
+	* Technology
+	  * Gadgets
+	  * Podcasting
+	  * Software How-To
+	  * Tech News
+	* TV & Film
 
-### <a name="Podcast.AddImage">func</a> (\*Podcast) [AddImage](./podcast.go#L213)
+### <a name="Podcast.AddImage">func</a> (\*Podcast) [AddImage](./podcast.go#L214)
 ``` go
 func (p *Podcast) AddImage(url string)
 ```
@@ -526,7 +550,7 @@ extensions (.jpg, .png), and in the RGB colorspace. To optimize
 images for mobile devices, Apple recommends compressing your
 image files.
 
-### <a name="Podcast.AddItem">func</a> (\*Podcast) [AddItem](./podcast.go#L266)
+### <a name="Podcast.AddItem">func</a> (\*Podcast) [AddItem](./podcast.go#L267)
 ``` go
 func (p *Podcast) AddItem(i Item) (int, error)
 ```
@@ -536,7 +560,7 @@ errors in validation that may have occurred.
 This method takes the "itunes overrides" approach to populating
 itunes tags according to the overrides rules in the specification.
 This not only complies completely with iTunes parsing rules; but, it also
-displays what is possible to be set on an individual episode level - if you
+displays what is possible to be set on an individual episode level – if you
 wish to have more fine grain control over your content.
 
 This method imposes strict validation of the Item being added to confirm
@@ -544,37 +568,34 @@ to Podcast and iTunes specifications.
 
 Article minimal requirements are:
 
-* Title
-* Description
-* Link
+	* Title
+	* Description
+	* Link
 
 Audio, Video and Downloads minimal requirements are:
 
-* Title
-* Description
-* Enclosure (HREF, Type and Length all required)
+	* Title
+	* Description
+	* Enclosure (HREF, Type and Length all required)
 
 The following fields are always overwritten (don't set them):
 
-* GUID
-* PubDateFormatted
-* AuthorFormatted
-* Enclosure.TypeFormatted
-* Enclosure.LengthFormatted
+	* GUID
+	* PubDateFormatted
+	* AuthorFormatted
+	* Enclosure.TypeFormatted
+	* Enclosure.LengthFormatted
 
 Recommendations:
 
-* Just set the minimal fields: the rest get set for you.
-* Always set an Enclosure.Length, to be nice to your downloaders.
-* Follow Apple's best practices to enrich your podcasts:
+	* Just set the minimal fields: the rest get set for you.
+	* Always set an Enclosure.Length, to be nice to your downloaders.
+	* Follow Apple's best practices to enrich your podcasts:
+	  <a href="https://help.apple.com/itc/podcasts_connect/#/itc2b3780e76">https://help.apple.com/itc/podcasts_connect/#/itc2b3780e76</a>
+	* For specifications of itunes tags, see:
+	  <a href="https://help.apple.com/itc/podcasts_connect/#/itcb54353390">https://help.apple.com/itc/podcasts_connect/#/itcb54353390</a>
 
-	<a href="https://help.apple.com/itc/podcasts_connect/#/itc2b3780e76">https://help.apple.com/itc/podcasts_connect/#/itc2b3780e76</a>
-
-* For specifications of itunes tags, see:
-
-	<a href="https://help.apple.com/itc/podcasts_connect/#/itcb54353390">https://help.apple.com/itc/podcasts_connect/#/itcb54353390</a>
-
-### <a name="Podcast.AddLastBuildDate">func</a> (\*Podcast) [AddLastBuildDate](./podcast.go#L340)
+### <a name="Podcast.AddLastBuildDate">func</a> (\*Podcast) [AddLastBuildDate](./podcast.go#L343)
 ``` go
 func (p *Podcast) AddLastBuildDate(datetime *time.Time)
 ```
@@ -582,7 +603,7 @@ AddLastBuildDate adds the datetime as a parsed PubDate.
 
 UTC time is used by default.
 
-### <a name="Podcast.AddPubDate">func</a> (\*Podcast) [AddPubDate](./podcast.go#L333)
+### <a name="Podcast.AddPubDate">func</a> (\*Podcast) [AddPubDate](./podcast.go#L336)
 ``` go
 func (p *Podcast) AddPubDate(datetime *time.Time)
 ```
@@ -590,7 +611,7 @@ AddPubDate adds the datetime as a parsed PubDate.
 
 UTC time is used by default.
 
-### <a name="Podcast.AddSubTitle">func</a> (\*Podcast) [AddSubTitle](./podcast.go#L349)
+### <a name="Podcast.AddSubTitle">func</a> (\*Podcast) [AddSubTitle](./podcast.go#L352)
 ``` go
 func (p *Podcast) AddSubTitle(subTitle string)
 ```
@@ -600,7 +621,7 @@ in iTunes.
 Note that this field should be just a few words long according to Apple.
 This method will truncate the string to 64 chars if too long with "..."
 
-### <a name="Podcast.AddSummary">func</a> (\*Podcast) [AddSummary](./podcast.go#L366)
+### <a name="Podcast.AddSummary">func</a> (\*Podcast) [AddSummary](./podcast.go#L370)
 ``` go
 func (p *Podcast) AddSummary(summary string)
 ```
@@ -609,21 +630,21 @@ AddSummary adds the iTunes summary.
 Limit: 4000 characters
 
 Note that this field is a CDATA encoded field which allows for rich text
-such as html links: <a href="<a href="http://www.apple.com">http://www.apple.com</a>">Apple</a>.
+such as html links: `<a href="<a href="http://www.apple.com">http://www.apple.com</a>">Apple</a>`.
 
-### <a name="Podcast.Bytes">func</a> (\*Podcast) [Bytes](./podcast.go#L380)
+### <a name="Podcast.Bytes">func</a> (\*Podcast) [Bytes](./podcast.go#L385)
 ``` go
 func (p *Podcast) Bytes() []byte
 ```
 Bytes returns an encoded []byte slice.
 
-### <a name="Podcast.Encode">func</a> (\*Podcast) [Encode](./podcast.go#L385)
+### <a name="Podcast.Encode">func</a> (\*Podcast) [Encode](./podcast.go#L390)
 ``` go
 func (p *Podcast) Encode(w io.Writer) error
 ```
 Encode writes the bytes to the io.Writer stream in RSS 2.0 specification.
 
-### <a name="Podcast.String">func</a> (\*Podcast) [String](./podcast.go#L402)
+### <a name="Podcast.String">func</a> (\*Podcast) [String](./podcast.go#L407)
 ``` go
 func (p *Podcast) String() string
 ```

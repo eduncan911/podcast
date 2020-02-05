@@ -35,19 +35,37 @@
 //
 // Podcasts: https://help.apple.com/itc/podcasts_connect/#/itca5b22233
 //
-// Final Release
+// Roadmap
 //
-// This project is now in maintenance mode.  This means no more planned releases expected.
+// The 1.x branch is now mostly in maintenance mode, open to PRs.  This means no
+// more planned features on the 1.x feature branch is expected. With the success of 6
+// iTunes-accepted podcasts I have published with this library, and with the feedback from
+// the community, the 1.x releases are now considered stable.
 //
-// With the success of 6 iTunes-accepted podcasts I have published with this library, and
-// with the feedback from the community, this library is now considered stable and complete.
+// The 2.x branch's primary focus is to allow for bi-direction marshalling both ways.
+// Currently, the 1.x branch only allows unmarshalling to a serial feed.  An attempt to marshall
+// a serialized feed back into a Podcast form will error or not work correctly.  Note that while
+// the 2.x branch is targeted to remain backwards compatible, it is true if using the public
+// API funcs to set parameters only.  Several of the underlying public fields are being removed
+// in order to accommodate the marshalling of serialized data.  Therefore, a version 2.x is denoted
+// for this release.
 //
-// Feel free to open an issue, file a bug or suggest a non-breaking enhancement and I will
-// address it as soon as possible.
+// Versioning
 //
-// Thank you!
+// We use SemVer versioning schema.  You can rest assured that pulling 1.x branches will
+// remain backwards compatible now and into the future.
+//
+// However, the new 2.x branch, while keeping the same API, is expected break those that
+// bypass the API methods and use the underlying public properties instead.
 //
 // Release Notes
+//
+// 1.3.2
+//   * Correct count len of UTF8 strings (#9)
+//   * Implement duration parser (#8)
+//   * Fix Github and GoDocs Markdown (#14)
+//   * Move podcast.go Private Methods to Respected Files (#12)
+//   * Allow providing GUID on Podcast (#15)
 //
 // 1.3.1
 //   * increased itunes compliance after feedback from Apple:
