@@ -1,9 +1,10 @@
 package podcast_test
 
 import (
+	"testing"
+
 	"github.com/eduncan911/podcast"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 type enclosureTest struct {
@@ -12,15 +13,15 @@ type enclosureTest struct {
 }
 
 var enclosureTests = []enclosureTest{
-	enclosureTest{podcast.M4A, "audio/x-m4a"},
-	enclosureTest{podcast.M4V, "video/x-m4v"},
-	enclosureTest{podcast.MP4, "video/mp4"},
-	enclosureTest{podcast.MP3, "audio/mpeg"},
-	enclosureTest{podcast.MOV, "video/quicktime"},
-	enclosureTest{podcast.PDF, "application/pdf"},
-	enclosureTest{podcast.EPUB, "document/x-epub"},
-	enclosureTest{podcast.M4A, "audio/x-m4a"},
-	enclosureTest{99, "application/octet-stream"},
+	{podcast.M4A, "audio/x-m4a"},
+	{podcast.M4V, "video/x-m4v"},
+	{podcast.MP4, "video/mp4"},
+	{podcast.MP3, "audio/mpeg"},
+	{podcast.MOV, "video/quicktime"},
+	{podcast.PDF, "application/pdf"},
+	{podcast.EPUB, "document/x-epub"},
+	{podcast.M4A, "audio/x-m4a"},
+	{99, "application/octet-stream"},
 }
 
 func TestEnclosureTypes(t *testing.T) {

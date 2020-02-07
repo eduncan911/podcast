@@ -60,6 +60,10 @@
 //
 // Release Notes
 //
+// 1.4.0
+//   * Add C.I. GitHub Actions (#25)
+//   * Add Go Modules (#26)
+//
 // 1.3.2
 //   * Correct count len of UTF8 strings (#9)
 //   * Implement duration parser (#8)

@@ -1,5 +1,5 @@
 [![GoDoc](https://godoc.org/github.com/eduncan911/podcast?status.svg)](https://godoc.org/github.com/eduncan911/podcast)
-[![Build Status](https://travis-ci.org/eduncan911/podcast.svg?branch=master)](https://travis-ci.org/eduncan911/podcast)
+[![Build Status](https://github.com/eduncan911/podcast/workflows/go-cicd/badge.svg)](https://github.com/eduncan911/podcast/actions?workflow=go-cicd)
 [![Coverage Status](https://coveralls.io/repos/github/eduncan911/podcast/badge.svg?branch=master)](https://coveralls.io/github/eduncan911/podcast?branch=master)
 [![Go Report Card](https://goreportcard.com/badge/github.com/eduncan911/podcast)](https://goreportcard.com/report/github.com/eduncan911/podcast)
 [![MIT License](https://img.shields.io/npm/l/mediaelement.svg)](https://eduncan911.mit-license.org/)
@@ -61,6 +61,11 @@ However, the new 2.x branch, while keeping the same API, is expected break those
 bypass the API methods and use the underlying public properties instead.
 
 ### Release Notes
+1.4.0
+
+	* Add C.I. GitHub Actions (#25)
+	* Add Go Modules (#26)
+
 1.3.2
 
 	* Correct count len of UTF8 strings (#9)
@@ -595,7 +600,7 @@ Recommendations:
 	* For specifications of itunes tags, see:
 	  <a href="https://help.apple.com/itc/podcasts_connect/#/itcb54353390">https://help.apple.com/itc/podcasts_connect/#/itcb54353390</a>
 
-### <a name="Podcast.AddLastBuildDate">func</a> (\*Podcast) [AddLastBuildDate](./podcast.go#L343)
+### <a name="Podcast.AddLastBuildDate">func</a> (\*Podcast) [AddLastBuildDate](./podcast.go#L344)
 ``` go
 func (p *Podcast) AddLastBuildDate(datetime *time.Time)
 ```
@@ -603,7 +608,7 @@ AddLastBuildDate adds the datetime as a parsed PubDate.
 
 UTC time is used by default.
 
-### <a name="Podcast.AddPubDate">func</a> (\*Podcast) [AddPubDate](./podcast.go#L336)
+### <a name="Podcast.AddPubDate">func</a> (\*Podcast) [AddPubDate](./podcast.go#L337)
 ``` go
 func (p *Podcast) AddPubDate(datetime *time.Time)
 ```
@@ -611,7 +616,7 @@ AddPubDate adds the datetime as a parsed PubDate.
 
 UTC time is used by default.
 
-### <a name="Podcast.AddSubTitle">func</a> (\*Podcast) [AddSubTitle](./podcast.go#L352)
+### <a name="Podcast.AddSubTitle">func</a> (\*Podcast) [AddSubTitle](./podcast.go#L353)
 ``` go
 func (p *Podcast) AddSubTitle(subTitle string)
 ```
@@ -621,7 +626,7 @@ in iTunes.
 Note that this field should be just a few words long according to Apple.
 This method will truncate the string to 64 chars if too long with "..."
 
-### <a name="Podcast.AddSummary">func</a> (\*Podcast) [AddSummary](./podcast.go#L370)
+### <a name="Podcast.AddSummary">func</a> (\*Podcast) [AddSummary](./podcast.go#L371)
 ``` go
 func (p *Podcast) AddSummary(summary string)
 ```
@@ -632,19 +637,19 @@ Limit: 4000 characters
 Note that this field is a CDATA encoded field which allows for rich text
 such as html links: `<a href="<a href="http://www.apple.com">http://www.apple.com</a>">Apple</a>`.
 
-### <a name="Podcast.Bytes">func</a> (\*Podcast) [Bytes](./podcast.go#L385)
+### <a name="Podcast.Bytes">func</a> (\*Podcast) [Bytes](./podcast.go#L386)
 ``` go
 func (p *Podcast) Bytes() []byte
 ```
 Bytes returns an encoded []byte slice.
 
-### <a name="Podcast.Encode">func</a> (\*Podcast) [Encode](./podcast.go#L390)
+### <a name="Podcast.Encode">func</a> (\*Podcast) [Encode](./podcast.go#L391)
 ``` go
 func (p *Podcast) Encode(w io.Writer) error
 ```
 Encode writes the bytes to the io.Writer stream in RSS 2.0 specification.
 
-### <a name="Podcast.String">func</a> (\*Podcast) [String](./podcast.go#L407)
+### <a name="Podcast.String">func</a> (\*Podcast) [String](./podcast.go#L410)
 ``` go
 func (p *Podcast) String() string
 ```

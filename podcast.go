@@ -310,12 +310,13 @@ func (p *Podcast) AddItem(i Item) (int, error) {
 	// iTunes it
 	//
 	if len(i.IAuthor) == 0 {
-		if i.Author != nil {
+		switch {
+		case i.Author != nil:
 			i.IAuthor = i.Author.Email
-		} else if len(p.IAuthor) != 0 {
+		case len(p.IAuthor) != 0:
 			i.Author = &Author{Email: p.IAuthor}
 			i.IAuthor = p.IAuthor
-		} else if len(p.ManagingEditor) != 0 {
+		case len(p.ManagingEditor) != 0:
 			i.Author = &Author{Email: p.ManagingEditor}
 			i.IAuthor = p.ManagingEditor
 		}
@@ -388,7 +389,9 @@ func (p *Podcast) Bytes() []byte {
 
 // Encode writes the bytes to the io.Writer stream in RSS 2.0 specification.
 func (p *Podcast) Encode(w io.Writer) error {
-	w.Write([]byte("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"))
+	if _, err := w.Write([]byte("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n")); err != nil {
+		return errors.Wrap(err, "podcast.Encode: w.Write return error")
+	}
 
 	atomLink := ""
 	if p.AtomLink != nil {
@@ -434,7 +437,7 @@ var encoder = func(w io.Writer, o interface{}) error {
 	e := xml.NewEncoder(w)
 	e.Indent("", "  ")
 	if err := e.Encode(o); err != nil {
-		return errors.Wrap(err, "podcast.encode: Encode returned error")
+		return errors.Wrap(err, "podcast.encoder: e.Encode returned error")
 	}
 	return nil
 }

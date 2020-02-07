@@ -1,0 +1,111 @@
+on: [push]
+name: go-cicd
+
+jobs:
+
+  golangci-lint:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Install Go
+      uses: actions/setup-go@v1
+      with:
+        go-version: 1.13.x
+    - name: setup env
+      shell: bash
+      run: |
+        echo "::set-env name=GOPATH::${{ github.workspace }}/go"
+        echo "::add-path::${{ github.workspace }}/go/bin"
+    - name: checkout
+      uses: actions/checkout@v1
+      with:
+        fetch-depth: 1
+        path: podcast/go/src/github.com/${{ github.repository }}
+    - name: Install golangci-lint
+      shell: bash
+      run: |
+        go get github.com/golangci/golangci-lint/cmd/golangci-lint
+    - name: Run linters
+      shell: bash
+      run: | 
+        golangci-lint -E bodyclose,misspell,gocyclo,dupl,gofmt,golint,unconvert,depguard,interfacer run
+
+  coveralls:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Install Go
+      if: success()
+      uses: actions/setup-go@v1
+      with:
+        go-version: 1.13.x
+    - name: setup env
+      shell: bash
+      run: |
+        echo "::set-env name=GOPATH::${{ github.workspace }}/go"
+        echo "::add-path::${{ github.workspace }}/go/bin"
+    - name: checkout
+      uses: actions/checkout@v1
+      with:
+        fetch-depth: 1
+        path: podcast/go/src/github.com/${{ github.repository }}
+    - name: Calc coverage 
+      run: |
+        export PATH=$PATH:$(go env GOPATH)/bin   
+        go test -v -covermode=count -coverprofile=coverage.out
+    - name: Convert coverage to lcov
+      uses: jandelgado/gcov2lcov-action@v1.0.0
+      with:
+          infile: coverage.out
+          outfile: coverage.lcov
+    - name: Coveralls
+      uses: coverallsapp/github-action@v1.0.1
+      with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path-to-lcov: coverage.lcov
+
+  go-bench:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Install Go
+      uses: actions/setup-go@v1
+      with:
+        go-version: 1.13.x
+    - name: setup env
+      shell: bash
+      run: |
+        echo "::set-env name=GOPATH::${{ github.workspace }}/go"
+        echo "::add-path::${{ github.workspace }}/go/bin"
+    - name: checkout
+      uses: actions/checkout@v1
+      with:
+        fetch-depth: 1
+        path: podcast/go/src/github.com/${{ github.repository }}
+    - name: Run Benchmark
+      shell: bash
+      run: | 
+        go test -test.run Benchmark -cpu 1 -bench .
+
+  go-test:
+    strategy:
+      matrix:
+        go-version: [1.7.x, 1.13.x]
+        platform: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.platform }}
+    steps:
+    - name: setup env
+      shell: bash
+      run: |
+        echo "::set-env name=GOPATH::${{ github.workspace }}/go"
+        echo "::add-path::${{ github.workspace }}/go/bin"
+    - name: Install Go
+      if: success()
+      uses: actions/setup-go@v1
+      with:
+        go-version: ${{ matrix.go-version }}
+    - name: checkout
+      uses: actions/checkout@v1
+      with:
+        fetch-depth: 1
+        path: podcast/go/src/github.com/${{ github.repository }}
+    - name: Run tests
+      run: |
+        go test -v -covermode=count 

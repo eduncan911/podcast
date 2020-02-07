@@ -21,7 +21,7 @@ func TestItemAddSummaryTooLong(t *testing.T) {
 		if len(summary) >= 4051 {
 			break
 		}
-		summary = summary + "abc ss 5 "
+		summary += "abc ss 5 "
 	}
 
 	// act

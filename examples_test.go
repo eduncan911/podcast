@@ -233,10 +233,17 @@ func ExampleItem_AddPubDate() {
 	// add the pub date
 	i.AddPubDate(&d)
 
+	// before adding
 	if i.PubDate != nil {
 		fmt.Println(i.PubDateFormatted, *i.PubDate)
 	}
-	p.AddItem(i) // this should not override with Podcast.PubDate
+
+	// this should not override with Podcast.PubDate
+	if _, err := p.AddItem(i); err != nil {
+		fmt.Println(err)
+	}
+
+	// after adding item
 	fmt.Println(i.PubDateFormatted, *i.PubDate)
 	// Output:
 	// Tue, 24 Jan 2017 08:21:52 +0000 2017-01-24 08:21:52 +0000 UTC
