@@ -21,6 +21,16 @@
 //
 // Full detailed Examples of the API are at https://godoc.org/github.com/eduncan911/podcast.
 //
+// Go Modules
+//
+// This library is supported on GoLang 1.7 and higher.
+//
+// We have implemented Go Modules support and the CI pipeline shows it working with
+// new installs, tested with Go 1.13.  To keep 1.7 compatibility, we use
+// `go mod vendor` to maintain the `vendor/` folder for older 1.7 and later runtimes.
+//
+// If either runtime has an issue, please create an Issue and I will address.
+//
 // Extensibility
 //
 // In no way are you restricted in having full control over your feeds.  You may
@@ -61,8 +71,10 @@
 // Release Notes
 //
 // 1.4.0
+//   * Add Go Modules, Update vendor folder (#26, #25)
 //   * Add C.I. GitHub Actions (#25)
-//   * Add Go Modules (#26)
+//   * Add additional error checks found by linters (#25)
+//   * Go Fmt enclosure_test.go (#25)
 //
 // 1.3.2
 //   * Correct count len of UTF8 strings (#9)
