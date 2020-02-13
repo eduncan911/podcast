@@ -37,16 +37,42 @@ new installs, tested with Go 1.13.  To keep 1.7 compatibility, we use
 If either runtime has an issue, please create an Issue and I will address.
 
 ### Extensibility
-In no way are you restricted in having full control over your feeds.  You may
-choose to skip the API methods and instead use the structs directly.  The
-fields have been grouped by RSS 2.0 and iTunes fields.
+For version 1.x, you are not restricted in having full control over your feeds.
+You may choose to skip the API methods and instead use the structs directly.  The
+fields have been grouped by RSS 2.0 and iTunes fields with iTunes specific fields
+all prefixed with the letter `I`.
 
-iTunes specific fields are all prefixed with the letter `I`.
+However, do note that the 2.x version currently in progress will break this
+extensibility and enforce API methods going forward. This is to ensure that the feed
+can both be marshalled, and unmarshalled back and forth (current 1.x branch can only
+be unmarshalled - hence the work for 2.x).
 
-### References
-RSS 2.0: <a href="https://cyber.harvard.edu/rss/rss.html">https://cyber.harvard.edu/rss/rss.html</a>
+### Fuzzing Inputs
+`go-fuzz` has been added in 1.4.1, covering all exported API methods.  They have been
+ran extensively and no issues have come out of them yet (most tests were ran overnight,
+over about 11 hours with zero crashes).
 
-Podcasts: <a href="https://help.apple.com/itc/podcasts_connect/#/itca5b22233">https://help.apple.com/itc/podcasts_connect/#/itca5b22233</a>
+If you wish to help fuzz the inputs, with Go 1.13 or later you can run `go-fuzz` on any
+of the inputs.
+
+	go get -u github.com/dvyukov/go-fuzz/go-fuzz
+	go get -u github.com/dvyukov/go-fuzz/go-fuzz-build
+	go get -u github.com/eduncan911/podcast
+	cd $GOPATH/src/github.com/eduncan911/podcast
+	go-fuzz-build
+	go-fuzz -func FuzzPodcastAddItem
+
+To obtain a list of available funcs to pass, just run `go-fuzz` without any parameters:
+
+	$ go-fuzz
+	2020/02/13 07:27:32 -func flag not provided, but multiple fuzz functions available:
+	FuzzItemAddDuration, FuzzItemAddEnclosure, FuzzItemAddImage, FuzzItemAddPubDate,
+	FuzzItemAddSummary, FuzzPodcastAddAtomLink, FuzzPodcastAddAuthor, FuzzPodcastAddCategory,
+	FuzzPodcastAddImage, FuzzPodcastAddItem, FuzzPodcastAddLastBuildDate, FuzzPodcastAddPubDate,
+	FuzzPodcastAddSubTitle, FuzzPodcastAddSummary, FuzzPodcastBytes, FuzzPodcastEncode,
+	FuzzPodcastNew
+
+If you do find an issue, please raise an issue immediately and I will quickly address.
 
 ### Roadmap
 The 1.x branch is now mostly in maintenance mode, open to PRs.  This means no
@@ -70,6 +96,13 @@ However, the new 2.x branch, while keeping the same API, is expected break those
 bypass the API methods and use the underlying public properties instead.
 
 ### Release Notes
+1.4.1
+
+	* Implement fuzz logic testing of exported funcs (#31)
+	* Upgrade CICD Pipeline Tooling (#31)
+	* Update documentation for 1.x and 2.3 (#31)
+	* Allow godoc2ghmd to run without network (#31)
+
 1.4.0
 
 	* Add Go Modules, Update vendor folder (#26, #25)
@@ -120,6 +153,226 @@ bypass the API methods and use the underlying public properties instead.
 
 	* Initial release.
 	* Full documentation, full examples and complete code coverage.
+
+### References
+RSS 2.0: <a href="https://cyber.harvard.edu/rss/rss.html">https://cyber.harvard.edu/rss/rss.html</a>
+
+Podcasts: <a href="https://help.apple.com/itc/podcasts_connect/#/itca5b22233">https://help.apple.com/itc/podcasts_connect/#/itca5b22233</a>
+
+#### Example:
+
+<details>
+<summary>Click to expand code.</summary>
+
+```go
+// ResponseWriter example using Podcast.Encode(w io.Writer).
+	//
+	httpHandler := func(w http.ResponseWriter, r *http.Request) {
+	
+	    // instantiate a new Podcast
+	    p := podcast.New(
+	        "eduncan911 Podcasts",
+	        "http://eduncan911.com/",
+	        "An example Podcast",
+	        &pubDate, &updatedDate,
+	    )
+	
+	    // add some channel properties
+	    p.AddAuthor("Jane Doe", "me@janedoe.com")
+	    p.AddAtomLink("http://eduncan911.com/feed.rss")
+	    p.AddImage("http://janedoe.com/i.jpg")
+	    p.AddSummary(`link <a href="http://example.com">example.com</a>`)
+	    p.IExplicit = "no"
+	
+	    for i := int64(1); i < 3; i++ {
+	        n := strconv.FormatInt(i, 10)
+	        d := pubDate.AddDate(0, 0, int(i))
+	
+	        // create an Item
+	        item := podcast.Item{
+	            Title:       "Episode " + n,
+	            Link:        "http://example.com/" + n + ".mp3",
+	            Description: "Description for Episode " + n,
+	            PubDate:     &d,
+	        }
+	        item.AddImage("http://example.com/episode-" + n + ".png")
+	        item.AddSummary(`item <a href="http://example.com">example.com</a>`)
+	        // add a Download to the Item
+	        item.AddEnclosure("http://e.com/"+n+".mp3", podcast.MP3, 55*(i+1))
+	
+	        // add the Item and check for validation errors
+	        if _, err := p.AddItem(item); err != nil {
+	            fmt.Println(item.Title, ": error", err.Error())
+	            return
+	        }
+	    }
+	
+	    // set the Content Type to that of XML
+	    w.Header().Set("Content-Type", "application/xml")
+	
+	    // finally, Encode and write the Podcast to the ResponseWriter.
+	    //
+	    // a simple pattern is to handle any errors within this check.
+	    // alternatively if using middleware, you can just return
+	    // the Podcast entity as it also implements the io.Writer interface
+	    // that complies with several middleware packages.
+	    if err := p.Encode(w); err != nil {
+	        http.Error(w, err.Error(), http.StatusInternalServerError)
+	    }
+	}
+	
+	rr := httptest.NewRecorder()
+	httpHandler(rr, nil)
+	os.Stdout.Write(rr.Body.Bytes())
+	// Output:
+	// <?xml version="1.0" encoding="UTF-8"?>
+	// <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
+	//   <channel>
+	//     <title>eduncan911 Podcasts</title>
+	//     <link>http://eduncan911.com/</link>
+	//     <description>An example Podcast</description>
+	//     <generator>go podcast v1.3.1 (github.com/eduncan911/podcast)</generator>
+	//     <language>en-us</language>
+	//     <lastBuildDate>Mon, 06 Feb 2017 08:21:52 +0000</lastBuildDate>
+	//     <managingEditor>me@janedoe.com (Jane Doe)</managingEditor>
+	//     <pubDate>Sat, 04 Feb 2017 08:21:52 +0000</pubDate>
+	//     <image>
+	//       <url>http://janedoe.com/i.jpg</url>
+	//       <title>eduncan911 Podcasts</title>
+	//       <link>http://eduncan911.com/</link>
+	//     </image>
+	//     <atom:link href="http://eduncan911.com/feed.rss" rel="self" type="application/rss+xml"></atom:link>
+	//     <itunes:author>me@janedoe.com (Jane Doe)</itunes:author>
+	//     <itunes:summary><![CDATA[link <a href="http://example.com">example.com</a>]]></itunes:summary>
+	//     <itunes:image href="http://janedoe.com/i.jpg"></itunes:image>
+	//     <itunes:explicit>no</itunes:explicit>
+	//     <item>
+	//       <guid>http://e.com/1.mp3</guid>
+	//       <title>Episode 1</title>
+	//       <link>http://example.com/1.mp3</link>
+	//       <description>Description for Episode 1</description>
+	//       <pubDate>Sun, 05 Feb 2017 08:21:52 +0000</pubDate>
+	//       <enclosure url="http://e.com/1.mp3" length="110" type="audio/mpeg"></enclosure>
+	//       <itunes:author>me@janedoe.com (Jane Doe)</itunes:author>
+	//       <itunes:summary><![CDATA[item <a href="http://example.com">example.com</a>]]></itunes:summary>
+	//       <itunes:image href="http://example.com/episode-1.png"></itunes:image>
+	//     </item>
+	//     <item>
+	//       <guid>http://e.com/2.mp3</guid>
+	//       <title>Episode 2</title>
+	//       <link>http://example.com/2.mp3</link>
+	//       <description>Description for Episode 2</description>
+	//       <pubDate>Mon, 06 Feb 2017 08:21:52 +0000</pubDate>
+	//       <enclosure url="http://e.com/2.mp3" length="165" type="audio/mpeg"></enclosure>
+	//       <itunes:author>me@janedoe.com (Jane Doe)</itunes:author>
+	//       <itunes:summary><![CDATA[item <a href="http://example.com">example.com</a>]]></itunes:summary>
+	//       <itunes:image href="http://example.com/episode-2.png"></itunes:image>
+	//     </item>
+	//   </channel>
+	// </rss>
+```
+
+</details>
+
+#### Example:
+
+<details>
+<summary>Click to expand code.</summary>
+
+```go
+// instantiate a new Podcast
+	p := podcast.New(
+	    "Sample Podcasts",
+	    "http://example.com/",
+	    "An example Podcast",
+	    &createdDate, &updatedDate,
+	)
+	
+	// add some channel properties
+	p.ISubtitle = "A simple Podcast"
+	p.AddSummary(`link <a href="http://example.com">example.com</a>`)
+	p.AddImage("http://example.com/podcast.jpg")
+	p.AddAuthor("Jane Doe", "jane.doe@example.com")
+	p.AddAtomLink("http://example.com/atom.rss")
+	
+	for i := int64(9); i < 11; i++ {
+	    n := strconv.FormatInt(i, 10)
+	    d := pubDate.AddDate(0, 0, int(i))
+	
+	    // create an Item
+	    item := podcast.Item{
+	        Title:       "Episode " + n,
+	        Description: "Description for Episode " + n,
+	        ISubtitle:   "A simple episode " + n,
+	        PubDate:     &d,
+	    }
+	    item.AddImage("http://example.com/episode-" + n + ".png")
+	    item.AddSummary(`item k <a href="http://example.com">example.com</a>`)
+	    // add a Download to the Item
+	    item.AddEnclosure("http://example.com/"+n+".mp3", podcast.MP3, 55*(i+1))
+	
+	    // add the Item and check for validation errors
+	    if _, err := p.AddItem(item); err != nil {
+	        os.Stderr.WriteString("item validation error: " + err.Error())
+	    }
+	}
+	
+	// Podcast.Encode writes to an io.Writer
+	if err := p.Encode(os.Stdout); err != nil {
+	    fmt.Println("error writing to stdout:", err.Error())
+	}
+	
+	// Output:
+	// <?xml version="1.0" encoding="UTF-8"?>
+	// <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
+	//   <channel>
+	//     <title>Sample Podcasts</title>
+	//     <link>http://example.com/</link>
+	//     <description>An example Podcast</description>
+	//     <generator>go podcast v1.3.1 (github.com/eduncan911/podcast)</generator>
+	//     <language>en-us</language>
+	//     <lastBuildDate>Mon, 06 Feb 2017 08:21:52 +0000</lastBuildDate>
+	//     <managingEditor>jane.doe@example.com (Jane Doe)</managingEditor>
+	//     <pubDate>Wed, 01 Feb 2017 08:21:52 +0000</pubDate>
+	//     <image>
+	//       <url>http://example.com/podcast.jpg</url>
+	//       <title>Sample Podcasts</title>
+	//       <link>http://example.com/</link>
+	//     </image>
+	//     <atom:link href="http://example.com/atom.rss" rel="self" type="application/rss+xml"></atom:link>
+	//     <itunes:author>jane.doe@example.com (Jane Doe)</itunes:author>
+	//     <itunes:subtitle>A simple Podcast</itunes:subtitle>
+	//     <itunes:summary><![CDATA[link <a href="http://example.com">example.com</a>]]></itunes:summary>
+	//     <itunes:image href="http://example.com/podcast.jpg"></itunes:image>
+	//     <item>
+	//       <guid>http://example.com/9.mp3</guid>
+	//       <title>Episode 9</title>
+	//       <link>http://example.com/9.mp3</link>
+	//       <description>Description for Episode 9</description>
+	//       <pubDate>Mon, 13 Feb 2017 08:21:52 +0000</pubDate>
+	//       <enclosure url="http://example.com/9.mp3" length="550" type="audio/mpeg"></enclosure>
+	//       <itunes:author>jane.doe@example.com (Jane Doe)</itunes:author>
+	//       <itunes:subtitle>A simple episode 9</itunes:subtitle>
+	//       <itunes:summary><![CDATA[item k <a href="http://example.com">example.com</a>]]></itunes:summary>
+	//       <itunes:image href="http://example.com/episode-9.png"></itunes:image>
+	//     </item>
+	//     <item>
+	//       <guid>http://example.com/10.mp3</guid>
+	//       <title>Episode 10</title>
+	//       <link>http://example.com/10.mp3</link>
+	//       <description>Description for Episode 10</description>
+	//       <pubDate>Tue, 14 Feb 2017 08:21:52 +0000</pubDate>
+	//       <enclosure url="http://example.com/10.mp3" length="605" type="audio/mpeg"></enclosure>
+	//       <itunes:author>jane.doe@example.com (Jane Doe)</itunes:author>
+	//       <itunes:subtitle>A simple episode 10</itunes:subtitle>
+	//       <itunes:summary><![CDATA[item k <a href="http://example.com">example.com</a>]]></itunes:summary>
+	//       <itunes:image href="http://example.com/episode-10.png"></itunes:image>
+	//     </item>
+	//   </channel>
+	// </rss>
+```
+
+</details>
 
 ## Table of Contents
 
@@ -364,6 +617,29 @@ func (i *Item) AddDuration(durationInSeconds int64)
 ```
 AddDuration adds the duration to the iTunes duration field.
 
+#### Example:
+
+<details>
+<summary>Click to expand code.</summary>
+
+```go
+i := podcast.Item{
+	    Title:       "item title",
+	    Description: "item desc",
+	    Link:        "item link",
+	}
+	d := int64(533)
+	
+	// add the Duration in Seconds
+	i.AddDuration(d)
+	
+	fmt.Println(i.IDuration)
+	// Output:
+	// 8:53
+```
+
+</details>
+
 ### <a name="Item.AddEnclosure">func</a> (\*Item) [AddEnclosure](./item.go#L54-L55)
 ``` go
 func (i *Item) AddEnclosure(
@@ -392,6 +668,42 @@ func (i *Item) AddPubDate(datetime *time.Time)
 AddPubDate adds the datetime as a parsed PubDate.
 
 UTC time is used by default.
+
+#### Example:
+
+<details>
+<summary>Click to expand code.</summary>
+
+```go
+p := podcast.New("title", "link", "description", nil, nil)
+	i := podcast.Item{
+	    Title:       "item title",
+	    Description: "item desc",
+	    Link:        "item link",
+	}
+	d := pubDate.AddDate(0, 0, -11)
+	
+	// add the pub date
+	i.AddPubDate(&d)
+	
+	// before adding
+	if i.PubDate != nil {
+	    fmt.Println(i.PubDateFormatted, *i.PubDate)
+	}
+	
+	// this should not override with Podcast.PubDate
+	if _, err := p.AddItem(i); err != nil {
+	    fmt.Println(err)
+	}
+	
+	// after adding item
+	fmt.Println(i.PubDateFormatted, *i.PubDate)
+	// Output:
+	// Tue, 24 Jan 2017 08:21:52 +0000 2017-01-24 08:21:52 +0000 UTC
+	// Tue, 24 Jan 2017 08:21:52 +0000 2017-01-24 08:21:52 +0000 UTC
+```
+
+</details>
 
 ### <a name="Item.AddSummary">func</a> (\*Item) [AddSummary](./item.go#L92)
 ``` go
@@ -458,6 +770,26 @@ New instantiates a Podcast with required parameters.
 Nil-able fields are optional but recommended as they are formatted
 to the expected proper formats.
 
+#### Example:
+
+<details>
+<summary>Click to expand code.</summary>
+
+```go
+ti, l, d := "title", "link", "description"
+	
+	// instantiate a new Podcast
+	p := podcast.New(ti, l, d, &pubDate, &updatedDate)
+	
+	fmt.Println(p.Title, p.Link, p.Description, p.Language)
+	fmt.Println(p.PubDate, p.LastBuildDate)
+	// Output:
+	// title link description en-us
+	// Sat, 04 Feb 2017 08:21:52 +0000 Mon, 06 Feb 2017 08:21:52 +0000
+```
+
+</details>
+
 ### <a name="Podcast.AddAtomLink">func</a> (\*Podcast) [AddAtomLink](./podcast.go#L94)
 ``` go
 func (p *Podcast) AddAtomLink(href string)
@@ -469,6 +801,26 @@ AddAtomLink adds a FQDN reference to an atom feed.
 func (p *Podcast) AddAuthor(name, email string)
 ```
 AddAuthor adds the specified Author to the podcast.
+
+#### Example:
+
+<details>
+<summary>Click to expand code.</summary>
+
+```go
+p := podcast.New("title", "link", "description", nil, nil)
+	
+	// add the Author
+	p.AddAuthor("the name", "me@test.com")
+	
+	fmt.Println(p.ManagingEditor)
+	fmt.Println(p.IAuthor)
+	// Output:
+	// me@test.com (the name)
+	// me@test.com (the name)
+```
+
+</details>
 
 ### <a name="Podcast.AddCategory">func</a> (\*Podcast) [AddCategory](./podcast.go#L183)
 ``` go
@@ -553,6 +905,28 @@ as follows.
 	  * Tech News
 	* TV & Film
 
+#### Example:
+
+<details>
+<summary>Click to expand code.</summary>
+
+```go
+p := podcast.New("title", "link", "description", nil, nil)
+	
+	// add the Category
+	p.AddCategory("Bombay", nil)
+	p.AddCategory("American", []string{"Longhair", "Shorthair"})
+	p.AddCategory("Siamese", nil)
+	
+	fmt.Println(len(p.ICategories), len(p.ICategories[1].ICategories))
+	fmt.Println(p.Category)
+	// Output:
+	// 3 2
+	// Bombay,American,Siamese
+```
+
+</details>
+
 ### <a name="Podcast.AddImage">func</a> (\*Podcast) [AddImage](./podcast.go#L214)
 ``` go
 func (p *Podcast) AddImage(url string)
@@ -565,6 +939,28 @@ Podcast feeds contain artwork that is a minimum size of
 extensions (.jpg, .png), and in the RGB colorspace. To optimize
 images for mobile devices, Apple recommends compressing your
 image files.
+
+#### Example:
+
+<details>
+<summary>Click to expand code.</summary>
+
+```go
+p := podcast.New("title", "link", "description", nil, nil)
+	
+	// add the Image
+	p.AddImage("http://example.com/image.jpg")
+	
+	if p.Image != nil && p.IImage != nil {
+	    fmt.Println(p.Image.URL)
+	    fmt.Println(p.IImage.HREF)
+	}
+	// Output:
+	// http://example.com/image.jpg
+	// http://example.com/image.jpg
+```
+
+</details>
 
 ### <a name="Podcast.AddItem">func</a> (\*Podcast) [AddItem](./podcast.go#L267)
 ``` go
@@ -611,6 +1007,52 @@ Recommendations:
 	* For specifications of itunes tags, see:
 	  <a href="https://help.apple.com/itc/podcasts_connect/#/itcb54353390">https://help.apple.com/itc/podcasts_connect/#/itcb54353390</a>
 
+#### Example:
+
+<details>
+<summary>Click to expand code.</summary>
+
+```go
+p := podcast.New("title", "link", "description", &pubDate, &updatedDate)
+	p.AddAuthor("the name", "me@test.com")
+	p.AddImage("http://example.com/image.jpg")
+	
+	// create an Item
+	date := pubDate.AddDate(0, 0, 77)
+	item := podcast.Item{
+	    Title:       "Episode 1",
+	    Description: "Description for Episode 1",
+	    ISubtitle:   "A simple episode 1",
+	    PubDate:     &date,
+	}
+	item.AddEnclosure(
+	    "http://example.com/1.mp3",
+	    podcast.MP3,
+	    183,
+	)
+	item.AddSummary("See more at <a href=\"http://example.com\">Here</a>")
+	
+	// add the Item
+	if _, err := p.AddItem(item); err != nil {
+	    fmt.Println("item validation error: " + err.Error())
+	}
+	
+	if len(p.Items) != 1 {
+	    fmt.Println("expected 1 item in the collection")
+	}
+	pp := p.Items[0]
+	fmt.Println(
+	    pp.GUID, pp.Title, pp.Link, pp.Description, pp.Author,
+	    pp.AuthorFormatted, pp.Category, pp.Comments, pp.Source,
+	    pp.PubDate, pp.PubDateFormatted, *pp.Enclosure,
+	    pp.IAuthor, pp.IDuration, pp.IExplicit, pp.IIsClosedCaptioned,
+	    pp.IOrder, pp.ISubtitle, pp.ISummary)
+	// Output:
+	// http://example.com/1.mp3 Episode 1 http://example.com/1.mp3 Description for Episode 1 &{{ }  me@test.com (the name)}     2017-04-22 08:21:52 +0000 UTC Sat, 22 Apr 2017 08:21:52 +0000 {{ } http://example.com/1.mp3 183 183 audio/mpeg audio/mpeg} me@test.com (the name)     A simple episode 1 &{{ } See more at <a href="http://example.com">Here</a>}
+```
+
+</details>
+
 ### <a name="Podcast.AddLastBuildDate">func</a> (\*Podcast) [AddLastBuildDate](./podcast.go#L344)
 ``` go
 func (p *Podcast) AddLastBuildDate(datetime *time.Time)
@@ -619,6 +1061,24 @@ AddLastBuildDate adds the datetime as a parsed PubDate.
 
 UTC time is used by default.
 
+#### Example:
+
+<details>
+<summary>Click to expand code.</summary>
+
+```go
+p := podcast.New("title", "link", "description", nil, nil)
+	d := pubDate.AddDate(0, 0, -7)
+	
+	p.AddLastBuildDate(&d)
+	
+	fmt.Println(p.LastBuildDate)
+	// Output:
+	// Sat, 28 Jan 2017 08:21:52 +0000
+```
+
+</details>
+
 ### <a name="Podcast.AddPubDate">func</a> (\*Podcast) [AddPubDate](./podcast.go#L337)
 ``` go
 func (p *Podcast) AddPubDate(datetime *time.Time)
@@ -626,6 +1086,24 @@ func (p *Podcast) AddPubDate(datetime *time.Time)
 AddPubDate adds the datetime as a parsed PubDate.
 
 UTC time is used by default.
+
+#### Example:
+
+<details>
+<summary>Click to expand code.</summary>
+
+```go
+p := podcast.New("title", "link", "description", nil, nil)
+	d := pubDate.AddDate(0, 0, -5)
+	
+	p.AddPubDate(&d)
+	
+	fmt.Println(p.PubDate)
+	// Output:
+	// Mon, 30 Jan 2017 08:21:52 +0000
+```
+
+</details>
 
 ### <a name="Podcast.AddSubTitle">func</a> (\*Podcast) [AddSubTitle](./podcast.go#L353)
 ``` go
@@ -648,11 +1126,121 @@ Limit: 4000 characters
 Note that this field is a CDATA encoded field which allows for rich text
 such as html links: `<a href="<a href="http://www.apple.com">http://www.apple.com</a>">Apple</a>`.
 
+#### Example:
+
+<details>
+<summary>Click to expand code.</summary>
+
+```go
+p := podcast.New("title", "link", "description", nil, nil)
+	
+	// add a summary
+	p.AddSummary(`A very cool podcast with a long summary!
+	
+	See more at our website: <a href="http://example.com">example.com</a>
+	`)
+	
+	if p.ISummary != nil {
+	    fmt.Println(p.ISummary.Text)
+	}
+	// Output:
+	// A very cool podcast with a long summary!
+	//
+	// See more at our website: <a href="http://example.com">example.com</a>
+```
+
+</details>
+
 ### <a name="Podcast.Bytes">func</a> (\*Podcast) [Bytes](./podcast.go#L386)
 ``` go
 func (p *Podcast) Bytes() []byte
 ```
 Bytes returns an encoded []byte slice.
+
+#### Example:
+
+<details>
+<summary>Click to expand code.</summary>
+
+```go
+p := podcast.New(
+	    "eduncan911 Podcasts",
+	    "http://eduncan911.com/",
+	    "An example Podcast",
+	    &pubDate, &updatedDate,
+	)
+	p.AddAuthor("Jane Doe", "me@janedoe.com")
+	p.AddImage("http://janedoe.com/i.jpg")
+	p.AddSummary(`A very cool podcast with a long summary using Bytes()!
+	
+	See more at our website: <a href="http://example.com">example.com</a>
+	`)
+	
+	for i := int64(5); i < 7; i++ {
+	    n := strconv.FormatInt(i, 10)
+	    d := pubDate.AddDate(0, 0, int(i+3))
+	
+	    item := podcast.Item{
+	        Title:       "Episode " + n,
+	        Link:        "http://example.com/" + n + ".mp3",
+	        Description: "Description for Episode " + n,
+	        PubDate:     &d,
+	    }
+	    if _, err := p.AddItem(item); err != nil {
+	        fmt.Println(item.Title, ": error", err.Error())
+	        break
+	    }
+	}
+	
+	// call Podcast.Bytes() to return a byte array
+	os.Stdout.Write(p.Bytes())
+	
+	// Output:
+	// <?xml version="1.0" encoding="UTF-8"?>
+	// <rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
+	//   <channel>
+	//     <title>eduncan911 Podcasts</title>
+	//     <link>http://eduncan911.com/</link>
+	//     <description>An example Podcast</description>
+	//     <generator>go podcast v1.3.1 (github.com/eduncan911/podcast)</generator>
+	//     <language>en-us</language>
+	//     <lastBuildDate>Mon, 06 Feb 2017 08:21:52 +0000</lastBuildDate>
+	//     <managingEditor>me@janedoe.com (Jane Doe)</managingEditor>
+	//     <pubDate>Sat, 04 Feb 2017 08:21:52 +0000</pubDate>
+	//     <image>
+	//       <url>http://janedoe.com/i.jpg</url>
+	//       <title>eduncan911 Podcasts</title>
+	//       <link>http://eduncan911.com/</link>
+	//     </image>
+	//     <itunes:author>me@janedoe.com (Jane Doe)</itunes:author>
+	//     <itunes:summary><![CDATA[A very cool podcast with a long summary using Bytes()!
+	//
+	// See more at our website: <a href="http://example.com">example.com</a>
+	// ]]></itunes:summary>
+	//     <itunes:image href="http://janedoe.com/i.jpg"></itunes:image>
+	//     <item>
+	//       <guid>http://example.com/5.mp3</guid>
+	//       <title>Episode 5</title>
+	//       <link>http://example.com/5.mp3</link>
+	//       <description>Description for Episode 5</description>
+	//       <pubDate>Sun, 12 Feb 2017 08:21:52 +0000</pubDate>
+	//       <itunes:author>me@janedoe.com (Jane Doe)</itunes:author>
+	//       <itunes:image href="http://janedoe.com/i.jpg"></itunes:image>
+	//     </item>
+	//     <item>
+	//       <guid>http://example.com/6.mp3</guid>
+	//       <title>Episode 6</title>
+	//       <link>http://example.com/6.mp3</link>
+	//       <description>Description for Episode 6</description>
+	//       <pubDate>Mon, 13 Feb 2017 08:21:52 +0000</pubDate>
+	//       <itunes:author>me@janedoe.com (Jane Doe)</itunes:author>
+	//       <itunes:image href="http://janedoe.com/i.jpg"></itunes:image>
+	//     </item>
+	//   </channel>
+	// </rss>
+```
+
+</details>
 
 ### <a name="Podcast.Encode">func</a> (\*Podcast) [Encode](./podcast.go#L391)
 ``` go

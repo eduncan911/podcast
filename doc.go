@@ -33,17 +33,43 @@
 //
 // Extensibility
 //
-// In no way are you restricted in having full control over your feeds.  You may
-// choose to skip the API methods and instead use the structs directly.  The
-// fields have been grouped by RSS 2.0 and iTunes fields.
+// For version 1.x, you are not restricted in having full control over your feeds.
+// You may choose to skip the API methods and instead use the structs directly.  The
+// fields have been grouped by RSS 2.0 and iTunes fields with iTunes specific fields
+// all prefixed with the letter `I`.
 //
-// iTunes specific fields are all prefixed with the letter `I`.
+// However, do note that the 2.x version currently in progress will break this
+// extensibility and enforce API methods going forward. This is to ensure that the feed
+// can both be marshalled, and unmarshalled back and forth (current 1.x branch can only
+// be unmarshalled - hence the work for 2.x).
 //
-// References
+// Fuzzing Inputs
 //
-// RSS 2.0: https://cyber.harvard.edu/rss/rss.html
+// `go-fuzz` has been added in 1.4.1, covering all exported API methods.  They have been
+// ran extensively and no issues have come out of them yet (most tests were ran overnight,
+// over about 11 hours with zero crashes).
 //
-// Podcasts: https://help.apple.com/itc/podcasts_connect/#/itca5b22233
+// If you wish to help fuzz the inputs, with Go 1.13 or later you can run `go-fuzz` on any
+// of the inputs.
+//
+//   go get -u github.com/dvyukov/go-fuzz/go-fuzz
+//   go get -u github.com/dvyukov/go-fuzz/go-fuzz-build
+//   go get -u github.com/eduncan911/podcast
+//   cd $GOPATH/src/github.com/eduncan911/podcast
+//   go-fuzz-build
+//   go-fuzz -func FuzzPodcastAddItem
+//
+// To obtain a list of available funcs to pass, just run `go-fuzz` without any parameters:
+//
+//   $ go-fuzz
+//   2020/02/13 07:27:32 -func flag not provided, but multiple fuzz functions available:
+//   FuzzItemAddDuration, FuzzItemAddEnclosure, FuzzItemAddImage, FuzzItemAddPubDate,
+//   FuzzItemAddSummary, FuzzPodcastAddAtomLink, FuzzPodcastAddAuthor, FuzzPodcastAddCategory,
+//   FuzzPodcastAddImage, FuzzPodcastAddItem, FuzzPodcastAddLastBuildDate, FuzzPodcastAddPubDate,
+//   FuzzPodcastAddSubTitle, FuzzPodcastAddSummary, FuzzPodcastBytes, FuzzPodcastEncode,
+//   FuzzPodcastNew
+//
+// If you do find an issue, please raise an issue immediately and I will quickly address.
 //
 // Roadmap
 //
@@ -69,6 +95,12 @@
 // bypass the API methods and use the underlying public properties instead.
 //
 // Release Notes
+//
+// 1.4.1
+//   * Implement fuzz logic testing of exported funcs (#31)
+//   * Upgrade CICD Pipeline Tooling (#31)
+//   * Update documentation for 1.x and 2.3 (#31)
+//   * Allow godoc2ghmd to run without network (#31)
 //
 // 1.4.0
 //   * Add Go Modules, Update vendor folder (#26, #25)
@@ -112,5 +144,11 @@
 // 1.0.0
 //   * Initial release.
 //   * Full documentation, full examples and complete code coverage.
+//
+// References
+//
+// RSS 2.0: https://cyber.harvard.edu/rss/rss.html
+//
+// Podcasts: https://help.apple.com/itc/podcasts_connect/#/itca5b22233
 //
 package podcast

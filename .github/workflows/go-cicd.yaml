@@ -3,7 +3,7 @@ name: go-cicd
 
 jobs:
 
-  golangci-lint:
+  lint:
     runs-on: ubuntu-latest
     steps:
     - name: Install Go
@@ -16,20 +16,21 @@ jobs:
         echo "::set-env name=GOPATH::${{ github.workspace }}/go"
         echo "::add-path::${{ github.workspace }}/go/bin"
     - name: checkout
-      uses: actions/checkout@v1
+      uses: actions/checkout@v2
       with:
         fetch-depth: 1
-        path: podcast/go/src/github.com/${{ github.repository }}
+        path: go/src/github.com/${{ github.repository }}
     - name: Install golangci-lint
       shell: bash
       run: |
         go get github.com/golangci/golangci-lint/cmd/golangci-lint
     - name: Run linters
       shell: bash
-      run: | 
+      run: |
+        cd $GOPATH/src/github.com/${{ github.repository }}
         golangci-lint -E bodyclose,misspell,gocyclo,dupl,gofmt,golint,unconvert,depguard,interfacer run
 
-  coveralls:
+  coverage:
     runs-on: ubuntu-latest
     steps:
     - name: Install Go
@@ -62,7 +63,9 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           path-to-lcov: coverage.lcov
 
-  go-bench:
+  benchmark:
+    # TODO: actually compare to previous runs
+    # maybe this setup: https://github.com/knqyf263/cob
     runs-on: ubuntu-latest
     steps:
     - name: Install Go
@@ -75,13 +78,14 @@ jobs:
         echo "::set-env name=GOPATH::${{ github.workspace }}/go"
         echo "::add-path::${{ github.workspace }}/go/bin"
     - name: checkout
-      uses: actions/checkout@v1
+      uses: actions/checkout@v2
       with:
         fetch-depth: 1
-        path: podcast/go/src/github.com/${{ github.repository }}
+        path: go/src/github.com/${{ github.repository }}
     - name: Run Benchmark
       shell: bash
       run: | 
+        cd $GOPATH/src/github.com/${{ github.repository }}
         go test -test.run Benchmark -cpu 1 -bench .
 
   go-test:
@@ -102,10 +106,12 @@ jobs:
       with:
         go-version: ${{ matrix.go-version }}
     - name: checkout
-      uses: actions/checkout@v1
+      uses: actions/checkout@v2
       with:
         fetch-depth: 1
-        path: podcast/go/src/github.com/${{ github.repository }}
+        path: go/src/github.com/${{ github.repository }}
     - name: Run tests
+      shell: bash
       run: |
+        cd $GOPATH/src/github.com/${{ github.repository }}
         go test -v -covermode=count 
