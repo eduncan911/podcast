@@ -96,52 +96,55 @@
 //
 // Release Notes
 //
-// 1.4.1
+// v1.4.2
+//   * Slim down Go Modules for consumers (#32)
+//
+// v1.4.1
 //   * Implement fuzz logic testing of exported funcs (#31)
 //   * Upgrade CICD Pipeline Tooling (#31)
 //   * Update documentation for 1.x and 2.3 (#31)
 //   * Allow godoc2ghmd to run without network (#31)
 //
-// 1.4.0
+// v1.4.0
 //   * Add Go Modules, Update vendor folder (#26, #25)
 //   * Add C.I. GitHub Actions (#25)
 //   * Add additional error checks found by linters (#25)
 //   * Go Fmt enclosure_test.go (#25)
 //
-// 1.3.2
+// v1.3.2
 //   * Correct count len of UTF8 strings (#9)
 //   * Implement duration parser (#8)
 //   * Fix Github and GoDocs Markdown (#14)
 //   * Move podcast.go Private Methods to Respected Files (#12)
 //   * Allow providing GUID on Podcast (#15)
 //
-// 1.3.1
+// v1.3.1
 //   * increased itunes compliance after feedback from Apple:
 //     - specified what categories should be set with AddCategory().
 //     - enforced title and link as part of Image.
 //   * added Podcast.AddAtomLink() for more broad compliance to readers.
 //
-// 1.3.0
+// v1.3.0
 //   * fixes Item.Duration being set incorrectly.
 //   * changed Item.AddEnclosure() parameter definition (Bytes not Seconds!).
 //   * added Item.AddDuration formatting and override.
 //   * added more documentation surrounding Item.Enclosure{}
 //
-// 1.2.1
+// v1.2.1
 //   * added Podcast.AddSubTitle() and truncating to 64 chars.
 //   * added a number of Guards to protect against empty fields.
 //
-// 1.2.0
+// v1.2.0
 //   * added Podcast.AddPubDate() and Podcast.AddLastBuildDate() overrides.
 //   * added Item.AddImage() to mask some cumbersome addition of IImage.
 //   * added Item.AddPubDate to simply datetime setters.
 //   * added more examples (mostly around Item struct).
 //   * tweaked some documentation.
 //
-// 1.1.0
+// v1.1.0
 //   * Enabling CDATA in ISummary fields for Podcast and Channel.
 //
-// 1.0.0
+// v1.0.0
 //   * Initial release.
 //   * Full documentation, full examples and complete code coverage.
 //
