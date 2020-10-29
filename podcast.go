@@ -18,43 +18,194 @@ const (
 
 // Podcast represents a podcast.
 type Podcast struct {
-	XMLName        xml.Name `xml:"channel"`
-	Title          string   `xml:"title"`
-	Link           string   `xml:"link"`
-	Description    string   `xml:"description"`
-	Category       string   `xml:"category,omitempty"`
-	Cloud          string   `xml:"cloud,omitempty"`
-	Copyright      string   `xml:"copyright,omitempty"`
-	Docs           string   `xml:"docs,omitempty"`
-	Generator      string   `xml:"generator,omitempty"`
-	Language       string   `xml:"language,omitempty"`
-	LastBuildDate  string   `xml:"lastBuildDate,omitempty"`
-	ManagingEditor string   `xml:"managingEditor,omitempty"`
-	PubDate        string   `xml:"pubDate,omitempty"`
-	Rating         string   `xml:"rating,omitempty"`
-	SkipHours      string   `xml:"skipHours,omitempty"`
-	SkipDays       string   `xml:"skipDays,omitempty"`
-	TTL            int      `xml:"ttl,omitempty"`
-	WebMaster      string   `xml:"webMaster,omitempty"`
-	Image          *Image
-	TextInput      *TextInput
-	AtomLink       *AtomLink
+	XMLName xml.Name `xml:"channel"`
 
-	// https://help.apple.com/itc/podcasts_connect/#/itcb54353390
-	IAuthor     string `xml:"itunes:author,omitempty"`
-	ISubtitle   string `xml:"itunes:subtitle,omitempty"`
-	ISummary    *ISummary
-	IBlock      string `xml:"itunes:block,omitempty"`
-	IImage      *IImage
-	IDuration   string  `xml:"itunes:duration,omitempty"`
-	IExplicit   string  `xml:"itunes:explicit,omitempty"`
-	IComplete   string  `xml:"itunes:complete,omitempty"`
-	INewFeedURL string  `xml:"itunes:new-feed-url,omitempty"`
-	IOwner      *Author // Author is formatted for itunes as-is
+	// Title is the show title.
+	//
+	// This is a required tag.
+	//
+	// It’s important to have a clear, concise name for your podcast. Make your
+	// title specific. A show titled Our Community Bulletin is too vague to
+	// attract many subscribers, no matter how compelling the content.
+	//
+	// Pay close attention to the title as Apple Podcasts uses this field fo
+	// search.
+	//
+	// If you include a long list of keywords in an attempt to game podcast
+	// search, your show may be removed from the Apple directory.
+	Title string `xml:"title"`
+
+	// Link is the associated with a podcast.
+	//
+	// Do not specify HTML here.  Use RAW https:// urls.
+	Link string `xml:"link"`
+
+	// Description is text containing one or more sentences describing
+	// your podcast to potential listeners.
+	//
+	// This is a required tag.
+	//
+	// Limit: 4000 characters
+	//
+	// Note that this field is a CDATA encoded field which allows for rich text
+	// such as html links: `<a href="http://www.apple.com">Apple</a>`.
+	//
+	// Use podcast.New(...) to populate this field correctly.
+	Description *Description
+
+	// Language is language spoken on the show.
+	//
+	// This is a required tag.
+	//
+	// Because Apple Podcasts is available in territories around the world,
+	// it is critical to specify the language of a podcast. Apple Podcasts
+	// only supports values from the ISO 639 list (two-letter language codes,
+	// with some possible modifiers, such as "en-us").
+	//
+	// Invalid language codes will cause your feed to fail Apple validation.
+	Language string `xml:"language,omitempty"`
+
+	// IAuthor is the group responsible for creating the show.
+	//
+	// Note the difference of this itunes tag from Harvard's RSS definition
+	// for author.  Harvard's requirement is that this is in the format of:
+	//
+	// Full Name (emai@address)
+	//
+	// Whereas iTunes defines this field as the following:
+	//
+	// Show author most often refers to the parent company or network of a
+	// podcast, but it can also be used to identify the host(s) if none exists.
+	//
+	// Author information is especially useful if a company or organization
+	// publishes multiple podcasts. Providing this information will allow
+	// listeners to see all shows created by the same entity.
+	IAuthor string `xml:"itunes:author,omitempty"`
+
+	// IImage is of type podcast.Image.
+	//
+	// This is a required tag.
+	//
+	// Use podcast.AddImage(...) to populate this field correctly.
+	IImage *IImage
+
+	// IExplicit defines the parental advisory information.
+	//
+	// This is a required tag.
+	//
+	// Where the explicit value can be one of the following:
+	//
+	// "true" : If you specify true, indicating the presence of explicit
+	// content, Apple Podcasts displays an Explicit parental advisory
+	// graphic for your episode.
+	// Episodes containing explicit material aren’t available in some Apple
+	// Podcasts territories.
+	//
+	// "false" : If you specify false, indicating that the episode does not
+	// contain explicit language or adult content, Apple Podcasts displays
+	// a Clean parental advisory graphic for your episode.
+	IExplicit string `xml:"itunes:explicit,omitempty"`
+
+	// IOwner is the podcast owner contact information.
+	//
+	// Use AddAuthor(...) to set this field correctly.
+	//
+	// Note: This tag information is for administrative communication about
+	// the podcast and isn’t displayed in Apple Podcasts. Please make sure
+	// the email address is active and monitored.
+	IOwner *Author
+
+	// ICategories is an array of specific iTunes categories.
+	//
+	// This is a required tag.
+	//
+	// Use podcast.AddCategories(...) to properly populate.
 	ICategories []*ICategory
 
-	Items []*Item
+	// ITitle is a Situational tag that is the title specific for Apple
+	// Podcasts.
+	//
+	// Use podcast.New(...) to properly set this field.
+	ITitle string `xml:"itunes:title,omitempty"`
 
+	// IType is a Situational tag of the type of the show.
+	//
+	// If your show is Serial you must use this tag.
+	//
+	// Use podcast.AddType(...) to properly set this field.
+	IType *IType
+
+	// Copyright is a Situational tag for the show's copyright details.
+	Copyright string `xml:"copyright,omitempty"`
+
+	// INewFeedURL is a Situational tag to specify new podcast RSS Feed URL.
+	//
+	// If you change the URL of your podcast feed, you should use this tag in
+	// your new feed.
+	//
+	// Use this tag to manually change the URL where your podcast is located.
+	//
+	// You should maintain your old feed until you have migrated your existing
+	// subscribers. For more information, see Update your RSS feed URL.
+	//
+	// Note: This tag reports new feed URLs to Apple Podcasts and isn’t
+	// displayed in Apple Podcasts.
+	INewFeedURL string `xml:"itunes:new-feed-url,omitempty"`
+
+	// IBlock is a Situational tag to show or hide the status of the the
+	// podcasts.
+	//
+	// If you want your show removed from the Apple directory, use this tag.
+	//
+	// Specifying the tag with a "Yes" value prevents that this show from
+	// appearing in Apple Podcasts.
+	//
+	// Specifying any value other than Yes has no effect.
+	IBlock string `xml:"itunes:block,omitempty"`
+
+	// IComplete is a Situational tag for the podcast update status.
+	//
+	// If you will never publish another episode to your show, use this tag.
+	//
+	// Specifying the <itunes:complete> tag with a Yes value indicates that a
+	// podcast is complete and you will not post any more episodes in the
+	// future.
+	//
+	// Specifying any value other than Yes has no effect.
+	IComplete string `xml:"itunes:complete,omitempty"`
+
+	// As of April 2019, the following tags are no longer listed in iTunes'
+	// supported tags.  However, most are still listed under Harvard's
+	// definition of RSS feed tags with channels and episodes.  See Harvard's
+	// defnitions for more info.
+	//
+	// https://cyber.harvard.edu/rss/rss.html
+	//
+	// This does not mean they are not supported; it is just that Apple
+	// has chosen to remove their listings and descriptions.
+	//
+
+	AtomLink       *AtomLink
+	Category       string `xml:"category,omitempty"`
+	Cloud          string `xml:"cloud,omitempty"`
+	Docs           string `xml:"docs,omitempty"`
+	Generator      string `xml:"generator,omitempty"`
+	IDuration      string `xml:"itunes:duration,omitempty"`
+	ISubtitle      string `xml:"itunes:subtitle,omitempty"`
+	ISummary       *ISummary
+	Image          *Image
+	LastBuildDate  string `xml:"lastBuildDate,omitempty"`
+	ManagingEditor string `xml:"managingEditor,omitempty"`
+	PubDate        string `xml:"pubDate,omitempty"`
+	Rating         string `xml:"rating,omitempty"`
+	SkipHours      string `xml:"skipHours,omitempty"`
+	SkipDays       string `xml:"skipDays,omitempty"`
+	TextInput      *TextInput
+	TTL            int    `xml:"ttl,omitempty"`
+	WebMaster      string `xml:"webMaster,omitempty"`
+
+	// Items is a collection of 0..n episodes for this podcast.
+	Items  []*Item
 	encode func(w io.Writer, o interface{}) error
 }
 
@@ -66,8 +217,9 @@ func New(title, link, description string,
 	pubDate, lastBuildDate *time.Time) Podcast {
 	return Podcast{
 		Title:         title,
+		ITitle:        title,
+		Description:   parseDescription(description),
 		Link:          link,
-		Description:   description,
 		Generator:     fmt.Sprintf("go podcast v%s (github.com/eduncan911/podcast)", pVersion),
 		PubDate:       parseDateRFC1123Z(pubDate),
 		LastBuildDate: parseDateRFC1123Z(lastBuildDate),
@@ -78,16 +230,18 @@ func New(title, link, description string,
 	}
 }
 
-// AddAuthor adds the specified Author to the podcast.
+// AddAuthor adds the specified Author to the podcast's IOwner and
+// Harvard's ManagingEditor tags.
 func (p *Podcast) AddAuthor(name, email string) {
 	if len(email) == 0 {
 		return
 	}
-	p.ManagingEditor = parseAuthorNameEmail(&Author{
+	a := &Author{
 		Name:  name,
 		Email: email,
-	})
-	p.IAuthor = p.ManagingEditor
+	}
+	p.IOwner = a
+	p.ManagingEditor = parseAuthorNameEmail(a)
 }
 
 // AddAtomLink adds a FQDN reference to an atom feed.
@@ -110,76 +264,11 @@ func (p *Podcast) AddAtomLink(href string) {
 // list, if any, including ICategory.
 //
 // Note that Apple iTunes has a specific list of categories that only can be
-// used and will invalidate the feed if deviated from the list.  That list is
-// as follows.
+// used and will invalidate the feed if deviated from the list.  The list
+// changes occassionally.  Please refer to the following link for the updated
+// list:
 //
-//   * Arts
-//     * Design
-//     * Fashion & Beauty
-//     * Food
-//     * Literature
-//     * Performing Arts
-//     * Visual Arts
-//   * Business
-//     * Business News
-//     * Careers
-//     * Investing
-//     * Management & Marketing
-//     * Shopping
-//   * Comedy
-//   * Education
-//     * Education Technology
-//     * Higher Education
-//     * K-12
-//     * Language Courses
-//     * Training
-//   * Games & Hobbies
-//     * Automotive
-//     * Aviation
-//     * Hobbies
-//     * Other Games
-//     * Video Games
-//   * Government & Organizations
-//     * Local
-//     * National
-//     * Non-Profit
-//     * Regional
-//   * Health
-//     * Alternative Health
-//     * Fitness & Nutrition
-//     * Self-Help
-//     * Sexuality
-//   * Kids & Family
-//   * Music
-//   * News & Politics
-//   * Religion & Spirituality
-//     * Buddhism
-//     * Christianity
-//     * Hinduism
-//     * Islam
-//     * Judaism
-//     * Other
-//     * Spirituality
-//   * Science & Medicine
-//     * Medicine
-//     * Natural Sciences
-//     * Social Sciences
-//   * Society & Culture
-//     * History
-//     * Personal Journals
-//     * Philosophy
-//     * Places & Travel
-//   * Sports & Recreation
-//     * Amateur
-//     * College & High School
-//     * Outdoor
-//     * Professional
-//   * Technology
-//     * Gadgets
-//     * Podcasting
-//     * Software How-To
-//     * Tech News
-//   * TV & Film
+// https://help.apple.com/itc/podcasts_connect/#/itc9267a2f12
 func (p *Podcast) AddCategory(category string, subCategories []string) {
 	if len(category) == 0 {
 		return
@@ -382,6 +471,29 @@ func (p *Podcast) AddSummary(summary string) {
 	}
 }
 
+func (p *Podcast) AddType(type *Type) {
+	// Its values can be one of the following:
+	//
+	// Episodic (default). Specify episodic when episodes are intended to be
+	// consumed without any specific order. Apple Podcasts will present newest
+	// episodes first and display the publish date (required) of each episode.
+	// If organized into seasons, the newest season will be presented first
+	// - otherwise, episodes will be grouped by year published, newest first.
+	//
+	// For new subscribers, Apple Podcasts adds the newest, most recent episode
+	// in their Library.
+	//
+	// Serial. Specify serial when episodes are intended to be consumed in
+	// sequential order. Apple Podcasts will present the oldest episodes
+	// first and display the episode numbers (required) of each episode. If
+	// organized into seasons, the newest season will be presented first and
+	// <itunes:episode> numbers must be given for each episode.
+	//
+	// For new subscribers, Apple Podcasts adds the first episode to their
+	// Library, or the entire current season if using seasons.
+	
+}
+
 // Bytes returns an encoded []byte slice.
 func (p *Podcast) Bytes() []byte {
 	return []byte(p.String())
@@ -451,4 +563,15 @@ var parseAuthorNameEmail = func(a *Author) string {
 		}
 	}
 	return author
+}
+
+var parseDescription = func(d string) *Description {
+	count := utf8.RuneCountInString(d)
+	if count > 4000 {
+		s := []rune(d)
+		d = string(s[0:4000])
+	}
+	return &Description{
+		Text: d,
+	}
 }
