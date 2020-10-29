@@ -21,6 +21,10 @@
 //
 // Full detailed Examples of the API are at https://godoc.org/github.com/eduncan911/podcast.
 //
+// Contributing
+//
+// See the CONTRIBUTING.md for all the details.
+//
 // Go Modules
 //
 // This library is supported on GoLang 1.7 and higher.

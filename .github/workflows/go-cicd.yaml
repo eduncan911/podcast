@@ -27,7 +27,7 @@ jobs:
     - name: Install golangci-lint
       shell: bash
       run: |
-        go get github.com/golangci/golangci-lint/cmd/golangci-lint
+        curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.28.3
     - name: Run linters
       shell: bash
       run: |
@@ -70,6 +70,7 @@ jobs:
   benchmark:
     # TODO: actually compare to previous runs
     # maybe this setup: https://github.com/knqyf263/cob
+    # or this: https://github.com/actions/toolkit/tree/master/packages/cache
     runs-on: ubuntu-latest
     steps:
     - name: Install Go

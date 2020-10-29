@@ -139,3 +139,29 @@ https://github.com/eduncan911/podcast/blob/master/.github/workflows/go-cicd.yaml
 ## Thank you!
 
 Most of all, thank you for your help!
+
+---
+
+## How to Publish
+
+I branch and publish this repo with the following steps.  Note that [I have automatic rebasing in my `~/.gitconfig`](https://github.com/eduncan911/dotfiles/blob/master/.gitconfig#L1-L2) when doing all `git pulls`.
+
+I still prefer to do this manually for now; but, I may move it to a Github action later.
+
+```
+git checkout develop
+git checkout -b feature-x
+# commit everything
+# open PR against develop branch
+# squash and merge to develop branch
+git checkout develop
+git pull origin develop
+git checkout master
+git pull origin master
+# push develop onto of master
+git push origin develop:master
+# Create Release/Tag from Github UI, since it's much prettier
+```
+
+TODO:
+  * Automate release notes via commits and PR notes
