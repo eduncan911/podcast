@@ -1,6 +1,7 @@
 package podcast_test
 
 import (
+	"encoding/xml"
 	"fmt"
 	"os"
 	"strconv"
@@ -219,4 +220,62 @@ See more at our website: <a href="http://example.com">example.com</a>
 	//     </item>
 	//   </channel>
 	// </rss>
+}
+
+func ExamplePodcast_UnmarshalXML() {
+	// using a local test file
+	f, err := os.Open("testdata/defensive_security.rss")
+	if err != nil {
+		fmt.Println("ExamplePodcast_UnmarshalXML: error opening file", err.Error())
+	}
+	defer f.Close()
+
+	d := xml.NewDecoder(f)
+	p := podcast.Podcast{}
+	if err2 := d.Decode(&p); err2 != nil {
+		fmt.Println("ExamplePodcast_UnmarshalXML: error d.Decode()", err2.Error())
+	}
+
+	fmt.Printf("%+v", p)
+	// Output:
+	// something
+}
+
+func X() {
+
+	rss := podcast.New(...)
+	
+	
+
+	c := podcast.NewChannel(
+		"eduncan911 Podcasts",
+		"http://eduncan911.com/",
+		"An example Podcast",
+		&pubDate, &updatedDate,
+	)
+	c.AddAuthor("Jane Doe", "me@janedoe.com")
+	c.AddImage("http://janedoe.com/i.jpg")
+	c.AddSummary(`A very cool podcast with a long summary using Bytes()!
+
+See more at our website: <a href="http://example.com">example.com</a>
+`)
+
+	for i := int64(5); i < 7; i++ {
+		n := strconv.FormatInt(i, 10)
+		d := pubDate.AddDate(0, 0, int(i+3))
+
+		item := podcast.Item{
+			Title:       "Episode " + n,
+			Link:        "http://example.com/" + n + ".mp3",
+			Description: "Description for Episode " + n,
+			PubDate:     &d,
+		}
+		if _, err := c.AddItem(item); err != nil {
+			fmt.Println(item.Title, ": error", err.Error())
+			break
+		}
+	}
+
+	podcast.Encode(c)
+
 }
