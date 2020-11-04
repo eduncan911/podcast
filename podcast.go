@@ -281,15 +281,15 @@ func (p *Podcast) AddCategory(category string, subCategories []string) {
 		p.Category = category
 	}
 
-	icat := ICategory{Text: category}
+	ic := ICategory{Text: category}
 	for _, c := range subCategories {
 		if len(c) == 0 {
 			continue
 		}
-		icat2 := ICategory{Text: c}
-		icat.ICategories = append(icat.ICategories, &icat2)
+		ic2 := ICategory{Text: c}
+		ic.ICategories = append(ic.ICategories, &ic2)
 	}
-	p.ICategories = append(p.ICategories, &icat)
+	p.ICategories = append(p.ICategories, &ic)
 }
 
 // AddImage adds the specified Image to the Podcast.
@@ -355,7 +355,7 @@ func (p *Podcast) AddImage(url string) {
 //
 func (p *Podcast) AddItem(i Item) (int, error) {
 	// initial guards for required fields
-	if len(i.Title) == 0 || len(i.Description) == 0 {
+	if len(i.Title) == 0 || len(i.Description.Text) == 0 {
 		return len(p.Items), errors.New("Title and Description are required")
 	}
 	if i.Enclosure != nil {
@@ -471,7 +471,8 @@ func (p *Podcast) AddSummary(summary string) {
 	}
 }
 
-func (p *Podcast) AddType(type *Type) {
+// AddType takes type PodcastType to define the podcast's type.
+func (p *Podcast) AddType(t *PodcastType) {
 	// Its values can be one of the following:
 	//
 	// Episodic (default). Specify episodic when episodes are intended to be
@@ -491,7 +492,7 @@ func (p *Podcast) AddType(type *Type) {
 	//
 	// For new subscribers, Apple Podcasts adds the first episode to their
 	// Library, or the entire current season if using seasons.
-	
+
 }
 
 // Bytes returns an encoded []byte slice.

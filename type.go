@@ -1,6 +1,6 @@
 package podcast
 
-// Type specifies the type of the podcast.
+// PodcastType specifies the type of the podcast.
 //
 // Its values can be one of the following:
 //
@@ -22,15 +22,15 @@ package podcast
 // For new subscribers, Apple Podcasts adds the first episode to their
 // Library, or the entire current season if using seasons.
 const (
-	Episodic Type = iota
+	Episodic PodcastType = iota
 	Serial
 )
 
 const (
-	typeDefault = "Episodic"
+	podcastTypeDefault = "Episodic"
 )
 
-// Type specifies the type of the podcast.
+// PodcastType specifies the type of the podcast.
 //
 // Its values can be one of the following:
 //
@@ -51,16 +51,16 @@ const (
 //
 // For new subscribers, Apple Podcasts adds the first episode to their
 // Library, or the entire current season if using seasons.
-type Type int
+type PodcastType int
 
 // String returns the MIME type encoding of the specified EnclosureType.
-func (t Type) String() string {
+func (pt PodcastType) String() string {
 	// https://help.apple.com/itc/podcasts_connect/#/itcb54353390
-	switch t {
+	switch pt {
 	case Episodic:
 		return "Episodic"
 	case Serial:
 		return "Serial"
 	}
-	return typeDefault
+	return podcastTypeDefault
 }
